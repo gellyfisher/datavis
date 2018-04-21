@@ -1,7 +1,10 @@
 
 
 function getData() {
-	data=$.get("https://min-api.cryptocompare.com/data/histoday?fsym=BTC&tsym=USD&limit=30&aggregate=3&e=CCCAGG");
+	$.ajax({
+	    type: "GET", 
+	    url: "https://min-api.cryptocompare.com/data/histoday?fsym=ETH&tsym=BTC&limit=30&aggregate=1&toTs=1452680400&extraParams=datavis"
+	})
 	console.log(data);
 }
 
