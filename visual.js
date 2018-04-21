@@ -62,10 +62,17 @@ function setUp() {
 		.attr("height", height);
 		
 	graph.append("text")
-		.attr("y", padding.top - 3)
-		.text("Action!")
+		.attr("y", padding.top - 5)
+		.text("scroll up")
 		.style("cursor", "hand")
 		.on("click", scrollUp);
+		
+	graph.append("text")
+		.attr("y", padding.top - 5)
+		.attr("x", 70)
+		.text("scroll down")
+		.style("cursor", "hand")
+		.on("click", scrollDown);
 
 	xScale = d3.scaleTime()                      
 					.range([padding.left, width - padding.right]);
@@ -97,7 +104,17 @@ function setUp() {
 }
 
 function scrollUp() {
-	NUM_POINTS=Math.max(10,Math.ceil(NUM_POINTS/2));
+	NUM_POINTS=Math.max(10,Math.ceil(NUM_POINTS/1.5)); //make sure theres enough points remaining
+	var dist=(end-start)/4;
+	
+	start=new Date(Math.max(start.getTime()+dist,0));
+	end=new Date(Math.min(end.getTime()-dist,(new Date()).getTime()));
+	
+	requestData();
+}
+
+function scrollDown() {
+	NUM_POINTS=Math.min(100,Math.floor(NUM_POINTS*1.5)); //limit the amount of points
 	var dist=(end-start)/2;
 	
 	start=new Date(Math.max(start.getTime()-dist,0));
