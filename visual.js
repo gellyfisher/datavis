@@ -1,13 +1,34 @@
 var data;
 
-function requestData(asyn=true) {
-	var url="https://min-api.cryptocompare.com/data/histoday?fsym=ETH&tsym=EUR&limit=30&aggregate=1&toTs=1452680400&extraParams=datavis";
-	//construct appropriate url with possible params...
+function requestData(currency="BTC",timeInBetween=24*60,date=new Date()) {
+	var url="https://min-api.cryptocompare.com/data/histo";
+	var amount;
+	
+	if (timeInBetween>=24*60) {
+		url+="day";
+		amount=Math.round(timeInBetween/1440);
+	} else if (timeInBetween>=60) {
+		url+="hour";
+		amount=Math.round(timeInBetween/60);
+	} else if (timeInBetween>0) {
+		url+="minute";
+		amount=timeInBetween
+	} else {
+		throw "invalid timeInBetween for the data request";
+	}
+	
+	params={
+	    fsym: currency, 
+	    tsym: "EUR",
+		limit: 30, //?? maybe more or less ?
+	    aggregate: amount, //amount of days/hours/minutes in between data points
+		toTs: Math.floor(date.getTime() / 1000) //unix timestamp
+	}
 	
 	$.ajax({
 	    type: "GET", 
 	    url: url,
-		async: asyn,
+		data: params,
 	    success : handleData 
 	});
 }
@@ -17,10 +38,8 @@ function handleData(recv) {
 	data.forEach(function(d) { d.time = new Date(d.time * 1000); });
 	
 	console.log(data);
-	//updateGraphs()
+	updateGraphs()
 }
-
-requestData(false);
 
 const width = 600;
 const height = 300;
@@ -34,11 +53,9 @@ const graph=d3.select("body")
     .attr("height", height);
 
 const xScale = d3.scaleTime()                      
-  				.domain(d3.extent(data, d => d.time))
   				.range([padding.left, width - padding.right]);
   
 const yScale = d3.scaleLinear()
-  				.domain([0,d3.max(data, d => d.high)])
   				.range([height - padding.bottom, padding.top]);
 					
 const xAxis = d3.axisBottom() 
@@ -57,3 +74,18 @@ graph.append("g")
     .attr("class", "y axis")
     .attr("transform", `translate(${padding.left}, 0)`)
     .call(yAxis);
+
+requestData();
+
+function updateGraphs() {
+	xScale.domain(d3.extent(data, d => d.time));
+	yScale.domain([0,d3.max(data, d => d.high)]);
+	
+	graph.select(".x.axis")
+      .transition()
+      .call(xAxis);
+    
+    graph.select(".y.axis")
+      .transition()
+      .call(yAxis);
+}
