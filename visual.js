@@ -1,13 +1,20 @@
 
 
-function getData() {
-	var dataTxt=$.ajax({
+function requestData() {
+	var url="https://min-api.cryptocompare.com/data/histoday?fsym=ETH&tsym=BTC&limit=30&aggregate=1&toTs=1452680400&extraParams=datavis";
+	//construct appropriate url
+	
+	$.ajax({
 	    type: "GET", 
-	    url: "https://min-api.cryptocompare.com/data/histoday?fsym=ETH&tsym=BTC&limit=30&aggregate=1&toTs=1452680400&extraParams=datavis"
+	    url: url,
+	    success : handleData;
 	});
-	console.log(dataTxt.responseText);
-	var data = JSON.parse(dataTxt.responseText);
+}
+
+function handleData(recv) {
+	console.log(recv);
+	data=JSON.parse(recv);
 	console.log(data);
 }
 
-getData();
+requestData();
