@@ -12,9 +12,9 @@ function requestData() {
 }
 
 function handleData(recv) {
-	console.log(recv);
-	data=JSON.parse(recv);
+	data=recv.Data
 	console.log(data);
+	console.log(data[2]["time"])
 }
 
 requestData();
