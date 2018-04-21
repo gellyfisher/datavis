@@ -7,7 +7,7 @@ function requestData() {
 	$.ajax({
 	    type: "GET", 
 	    url: url,
-	    success : handleData;
+	    success : handleData
 	});
 }
 
