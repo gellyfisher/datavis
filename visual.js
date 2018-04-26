@@ -17,12 +17,9 @@ function requestData(currency="BTC") {
 	if (timeInBetween>=24*60) {
 		url+="day";
 		amount=Math.round(timeInBetween/1440);
-	} else if (timeInBetween>=60) {
+	} else if (timeInBetween>0) {
 		url+="hour";
 		amount=Math.round(timeInBetween/60);
-	} else if (timeInBetween>0) {
-		url+="minute";
-		amount=Math.round(timeInBetween); //geeft nog een bug
 	} else {
 		throw "invalid timeInBetween for the data request";
 	}
@@ -44,10 +41,15 @@ function requestData(currency="BTC") {
 }
 
 function handleData(recv) {
-	data=recv.Data;
-	data.forEach(function(d) { d.time = new Date(d.time * 1000); });
-	
-	updateGraphs()
+	if (recv.Response==="Error") {
+		throw "Error: "+recv.Message
+	} else {
+		data=recv.Data;
+		console.log(data)
+		data.forEach(function(d) { d.time = new Date(d.time * 1000); });
+		
+		updateGraphs();
+	}
 }
 
 const width = 600;
