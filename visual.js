@@ -4,11 +4,15 @@ var end=new Date();
 var start = new Date();
 start.setDate(end.getDate()-NUM_POINTS);
 
+var minimumDate=1230764400000; //1 januari 2009
+
 function requestData(currency="BTC") {	
 	var url="https://min-api.cryptocompare.com/data/histo";
 	var amount;
 	
 	timeInBetween=(end-start)/(60*1000*NUM_POINTS)
+	
+	console.log(timeInBetween);
 	
 	if (timeInBetween>=24*60) {
 		url+="day";
@@ -18,7 +22,7 @@ function requestData(currency="BTC") {
 		amount=Math.round(timeInBetween/60);
 	} else if (timeInBetween>0) {
 		url+="minute";
-		amount=timeInBetween
+		amount=Math.round(timeInBetween); //geeft nog een bug
 	} else {
 		throw "invalid timeInBetween for the data request";
 	}
@@ -73,6 +77,20 @@ function setUp() {
 		.text("scroll down")
 		.style("cursor", "hand")
 		.on("click", scrollDown);
+		
+	graph.append("text")
+		.attr("y", padding.top - 5)
+		.attr("x", 200)
+		.text("drag left")
+		.style("cursor", "hand")
+		.on("click", dragLeft);
+		
+	graph.append("text")
+		.attr("y", padding.top - 5)
+		.attr("x", 270)
+		.text("drag right")
+		.style("cursor", "hand")
+		.on("click", dragRight);
 
 	xScale = d3.scaleTime()                      
 					.range([padding.left, width - padding.right]);
@@ -104,26 +122,45 @@ function setUp() {
 }
 
 function scrollUp() {
-	NUM_POINTS=Math.max(10,Math.ceil(NUM_POINTS/1.5)); //make sure theres enough points remaining
+	NUM_POINTS=Math.max(10,Math.ceil(NUM_POINTS/1.4)); //make sure theres enough points remaining
 	var dist=(end-start)/4;
 	
-	start=new Date(Math.max(start.getTime()+dist,0));
-	end=new Date(Math.min(end.getTime()-dist,(new Date()).getTime()));
+	start=new Date(start.getTime()+dist);
+	end=new Date(end.getTime()-dist);
 	
 	requestData();
 }
 
 function scrollDown() {
-	NUM_POINTS=Math.min(100,Math.floor(NUM_POINTS*1.5)); //limit the amount of points
+	NUM_POINTS=Math.min(100,Math.floor(NUM_POINTS*1.4)); //limit the amount of points
 	var dist=(end-start)/2;
 	
-	start=new Date(Math.max(start.getTime()-dist,0));
+	start=new Date(Math.max(start.getTime()-dist,minimumDate));
 	end=new Date(Math.min(end.getTime()+dist,(new Date()).getTime()));
+	
+	requestData();
+}
+
+function dragRight(dist=86400000) { //in dit geval gaan we terug in de tijd
+	dist=Math.min(dist,start.getTime()-minimumDate);
+	
+	start=new Date(start.getTime()-dist);
+	end=new Date(end.getTime()-dist);
+	
+	requestData();
+}
+
+function dragLeft(dist=86400000) { // nu gaan we vooruit in de tijd
+	dist=Math.min(dist,(new Date()).getTime()-end.getTime());
+	
+	start=new Date(start.getTime()+dist);
+	end=new Date(end.getTime()+dist);
 	
 	requestData();
 }
 	
 function updateGraphs() {
+	console.log(data);
 	xScale.domain(d3.extent(data, d => d.time));
 	yScale.domain([0,d3.max(data, d => d.high)]);
 	
