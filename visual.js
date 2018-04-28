@@ -7,22 +7,19 @@ start.setDate(end.getDate()-NUM_POINTS);
 var minimumDate=1230764400000; //1 januari 2009
 
 function requestData(currency="BTC") {	
-	var url="https://min-api.cryptocompare.com/data/histo";
-	var amount;
+	let url="https://min-api.cryptocompare.com/data/histo";
+	let amount;
 	
-	timeInBetween=(end-start)/(60*1000*NUM_POINTS)
-	
-	console.log(timeInBetween);
-	
+	let timeInBetween=(end-start)/(60*1000*NUM_POINTS)
+	let endTimeStamp=Math.floor(end.getTime() / 1000);
+	endTimeStamp-=endTimeStamp%3600 //fix it for hourly data
+		
 	if (timeInBetween>=24*60) {
 		url+="day";
 		amount=Math.round(timeInBetween/1440);
-	} else if (timeInBetween>=60) {
-		url+="hour";
-		amount=Math.round(timeInBetween/60);
 	} else if (timeInBetween>0) {
-		url+="minute";
-		amount=Math.round(timeInBetween); //geeft nog een bug
+		url+="hour";
+		amount=Math.ceil(timeInBetween/60);
 	} else {
 		throw "invalid timeInBetween for the data request";
 	}
@@ -32,7 +29,7 @@ function requestData(currency="BTC") {
 	    tsym: "EUR",
 		limit: NUM_POINTS,
 	    aggregate: amount, //amount of days/hours/minutes in between data points
-		toTs: Math.floor(end.getTime() / 1000) //last unix timestamp included
+		toTs: endTimeStamp //last unix timestamp included
 	}
 	
 	$.ajax({
@@ -44,10 +41,15 @@ function requestData(currency="BTC") {
 }
 
 function handleData(recv) {
-	data=recv.Data;
-	data.forEach(function(d) { d.time = new Date(d.time * 1000); });
-	
-	updateGraphs()
+	if (recv.Response==="Error") {
+		throw "Error: "+recv.Message
+	} else {
+		data=recv.Data;
+		console.log(data)
+		data.forEach(function(d) { d.time = new Date(d.time * 1000); });
+		
+		updateGraphs();
+	}
 }
 
 const width = 600;
@@ -158,44 +160,13 @@ function dragLeft(dist=86400000) { // nu gaan we vooruit in de tijd
 	
 	requestData();
 }
-	
-function updateGraphs() {
-	console.log(data);
-	xScale.domain(d3.extent(data, d => d.time));
-	yScale.domain([0,d3.max(data, d => d.high)]);
-	
-	let circles=graph.selectAll("circle").data(data);
-	
-	circles.exit().remove();
-		  
-	circles.enter()
-		.append("circle")
-		.attr("cx", d => xScale(d.time))
-		.attr("cy", d => yScale(0))
-		.attr("r", 2)
-		.merge(circles)
-		.transition()
-		.on("start", function () {
-			d3.select(this)
-			  .attr("r", 4);
-		  })
-		.attr("cx", d => xScale(d.time))
-		.attr("cy", d => yScale(d.high))
-		.on("end", function () {
-			d3.select(this)
-			  .attr("r", 2);
-		  });
-		  
-	graph.select(".x.axis")
-      .transition()
-      .call(xAxis)
-	  .selectAll("text")	 // rotate the axis labels
-        .style("text-anchor", "end")
-        .attr("dx", "-.8em")
-        .attr("dy", ".15em")
-        .attr("transform", "rotate(-30)");
-    
-    graph.select(".y.axis")
-      .transition()
-      .call(yAxis);
+
+function updateGraphs(type="candle") {
+	if (type==="candle") {
+		drawCandleChart();
+	} else if (type==="donut") {
+		//functie om donut te tekenen
+	} else {
+		throw "invalid graph type";
+	} 
 }
