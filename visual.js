@@ -60,7 +60,7 @@ setUp();
 requestData();
 
 function setUp() {
-	graph=d3.select("body")
+	graph=d3.select("#graph1")
 		.append("svg")
 		.attr("width", width)
 		.attr("height", height);
