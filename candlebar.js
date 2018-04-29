@@ -1,3 +1,99 @@
+function setUpCandleChart() {
+	scrollPos = $(window).scrollTop();
+	
+	graph=d3.select("div#graph")
+		.append("svg")
+		.attr("width", width)
+		.attr("height", height);
+	
+	d3.select("div#graph").on("wheel", scrollCandle);
+		
+	graph.append("text")
+		.attr("y", padding.top - 5)
+		.attr("x", 70)
+		.text("drag left")
+		.style("cursor", "hand")
+		.on("click", dragLeftCandleChart);
+		
+	graph.append("text")
+		.attr("y", padding.top - 5)
+		.attr("x", 140)
+		.text("drag right")
+		.style("cursor", "hand")
+		.on("click", dragRightCandleChart);
+
+	xScale = d3.scaleTime()                      
+				.range([padding.left, width - padding.right]);
+	  
+	yScale = d3.scaleLinear()
+				.range([height - padding.bottom, padding.top]);
+						
+	xAxis = d3.axisBottom() 
+				.scale(xScale)
+				.tickFormat(timeFormat);
+						
+	yAxis = d3.axisLeft()
+				.scale(yScale)
+					
+	graph.append("g") 
+		.attr("class", "x axis")
+		.attr("transform", `translate(0, ${height - padding.bottom})`)
+		.call(xAxis)
+		.selectAll("text")	    // rotate the axis labels
+		.style("text-anchor", "end")
+		.attr("dx", "-.8em")
+		.attr("dy", ".15em")
+		.attr("transform", "rotate(-30)");
+	  
+	graph.append("g") 
+		.attr("class", "y axis")
+		.attr("transform", `translate(${padding.left}, 0)`)
+		.call(yAxis);
+}
+
+function scrollCandle() {
+	if (d3.event.deltaY< 0) {
+		scrollUpCandle();
+	} else {
+		scrollDownCandle();
+	 }
+}
+
+function scrollUpCandle() {
+	var dist=(end-start)/4;
+	
+	start=new Date(start.getTime()+dist);
+	end=new Date(end.getTime()-dist);
+	
+	requestData();
+}
+
+function scrollDownCandle() {
+	var dist=(end-start)/2;
+	
+	start=new Date(Math.max(start.getTime()-dist,minimumDate));
+	end=new Date(Math.min(end.getTime()+dist,(new Date()).getTime()));
+	
+	requestData();
+}
+
+function dragRightCandleChart(dist=86400000) { //in dit geval gaan we terug in de tijd
+	dist=Math.min(dist,start.getTime()-minimumDate);
+	
+	start=new Date(start.getTime()-dist);
+	end=new Date(end.getTime()-dist);
+	
+	requestData();
+}
+
+function dragLeftCandleChart(dist=86400000) { // nu gaan we vooruit in de tijd
+	dist=Math.min(dist,(new Date()).getTime()-end.getTime());
+	
+	start=new Date(start.getTime()+dist);
+	end=new Date(end.getTime()+dist);
+	
+	requestData();
+}
 
 function drawCandleChart() {
 	xScale.domain(d3.extent(data, d => d.time));
