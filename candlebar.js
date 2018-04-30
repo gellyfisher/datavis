@@ -17,12 +17,14 @@ function setUpCandleChart() {
 	d3.select("div#graph").on("mousedown", function() {startDragCandle(this)});
 	d3.select("div#graph").on("mousemove", function() {dragCandle(this)});
 	d3.select("div#graph").on("mouseup", function() {endDragCandle(this)});
-
+	
 	xScale = d3.scaleTime()                      
-				.range([padding.left, width - padding.right]);
+				.range([padding.left, width - padding.right])
+				.domain([start,end]);
 	  
 	yScale = d3.scaleLinear()
-				.range([height - padding.bottom, padding.top]);
+				.range([height - padding.bottom, padding.top])
+				.domain([0,7500]); //just giving an approximate default so that it doesnt transition from [0,1]
 						
 	xAxis = d3.axisBottom() 
 				.scale(xScale)
@@ -72,9 +74,9 @@ function endDragCandle(container) {
 }
 
 function dragCandle(container) {
-	//We will only allow the dragging at most once in 200 ms. Otherwise this function is executed too often.
+	//We will only allow the dragging at most once in 100 ms. Otherwise this function is executed too often.
 	
-    if (dragging && (prevTime + 200 - Date.now()) < 0) {
+    if (dragging && (prevTime + 100 - Date.now()) < 0) {
 		let mouseX=d3.mouse(container)[0];
 	
 		let timeInBetween=(end-start)/(NUM_POINTS);

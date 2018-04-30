@@ -1,7 +1,7 @@
-let data;
-let NUM_POINTS=30;
-let end=new Date();
-let start = new Date();
+let data; //our actual data
+let NUM_POINTS=30; //amount of data points to fetch
+let end=new Date(); //end date of the data we're getting
+let start = new Date(); //start date of the data we're getting
 start.setDate(end.getDate()-NUM_POINTS);
 
 let minimumDate=new Date(2009,0,1,0,0,0,0).getTime(); //1 januari 2009 (eerste cryptocurrency was in 2009)
@@ -10,7 +10,18 @@ const width = 600;
 const height = 300;
 const padding = {top: 20, left: 40, right: 40, bottom: 50}; //deze waardes kunnen nog aangepast worden
 
+let graphType="candle";
+
 $(document).ready(function() {
+	$("#graph-type").val(graphType); //set initial value of the dropdown
+	
+	$("#graph-type").change(function () {
+		graphType = this.value; //the selected value
+		$("#graph").empty();
+		setUp();
+		requestData();
+	});
+	
     setUp();
 	requestData();
 });
@@ -65,24 +76,24 @@ function handleData(recv) {
 	}
 }
 
-function setUp(type="candle") {
-	if (type==="candle") {
+function setUp() {
+	if (graphType==="candle") {
 		setUpCandleChart();
-	} else if (type==="donut") {
+	} else if (graphType==="donut") {
 		//functie voor setup van donut
-	} else if (type==="line") {
+	} else if (graphType==="line") {
 		setUpLineChart();
 	} else {
 		throw "Invalid graph type.";
 	} 
 }
 
-function updateGraphs(type="candle") {
-	if (type==="candle") {
+function updateGraphs() {
+	if (graphType==="candle") {
 		drawCandleChart();
-	} else if (type==="donut") {
+	} else if (graphType==="donut") {
 		//functie om donut te tekenen
-	} else if (type==="line") {
+	} else if (graphType==="line") {
 		drawLineChart();
 	} else {
 		throw "Invalid graph type.";
