@@ -1,26 +1,22 @@
-function setUpCandleChart() {
-	scrollPos = $(window).scrollTop();
-	
+//specific global variables for the candle bar chart
+let graph,xScale,yScale;
+let xAxis,yAxis;
+let timeFormat = d3.timeFormat("%b %e %Y");
+let dragging=false;
+let prevMouseX;
+let prevTime=Date.now();
+
+function setUpCandleChart() {	
 	graph=d3.select("div#graph")
 		.append("svg")
 		.attr("width", width)
 		.attr("height", height);
 	
-	d3.select("div#graph").on("wheel", scrollCandle);
-		
-	graph.append("text")
-		.attr("y", padding.top - 5)
-		.attr("x", 70)
-		.text("drag left")
-		.style("cursor", "hand")
-		.on("click", dragLeftCandleChart);
-		
-	graph.append("text")
-		.attr("y", padding.top - 5)
-		.attr("x", 140)
-		.text("drag right")
-		.style("cursor", "hand")
-		.on("click", dragRightCandleChart);
+	d3.select("div#graph").on("wheel", scrollCandle);	
+	
+	d3.select("div#graph").on("mousedown", function() {startDragCandle(this)});
+	d3.select("div#graph").on("mousemove", function() {dragCandle(this)});
+	d3.select("div#graph").on("mouseup", function() {endDragCandle(this)});
 
 	xScale = d3.scaleTime()                      
 				.range([padding.left, width - padding.right]);
@@ -39,11 +35,12 @@ function setUpCandleChart() {
 		.attr("class", "x axis")
 		.attr("transform", `translate(0, ${height - padding.bottom})`)
 		.call(xAxis)
-		.selectAll("text")	    // rotate the axis labels
+		.selectAll("text")	   
 		.style("text-anchor", "end")
 		.attr("dx", "-.8em")
 		.attr("dy", ".15em")
-		.attr("transform", "rotate(-30)");
+		.attr("transform", "rotate(-30)");  // rotate the axis labels
+		
 	  
 	graph.append("g") 
 		.attr("class", "y axis")
@@ -51,33 +48,51 @@ function setUpCandleChart() {
 		.call(yAxis);
 }
 
-function scrollCandle() {
-	if (d3.event.deltaY< 0) {
-		scrollUpCandle();
-	} else {
-		scrollDownCandle();
-	 }
+function startDragCandle(container) {
+	dragging=true;
+	let mouseX=d3.mouse(container)[0];
+	
+	prevMouseX=mouseX;
 }
 
-function scrollUpCandle() {
-	var dist=(end-start)/4;
+function endDragCandle(container) {
+	dragging=false;
+	let mouseX=d3.mouse(container)[0];
 	
-	start=new Date(start.getTime()+dist);
-	end=new Date(end.getTime()-dist);
+	let timeInBetween=(end-start)/(NUM_POINTS);
+	let effectiveWidth=width-padding.left-padding.right
 	
-	requestData();
+	let scale=NUM_POINTS*Math.abs(mouseX-prevMouseX)/effectiveWidth
+	
+	if (mouseX>prevMouseX) {
+		dragRightCandle(scale*timeInBetween);
+	} else if (mouseX<prevMouseX) {
+		dragLeftCandle(scale*timeInBetween);
+	}
 }
 
-function scrollDownCandle() {
-	var dist=(end-start)/2;
+function dragCandle(container) {
+	//We will only allow the dragging at most once in 200 ms. Otherwise this function is executed too often.
 	
-	start=new Date(Math.max(start.getTime()-dist,minimumDate));
-	end=new Date(Math.min(end.getTime()+dist,(new Date()).getTime()));
+    if (dragging && (prevTime + 200 - Date.now()) < 0) {
+		let mouseX=d3.mouse(container)[0];
 	
-	requestData();
+		let timeInBetween=(end-start)/(NUM_POINTS);
+		let effectiveWidth=width-padding.left-padding.right;
+		
+		let scale=NUM_POINTS*Math.abs(mouseX-prevMouseX)/effectiveWidth;
+		
+		if (mouseX>prevMouseX) {
+			dragRightCandle(scale*timeInBetween);
+		} else if (mouseX<prevMouseX) {
+			dragLeftCandle(scale*timeInBetween);
+		}
+		prevMouseX=mouseX;
+		prevTime = Date.now();
+    }
 }
 
-function dragRightCandleChart(dist=86400000) { //in dit geval gaan we terug in de tijd
+function dragRightCandle(dist) { //in dit geval gaan we terug in de tijd
 	dist=Math.min(dist,start.getTime()-minimumDate);
 	
 	start=new Date(start.getTime()-dist);
@@ -86,13 +101,32 @@ function dragRightCandleChart(dist=86400000) { //in dit geval gaan we terug in d
 	requestData();
 }
 
-function dragLeftCandleChart(dist=86400000) { // nu gaan we vooruit in de tijd
+function dragLeftCandle(dist) { // nu gaan we vooruit in de tijd
 	dist=Math.min(dist,(new Date()).getTime()-end.getTime());
 	
 	start=new Date(start.getTime()+dist);
 	end=new Date(end.getTime()+dist);
 	
 	requestData();
+}
+
+function scrollCandle() {
+	/*change this such that it zooms into the current mouse position... instead of zooming in the middle*/
+	
+	if (d3.event.deltaY< 0) { //scroll up
+		let dist=(end-start)/4;
+	
+		start=new Date(start.getTime()+dist);
+		end=new Date(end.getTime()-dist);
+		
+	} else { //scroll down
+		let dist=(end-start)/2;
+	
+		start=new Date(Math.max(start.getTime()-dist,minimumDate));
+		end=new Date(Math.min(end.getTime()+dist,(new Date()).getTime()));
+	 }
+	 
+	 requestData();
 }
 
 function drawCandleChart() {
@@ -108,8 +142,8 @@ function drawCandleChart() {
 		.attr("class","high")
 		.attr("x1",d => xScale(d.time)-5)
 		.attr("x2",d => xScale(d.time)+5)
-		.attr("y1",d => yScale(0))
-		.attr("y2",d => yScale(0))
+		.attr("y1",d => yScale(d.high))
+		.attr("y2",d => yScale(d.high))
 		.merge(high)
 		.transition()
 		.duration(200)
@@ -128,8 +162,8 @@ function drawCandleChart() {
 		.attr("class","low")
 		.attr("x1",d => xScale(d.time)-5)
 		.attr("x2",d => xScale(d.time)+5)
-		.attr("y1",d => yScale(0))
-		.attr("y2",d => yScale(0))
+		.attr("y1",d => yScale(d.high))
+		.attr("y2",d => yScale(d.high))
 		.merge(low)
 		.transition()
 		.duration(200)
@@ -148,8 +182,8 @@ function drawCandleChart() {
 		.attr("class","vertical")
 		.attr("x1",d => xScale(d.time))
 		.attr("x2",d => xScale(d.time))
-		.attr("y1",d => yScale(0))
-		.attr("y2",d => yScale(0))
+		.attr("y1",d => yScale(d.high))
+		.attr("y2",d => yScale(d.high))
 		.merge(vertical)
 		.transition()
 		.duration(200)
@@ -166,7 +200,7 @@ function drawCandleChart() {
 	rectangles.enter()
 		.append("rect")
 		.attr("width",8)
-		.attr("y",d => yScale(0))
+		.attr("y",d => yScale(d.high))
 		.attr("x",d => xScale(d.time)-4)
 		.attr("height",0)
 		.attr("stroke-width",1)

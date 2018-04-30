@@ -1,5 +1,5 @@
 let data;
-let NUM_POINTS=50;
+let NUM_POINTS=30;
 let end=new Date();
 let start = new Date();
 start.setDate(end.getDate()-NUM_POINTS);
@@ -9,12 +9,6 @@ let minimumDate=new Date(2009,0,1,0,0,0,0).getTime(); //1 januari 2009 (eerste c
 const width = 600;
 const height = 300;
 const padding = {top: 20, left: 40, right: 40, bottom: 50}; //deze waardes kunnen nog aangepast worden
-
-//specific global variables for the candle bar chart
-let graph,xScale,yScale;
-let xAxis,yAxis;
-let scrollPos;
-let timeFormat = d3.timeFormat("%b %e %Y");
 
 $(document).ready(function() {
     setUp();
@@ -62,6 +56,7 @@ function handleData(recv) {
 	} else if (recv.Response==="Success") {
 		data=recv.Data;
 		data.forEach(function(d) { d.time = new Date(d.time * 1000); });
+		console.log(data);
 		
 		updateGraphs();
 		
@@ -75,6 +70,8 @@ function setUp(type="candle") {
 		setUpCandleChart();
 	} else if (type==="donut") {
 		//functie voor setup van donut
+	} else if (type==="line") {
+		setUpLineChart();
 	} else {
 		throw "Invalid graph type.";
 	} 
@@ -85,6 +82,8 @@ function updateGraphs(type="candle") {
 		drawCandleChart();
 	} else if (type==="donut") {
 		//functie om donut te tekenen
+	} else if (type==="line") {
+		drawLineChart();
 	} else {
 		throw "Invalid graph type.";
 	} 
