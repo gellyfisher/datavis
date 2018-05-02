@@ -1,4 +1,4 @@
-let numPoints=100; //amount of data points to fetch
+let numPoints=30; //amount of data points to fetch
 let end=new Date(); //end date of the data we're getting
 let start = new Date(); //start date of the data we're getting
 start.setDate(end.getDate()-numPoints);
@@ -9,9 +9,9 @@ const width = 600;
 const height = 300;
 const padding = {top: 20, left: 40, right: 40, bottom: 50}; //deze waardes kunnen nog aangepast worden
 
-let graphType="candle";
+let graphType="line";
 
-$(document).ready(function() {
+$(document).ready(function() {	
 	$("#graph-type").val(graphType); //set initial value of the dropdown
 	
 	$("#graph-type").change(function () {
@@ -22,8 +22,45 @@ $(document).ready(function() {
 	});
 	
     setUp();
-	requestData();
+	requestMultipleData(["BTC","ETH","XMR","MLN","DASH"]);
 });
+
+function requestMultipleData(currencies=["BTC"]) {
+	let promises=[];
+	let result=[];
+	
+	for (let i = 0; i < currencies.length; i++) {
+		promises.push(requestData(currencies[i]));
+	}
+	
+	// Als alle requests gedaan zijn dan kunnen we de grafiek tekenen
+	Promise.all(promises).then(function(data) {
+		
+		resultData={};
+		
+		for (let i = 0; i < currencies.length; i++) {
+			if (data[i].Response==="Error") {
+				throw "Error: "+data[i].Message
+				
+			} else if (data[i].Response==="Success") {
+				//volgorde van de requests blijft bewaard in de data zelf (zie https://stackoverflow.com/questions/28066429/promise-all-order-of-resolved-values)
+				resultData[currencies[i]]=data[i].Data;
+				
+				resultData[currencies[i]].forEach(function(d) { d.time = new Date(d.time * 1000); });
+				
+			} else {
+				throw "Unknown response message: "+data[i].Response
+			}
+		}
+		
+		console.log(resultData);
+		updateGraphs(resultData);
+		
+		
+	}, function(err) {
+		throw err;
+	});
+}
 
 function requestData(currency="BTC") {	
 	let url="https://min-api.cryptocompare.com/data/histo";
@@ -47,32 +84,15 @@ function requestData(currency="BTC") {
 	    fsym: currency, 
 	    tsym: "EUR",
 		limit: numPoints,
-	    aggregate: amount, //amount of days/hours/minutes in between data points
+	    aggregate: amount, //amount of days/hours in between data points (API ignores any value more than 30)
 		toTs: endTimeStamp //last unix timestamp included
 	}
 	
-	$.ajax({
+	return $.ajax({
 	    type: "GET", 
 	    url: url,
 		data: params,
-	    success : handleData 
 	});
-}
-
-function handleData(recv) {
-	if (recv.Response==="Error") {
-		throw "Error: "+recv.Message
-		
-	} else if (recv.Response==="Success") {
-		let data=recv.Data;
-		data.forEach(function(d) { d.time = new Date(d.time * 1000); });
-		console.log(data);
-		
-		updateGraphs(data);
-		
-	} else {
-		throw "Unknown response message: "+recv.Response
-	}
 }
 
 function setUp() {
