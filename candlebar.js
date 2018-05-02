@@ -66,7 +66,7 @@ function endDragCandle(container) {
 	let timeInBetween=(end-start)/(numPoints);
 	let effectiveWidth=width-padding.left-padding.right
 	
-	let scale=numPoints*Math.abs(mouseX-prevMouseX)/effectiveWidth
+	let scale=Math.floor(numPoints*Math.abs(mouseX-prevMouseX)/effectiveWidth);
 	
 	if (mouseX>prevMouseX) {
 		dragRightCandle(scale*timeInBetween);
