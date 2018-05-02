@@ -1,8 +1,7 @@
-let data; //our actual data
-let NUM_POINTS=30; //amount of data points to fetch
+let numPoints=100; //amount of data points to fetch
 let end=new Date(); //end date of the data we're getting
 let start = new Date(); //start date of the data we're getting
-start.setDate(end.getDate()-NUM_POINTS);
+start.setDate(end.getDate()-numPoints);
 
 let minimumDate=new Date(2009,0,1,0,0,0,0).getTime(); //1 januari 2009 (eerste cryptocurrency was in 2009)
 
@@ -29,8 +28,7 @@ $(document).ready(function() {
 function requestData(currency="BTC") {
 	let url="https://min-api.cryptocompare.com/data/histo";
 	let amount;
-
-	let timeInBetween=(end-start)/(60*1000*NUM_POINTS)
+	let timeInBetween=(end-start)/(60*1000*numPoints)
 	let endTimeStamp=Math.floor(end.getTime() / 1000);
 	endTimeStamp-=endTimeStamp%3600 //fix it for hourly data
 
@@ -47,7 +45,7 @@ function requestData(currency="BTC") {
 	params={
 	    fsym: currency,
 	    tsym: "EUR",
-		limit: NUM_POINTS,
+		limit: numPoints,
 	    aggregate: amount, //amount of days/hours/minutes in between data points
 		toTs: endTimeStamp //last unix timestamp included
 	}
@@ -65,11 +63,11 @@ function handleData(recv) {
 		throw "Error: "+recv.Message
 
 	} else if (recv.Response==="Success") {
-		data=recv.Data;
+		let data=recv.Data;
 		data.forEach(function(d) { d.time = new Date(d.time * 1000); });
 		console.log(data);
 
-		updateGraphs();
+		updateGraphs(data);
 
 	} else {
 		throw "Unknown response message: "+recv.Response
@@ -88,13 +86,13 @@ function setUp() {
 	}
 }
 
-function updateGraphs() {
+function updateGraphs(data) {
 	if (graphType==="candle") {
-		drawCandleChart();
+		drawCandleChart(data);
 	} else if (graphType==="donut") {
 		drawDonutChart([]);
 	} else if (graphType==="line") {
-		drawLineChart();
+		drawLineChart(data);
 	} else {
 		throw "Invalid graph type.";
 	}

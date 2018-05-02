@@ -6,7 +6,9 @@ let dragging=false;
 let prevMouseX;
 let prevTime=Date.now();
 
-function setUpCandleChart() {	
+function setUpCandleChart() {
+	numPoints=30;
+	
 	graph=d3.select("div#graph")
 		.append("svg")
 		.attr("width", width)
@@ -61,10 +63,10 @@ function endDragCandle(container) {
 	dragging=false;
 	let mouseX=d3.mouse(container)[0];
 	
-	let timeInBetween=(end-start)/(NUM_POINTS);
+	let timeInBetween=(end-start)/(numPoints);
 	let effectiveWidth=width-padding.left-padding.right
 	
-	let scale=NUM_POINTS*Math.abs(mouseX-prevMouseX)/effectiveWidth
+	let scale=Math.floor(numPoints*Math.abs(mouseX-prevMouseX)/effectiveWidth);
 	
 	if (mouseX>prevMouseX) {
 		dragRightCandle(scale*timeInBetween);
@@ -79,10 +81,10 @@ function dragCandle(container) {
     if (dragging && (prevTime + 100 - Date.now()) < 0) {
 		let mouseX=d3.mouse(container)[0];
 	
-		let timeInBetween=(end-start)/(NUM_POINTS);
+		let timeInBetween=(end-start)/(numPoints);
 		let effectiveWidth=width-padding.left-padding.right;
 		
-		let scale=NUM_POINTS*Math.abs(mouseX-prevMouseX)/effectiveWidth;
+		let scale=Math.floor(numPoints*Math.abs(mouseX-prevMouseX)/effectiveWidth);
 		
 		if (mouseX>prevMouseX) {
 			dragRightCandle(scale*timeInBetween);
@@ -131,7 +133,7 @@ function scrollCandle() {
 	 requestData();
 }
 
-function drawCandleChart() {
+function drawCandleChart(data) {
 	xScale.domain(d3.extent(data, d => d.time));
 	yScale.domain([0,d3.max(data, d => d.high)]);
 	
@@ -164,8 +166,8 @@ function drawCandleChart() {
 		.attr("class","low")
 		.attr("x1",d => xScale(d.time)-5)
 		.attr("x2",d => xScale(d.time)+5)
-		.attr("y1",d => yScale(d.high))
-		.attr("y2",d => yScale(d.high))
+		.attr("y1",d => yScale(d.low))
+		.attr("y2",d => yScale(d.low))
 		.merge(low)
 		.transition()
 		.duration(200)
@@ -184,7 +186,7 @@ function drawCandleChart() {
 		.attr("class","vertical")
 		.attr("x1",d => xScale(d.time))
 		.attr("x2",d => xScale(d.time))
-		.attr("y1",d => yScale(d.high))
+		.attr("y1",d => yScale(d.low))
 		.attr("y2",d => yScale(d.high))
 		.merge(vertical)
 		.transition()
@@ -202,9 +204,9 @@ function drawCandleChart() {
 	rectangles.enter()
 		.append("rect")
 		.attr("width",8)
-		.attr("y",d => yScale(d.high))
+		.attr("y",d => Math.min(yScale(d.open),yScale(d.close)))
 		.attr("x",d => xScale(d.time)-4)
-		.attr("height",0)
+		.attr("height",d => Math.abs(yScale(d.close)-yScale(d.open)))
 		.attr("stroke-width",1)
 		.merge(rectangles)
 		.transition()
