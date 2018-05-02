@@ -17,10 +17,12 @@ function setUpLineChart() {
 	d3.select("div#graph").on("mouseup", function() {endDragCandle(this)});
 
 	xScale = d3.scaleTime()                      
-				.range([padding.left, width - padding.right]);
+				.range([padding.left, width - padding.right])
+				.domain([start,end]);
 	  
 	yScale = d3.scaleLinear()
-				.range([height - padding.bottom, padding.top]);
+				.range([height - padding.bottom, padding.top])
+				.domain([0,7500]);
 						
 	xAxis = d3.axisBottom() 
 				.scale(xScale)
@@ -51,20 +53,22 @@ function setUpLineChart() {
     		.y(d => yScale((d.high+d.low+d.close)/3));
 }
 
-function drawLineChart(data) {
-	xScale.domain(d3.extent(data, d => d.time));
-	yScale.domain([0,d3.max(data, d => d.high)]);
+function drawLineChart(data) {	
+	xScale.domain([d3.min(data,d=> d3.min(d.data,D=>D.time)),d3.max(data,d=> d3.max(d.data,D=>D.time))]);
+	yScale.domain([0,d3.max(data,d=> d3.max(d.data,D=>D.high))]);
 	
-	graph.select("path.line").remove()
-	
-	graph.append("path").datum(data)
-		.attr("class","line")
-		.attr("fill", "none")
-		.attr("stroke", "black")
-		.attr("stroke-linejoin", "round")
-		.attr("stroke-linecap", "round")
-		.attr("stroke-width", 1.5)
-		.attr("d", line);
+	for (let i=0;i<data.length;i++) {
+		graph.select("path."+data[i].currency).remove()
+		
+		graph.append("path").datum(data[i].data)
+			.attr("class",data[i].currency)
+			.attr("fill", "none")
+			.attr("stroke", "black")
+			.attr("stroke-linejoin", "round")
+			.attr("stroke-linecap", "round")
+			.attr("stroke-width", 1.5)
+			.attr("d", line);
+	}
 		  
 	graph.select(".x.axis")
 		.transition()
