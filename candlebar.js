@@ -82,7 +82,7 @@ function dragCandle(container) {
 		let timeInBetween=(end-start)/(NUM_POINTS);
 		let effectiveWidth=width-padding.left-padding.right;
 		
-		let scale=NUM_POINTS*Math.abs(mouseX-prevMouseX)/effectiveWidth;
+		let scale=Math.floor(NUM_POINTS*Math.abs(mouseX-prevMouseX)/effectiveWidth);
 		
 		if (mouseX>prevMouseX) {
 			dragRightCandle(scale*timeInBetween);
@@ -131,7 +131,7 @@ function scrollCandle() {
 	 requestData();
 }
 
-function drawCandleChart() {
+function drawCandleChart(data) {
 	xScale.domain(d3.extent(data, d => d.time));
 	yScale.domain([0,d3.max(data, d => d.high)]);
 	

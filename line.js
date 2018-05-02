@@ -49,7 +49,7 @@ function setUpLineChart() {
     		.y(d => yScale((d.high+d.low+d.close)/3));
 }
 
-function drawLineChart() {
+function drawLineChart(data) {
 	xScale.domain(d3.extent(data, d => d.time));
 	yScale.domain([0,d3.max(data, d => d.high)]);
 	

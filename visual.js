@@ -1,4 +1,3 @@
-let data; //our actual data
 let NUM_POINTS=30; //amount of data points to fetch
 let end=new Date(); //end date of the data we're getting
 let start = new Date(); //start date of the data we're getting
@@ -10,7 +9,7 @@ const width = 600;
 const height = 300;
 const padding = {top: 20, left: 40, right: 40, bottom: 50}; //deze waardes kunnen nog aangepast worden
 
-let graphType="candle";
+let graphType="line";
 
 $(document).ready(function() {
 	$("#graph-type").val(graphType); //set initial value of the dropdown
@@ -65,11 +64,11 @@ function handleData(recv) {
 		throw "Error: "+recv.Message
 		
 	} else if (recv.Response==="Success") {
-		data=recv.Data;
+		let data=recv.Data;
 		data.forEach(function(d) { d.time = new Date(d.time * 1000); });
 		console.log(data);
 		
-		updateGraphs();
+		updateGraphs(data);
 		
 	} else {
 		throw "Unknown response message: "+recv.Response
@@ -88,13 +87,13 @@ function setUp() {
 	} 
 }
 
-function updateGraphs() {
+function updateGraphs(data) {
 	if (graphType==="candle") {
-		drawCandleChart();
+		drawCandleChart(data);
 	} else if (graphType==="donut") {
 		//functie om donut te tekenen
 	} else if (graphType==="line") {
-		drawLineChart();
+		drawLineChart(data);
 	} else {
 		throw "Invalid graph type.";
 	} 
