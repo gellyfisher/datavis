@@ -1,10 +1,30 @@
-var data;
-var NUM_POINTS=50;
-var end=new Date();
-var start = new Date();
+let data; //our actual data
+let NUM_POINTS=30; //amount of data points to fetch
+let end=new Date(); //end date of the data we're getting
+let start = new Date(); //start date of the data we're getting
 start.setDate(end.getDate()-NUM_POINTS);
 
-var minimumDate=1230764400000; //1 januari 2009
+let minimumDate=new Date(2009,0,1,0,0,0,0).getTime(); //1 januari 2009 (eerste cryptocurrency was in 2009)
+
+const width = 600;
+const height = 300;
+const padding = {top: 20, left: 40, right: 40, bottom: 50}; //deze waardes kunnen nog aangepast worden
+
+let graphType="candle";
+
+$(document).ready(function() {
+	$("#graph-type").val(graphType); //set initial value of the dropdown
+	
+	$("#graph-type").change(function () {
+		graphType = this.value; //the selected value
+		$("#graph").empty();
+		setUp();
+		requestData();
+	});
+	
+    setUp();
+	requestData();
+});
 
 function requestData(currency="BTC") {	
 	let url="https://min-api.cryptocompare.com/data/histo";
@@ -43,25 +63,21 @@ function requestData(currency="BTC") {
 function handleData(recv) {
 	if (recv.Response==="Error") {
 		throw "Error: "+recv.Message
-	} else {
+		
+	} else if (recv.Response==="Success") {
 		data=recv.Data;
-		console.log(data)
 		data.forEach(function(d) { d.time = new Date(d.time * 1000); });
+		console.log(data);
 		
 		updateGraphs();
+		
+	} else {
+		throw "Unknown response message: "+recv.Response
 	}
 }
 
-const width = 600;
-const height = 300;
-const padding = {top: 20, left: 40, right: 40, bottom: 50};
-
-let graph,xScale,yScale,xAxis,yAxis;
-let timeFormat = d3.timeFormat("%b %e %Y");
-setUp();
-requestData();
-
 function setUp() {
+<<<<<<< HEAD
 	graph=d3.select("#graph1")
 		.append("svg")
 		.attr("width", width)
@@ -159,14 +175,27 @@ function dragLeft(dist=86400000) { // nu gaan we vooruit in de tijd
 	end=new Date(end.getTime()+dist);
 	
 	requestData();
+=======
+	if (graphType==="candle") {
+		setUpCandleChart();
+	} else if (graphType==="donut") {
+		//functie voor setup van donut
+	} else if (graphType==="line") {
+		setUpLineChart();
+	} else {
+		throw "Invalid graph type.";
+	} 
+>>>>>>> 8a6cda8216eb8ffc4a1d2bd6d31ab310d9ed22fc
 }
 
-function updateGraphs(type="candle") {
-	if (type==="candle") {
+function updateGraphs() {
+	if (graphType==="candle") {
 		drawCandleChart();
-	} else if (type==="donut") {
+	} else if (graphType==="donut") {
 		//functie om donut te tekenen
+	} else if (graphType==="line") {
+		drawLineChart();
 	} else {
-		throw "invalid graph type";
+		throw "Invalid graph type.";
 	} 
 }

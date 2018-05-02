@@ -1,22 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="utf-8">
-        <title>index</title>
+	<meta charset="utf-8">
+	<title>Cryptocurrency graph</title>
+
+	<link rel = "stylesheet" type = "text/css" href = "index.css" />
+
+	<!-- Include jquery source-->
 	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
-	<!--include d3 source-->
-        <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
-		<link rel="stylesheet" type="text/css" href="donut.css">
+
+	<!-- Include d3 source-->
+	<script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+
+	<!-- Include our source for drawing the graphs-->
+	<script type="text/javascript" src="visual.js"></script>
+	<script type="text/javascript" src="candlebar.js"></script>
+	<script type="text/javascript" src="line.js"></script>
+  <script type="text/javascript" src="jummyjummydonuts.js"></script>
     </head>
+
     <body>
-		<!--include my own js file in the body -->
-
-        <div id="graph1"></div>
-        <div id="graph2"></div>
-        <div id="graph3"></div>
-
-
-        <script type="text/javascript" src="visual.js"></script>
-    		<script type="text/javascript" src="candlebar.js"></script>
-        <script type="text/javascript" src="jummyjummydonuts.js"></script>    </body>
+		<label> choose chart type</label>
+		<select id="graph-type">
+		  <option value="line">Line</option>
+		  <option value="candle">Candle</option>
+		  <option value="donut">Donut</option>
+		</select>
+		<div id="graph"></div>
+    <div id="graph2"></div>
+    </body>
 </html>
