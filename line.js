@@ -2,6 +2,8 @@
 let line;
 
 function setUpLineChart() {
+	numPoints=99;
+	
 	graph=d3.select("div#graph")
 		.append("svg")
 		.attr("width", width)
@@ -44,7 +46,7 @@ function setUpLineChart() {
 		.call(yAxis);
 		
 	line = d3.line()
-			.curve(d3.curveLinear)
+			.curve(d3.curveBundle)
     		.x(d => xScale(d.time))
     		.y(d => yScale((d.high+d.low+d.close)/3));
 }
