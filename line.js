@@ -6,12 +6,13 @@ function setUpLineChart() {
 		.append("svg")
 		.attr("width", width)
 		.attr("height", height);
-	/*
-	d3.select("div#graph").on("wheel", scrollLine);	
 	
-	d3.select("div#graph").on("mousedown", function() {startDragLine(this)});
-	d3.select("div#graph").on("mousemove", function() {dragLine(this)});
-	d3.select("div#graph").on("mouseup", function() {endDragLine(this)});*/
+	/* we can use the same functions to handle the events */
+	d3.select("div#graph").on("wheel", scrollCandle);	
+	
+	d3.select("div#graph").on("mousedown", function() {startDragCandle(this)});
+	d3.select("div#graph").on("mousemove", function() {dragCandle(this)});
+	d3.select("div#graph").on("mouseup", function() {endDragCandle(this)});
 
 	xScale = d3.scaleTime()                      
 				.range([padding.left, width - padding.right]);
@@ -43,7 +44,7 @@ function setUpLineChart() {
 		.call(yAxis);
 		
 	line = d3.line()
-			.curve(d3.curveCardinal)
+			.curve(d3.curveLinear)
     		.x(d => xScale(d.time))
     		.y(d => yScale((d.high+d.low+d.close)/3));
 }
@@ -52,14 +53,16 @@ function drawLineChart() {
 	xScale.domain(d3.extent(data, d => d.time));
 	yScale.domain([0,d3.max(data, d => d.high)]);
 	
-	graph.append("path")                          // draw the path using the helper
-      .datum(data)
-      .attr("fill", "none")
-      .attr("stroke", "black")
-      .attr("stroke-linejoin", "round")
-      .attr("stroke-linecap", "round")
-      .attr("stroke-width", 1.5)
-      .attr("d", line);
+	graph.select("path.line").remove()
+	
+	graph.append("path").datum(data)
+		.attr("class","line")
+		.attr("fill", "none")
+		.attr("stroke", "black")
+		.attr("stroke-linejoin", "round")
+		.attr("stroke-linecap", "round")
+		.attr("stroke-width", 1.5)
+		.attr("d", line);
 		  
 	graph.select(".x.axis")
 		.transition()
