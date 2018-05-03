@@ -3,31 +3,39 @@
     <head>
 	<meta charset="utf-8">
 	<title>Cryptocurrency graph</title>
-
-	<link rel = "stylesheet" type = "text/css" href = "donut.css" />
+	
 	<link rel = "stylesheet" type = "text/css" href = "index.css" />
-
+	
 	<!-- Include jquery source-->
 	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
-
+	
 	<!-- Include d3 source-->
 	<script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
-
+	
 	<!-- Include our source for drawing the graphs-->
 	<script type="text/javascript" src="visual.js"></script>
 	<script type="text/javascript" src="candlebar.js"></script>
 	<script type="text/javascript" src="line.js"></script>
-	<script type="text/javascript" src="jummyjummydonuts.js"></script>
     </head>
-
+	
     <body>
+	<div>
 		<label> choose chart type</label>
 		<select id="graph-type">
 		  <option value="line">Line</option>
 		  <option value="candle">Candle</option>
 		  <option value="donut">Donut</option>
 		</select>
-		<div id="graph"></div>
-    <div id="graph2"></div>
+	</div>
+	
+	<div>
+		<fieldset id="checkBoxContainer">
+		  <legend>Choose The cryptocurrencies</legend>
+		  <!-- We will dynamically create the checkboxes-->
+		</fieldset>
+	</div>
+		
+		
+	<div id="graph"></div>
     </body>
 </html>
