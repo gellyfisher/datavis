@@ -11,51 +11,98 @@ const padding = {top: 20, left: 40, right: 40, bottom: 50}; //deze waardes kunne
 
 let graphType="line";
 
+let currencyNames=["XMR","ETH","MLN","BTC","DASH"]; // all possible currencies
+let currentCurrencies=["XMR","ETH","MLN"]; // a subset of currencyNames to be drawn.
+
 $(document).ready(function() {	
+	setUpHtml();
+	
+    setUp();
+	requestMultipleData();
+});
+
+function setUpHtml() {
 	$("#graph-type").val(graphType); //set initial value of the dropdown
 	
+	for (let i=0;i<currencyNames.length;i++) {
+		let checkbox=addCheckbox(currencyNames[i]);
+		if ($.inArray(currencyNames[i], currentCurrencies)!==-1) {
+			checkbox.prop('checked',true);
+		}
+		checkbox.change(function() {
+			console.log("CHANGE");
+			console.log(currentCurrencies);
+			console.log(this.value);
+			console.log($.inArray(this.value, currentCurrencies),1)
+			if(this.checked) {
+				currentCurrencies.push(this.value);
+			} else {
+				currentCurrencies.splice( $.inArray(this.value, currentCurrencies),1);
+			}
+			console.log(currentCurrencies);
+			
+			requestMultipleData();
+		});
+	}
+	
+	
+	//NOG INSTELLEN DAT JE VOOR EEN CANDLE MAAR EEN CURRENCY KAN SELECTEREN
 	$("#graph-type").change(function () {
 		graphType = this.value; //the selected value
 		$("#graph").empty();
 		setUp();
-		requestData();
+		requestMultipleData();
 	});
-	
-    setUp();
-	requestMultipleData(["BTC","ETH","XMR","MLN","DASH"]);
-});
+}
 
-function requestMultipleData(currencies=["BTC"]) {
+function addCheckbox(name) {
+   let container = $("#checkBoxContainer");
+   let inputs = container.find('input');
+   let id = inputs.length+1;
+
+   let checkbox=$('<input />', { type: 'checkbox', id: 'cb'+id,name:'currencies', value: name }).appendTo(container);
+   $('<label />', { 'for': 'cb'+id, text: name }).appendTo(container);
+   $('<br />').appendTo(container);
+   return checkbox;
+}
+
+function requestMultipleData() {
 	let promises=[];
 	let result=[];
 	
-	for (let i = 0; i < currencies.length; i++) {
-		promises.push(requestData(currencies[i]));
+	for (let i = 0; i < currentCurrencies.length; i++) {
+		promises.push(requestData(currentCurrencies[i]));
 	}
 	
 	// Als alle requests gedaan zijn dan kunnen we de grafiek tekenen
 	Promise.all(promises).then(function(data) {
 		
-		resultData={};
+		resultData=[];
 		
-		for (let i = 0; i < currencies.length; i++) {
+		for (let i = 0; i < currentCurrencies.length; i++) {
 			if (data[i].Response==="Error") {
 				throw "Error: "+data[i].Message
 				
 			} else if (data[i].Response==="Success") {
 				//volgorde van de requests blijft bewaard in de data zelf (zie https://stackoverflow.com/questions/28066429/promise-all-order-of-resolved-values)
-				resultData[currencies[i]]=data[i].Data;
+				data[i].Data.forEach(function(d) { d.time = new Date(d.time * 1000); });
 				
-				resultData[currencies[i]].forEach(function(d) { d.time = new Date(d.time * 1000); });
+				resultData.push({
+					currency:currentCurrencies[i],
+					data:data[i].Data
+				});
 				
 			} else {
 				throw "Unknown response message: "+data[i].Response
 			}
 		}
 		
-		console.log(resultData);
-		updateGraphs(resultData);
-		
+		if (resultData===[]) {
+			throw "no data available";
+		} else {
+			console.log(resultData);
+			updateGraphs(resultData);
+		}
 		
 	}, function(err) {
 		throw err;
@@ -109,7 +156,7 @@ function setUp() {
 
 function updateGraphs(data) {
 	if (graphType==="candle") {
-		drawCandleChart(data);
+		drawCandleChart(data[0].data);
 	} else if (graphType==="donut") {
 		//functie om donut te tekenen
 	} else if (graphType==="line") {

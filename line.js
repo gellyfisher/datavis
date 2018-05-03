@@ -1,5 +1,6 @@
 //line specific global variables
 let line;
+let cScale;
 
 function setUpLineChart() {
 	numPoints=99;
@@ -23,6 +24,8 @@ function setUpLineChart() {
 	yScale = d3.scaleLinear()
 				.range([height - padding.bottom, padding.top])
 				.domain([0,7500]);
+				
+	cScale = d3.scaleOrdinal().range(d3.schemeCategory10);
 						
 	xAxis = d3.axisBottom() 
 				.scale(xScale)
@@ -57,13 +60,15 @@ function drawLineChart(data) {
 	xScale.domain([d3.min(data,d=> d3.min(d.data,D=>D.time)),d3.max(data,d=> d3.max(d.data,D=>D.time))]);
 	yScale.domain([0,d3.max(data,d=> d3.max(d.data,D=>D.high))]);
 	
+	for (let i=0;i<currencyNames.length;i++) {
+		graph.select("path."+currencyNames[i]).remove();
+	}
+	
 	for (let i=0;i<data.length;i++) {
-		graph.select("path."+data[i].currency).remove()
-		
 		graph.append("path").datum(data[i].data)
 			.attr("class",data[i].currency)
 			.attr("fill", "none")
-			.attr("stroke", "black")
+			.attr("stroke", cScale(i))
 			.attr("stroke-linejoin", "round")
 			.attr("stroke-linecap", "round")
 			.attr("stroke-width", 1.5)

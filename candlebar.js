@@ -76,9 +76,9 @@ function endDragCandle(container) {
 }
 
 function dragCandle(container) {
-	//We will only allow the dragging at most once in 100 ms. Otherwise this function is executed too often.
+	//We will only allow the dragging at most once in 150 ms. Otherwise this function is executed too often.
 	
-    if (dragging && (prevTime + 100 - Date.now()) < 0) {
+    if (dragging && (prevTime + 150 - Date.now()) < 0) {
 		let mouseX=d3.mouse(container)[0];
 	
 		let timeInBetween=(end-start)/(numPoints);
@@ -102,7 +102,7 @@ function dragRightCandle(dist) { //in dit geval gaan we terug in de tijd
 	start=new Date(start.getTime()-dist);
 	end=new Date(end.getTime()-dist);
 	
-	requestData();
+	requestMultipleData();
 }
 
 function dragLeftCandle(dist) { // nu gaan we vooruit in de tijd
@@ -111,7 +111,7 @@ function dragLeftCandle(dist) { // nu gaan we vooruit in de tijd
 	start=new Date(start.getTime()+dist);
 	end=new Date(end.getTime()+dist);
 	
-	requestData();
+	requestMultipleData();
 }
 
 function scrollCandle() {
@@ -130,7 +130,7 @@ function scrollCandle() {
 		end=new Date(Math.min(end.getTime()+dist,(new Date()).getTime()));
 	 }
 	 
-	 requestData();
+	 requestMultipleData();
 }
 
 function drawCandleChart(data) {

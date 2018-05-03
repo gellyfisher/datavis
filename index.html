@@ -19,12 +19,23 @@
     </head>
 	
     <body>
+	<div>
 		<label> choose chart type</label>
 		<select id="graph-type">
 		  <option value="line">Line</option>
 		  <option value="candle">Candle</option>
 		  <option value="donut">Donut</option>
 		</select>
-		<div id="graph"></div>
+	</div>
+	
+	<div>
+		<fieldset id="checkBoxContainer">
+		  <legend>Choose The cryptocurrencies</legend>
+		  <!-- We will dynamically create the checkboxes-->
+		</fieldset>
+	</div>
+		
+		
+	<div id="graph"></div>
     </body>
 </html>
