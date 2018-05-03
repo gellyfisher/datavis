@@ -10,6 +10,8 @@ function setUpLineChart() {
 		.append("svg")
 		.attr("width", width)
 		.attr("height", height);
+		
+	graph.on("mousemove", function() {drawIndicator(this)});
 	
 	/* we can use the same functions to handle the events */
 	d3.select("div#graph").on("wheel", scrollCandle);	
@@ -57,13 +59,27 @@ function setUpLineChart() {
     		.y(d => yScale((d.high+d.low+d.close)/3));
 }
 
+function drawIndicator(container) {
+	let mouseX=d3.mouse(container)[0];
+	let xCoord=Math.min(Math.max(padding.left,mouseX),width-padding.right)
+	
+	graph.select(".indicatorLine").remove();
+	
+	graph.append("line")
+		.attr("class","indicatorLine")
+		.attr("x1",xCoord)
+		.attr("x2",xCoord)
+		.attr("y1",padding.top)
+		.attr("y2",height-padding.bottom)
+		.attr("stroke", "#c77");
+}
+
 function drawLineChart(data) {	
 	xScale.domain([d3.min(data,d=> d3.min(d.data,D=>D.time)),d3.max(data,d=> d3.max(d.data,D=>D.time))]);
 	yScale.domain([0,d3.max(data,d=> d3.max(d.data,D=>D.high))]);
 	
 	for (let i=0;i<currencyNames.length;i++) {
 		graph.select("path."+currencyNames[i]).remove();
-		
 	}
 	
 	for (let i=0;i<data.length;i++) {
