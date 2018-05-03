@@ -1,6 +1,7 @@
 //line specific global variables
 let line;
 let cScale;
+let legend;
 
 function setUpLineChart() {
 	numPoints=99;
@@ -62,6 +63,7 @@ function drawLineChart(data) {
 	
 	for (let i=0;i<currencyNames.length;i++) {
 		graph.select("path."+currencyNames[i]).remove();
+		
 	}
 	
 	for (let i=0;i<data.length;i++) {
@@ -75,6 +77,35 @@ function drawLineChart(data) {
 			.attr("d", line);
 	}
 		  
+	legend = graph.selectAll(".legend").data(data);
+	
+	legend.exit().remove();
+	
+    legend=legend.enter()
+   		.append("g")
+    	.attr("class","legend")
+		.attr("transform", "translate(" + (width -padding.right+20) + "," + 0+ ")");
+		
+	legend.append("rect")
+		.attr("x", 0) 
+		.attr("y", function(d, i) { return 60+20*i; })
+		.attr("width", 10)
+		.attr("height", 10)
+		.style("fill", function(d, i) { return cScale(i); }); 
+		
+	legend.append("text")
+		.attr("x", 20) 
+		.attr("dy", "0.75em")
+		.attr("y", function(d, i) { return 60+20*i; })
+		.text(function(d) {return d.currency});
+	
+	legend.append("text")
+		 .attr("x",0)
+		 .attr("y",50)
+		 .text("Categories");
+
+	/*padding.right=legend.node().getBBox().width+20; // get width of our legend*/
+	
 	graph.select(".x.axis")
 		.transition()
 		.call(xAxis)

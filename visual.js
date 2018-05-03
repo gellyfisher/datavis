@@ -7,7 +7,7 @@ let minimumDate=new Date(2009,0,1,0,0,0,0).getTime(); //1 januari 2009 (eerste c
 
 const width = 600;
 const height = 300;
-const padding = {top: 20, left: 40, right: 40, bottom: 50}; //deze waardes kunnen nog aangepast worden
+const padding = {top: 20, left: 40, right: 100, bottom: 50}; //deze waardes kunnen nog aangepast worden
 
 let graphType="line";
 
@@ -30,21 +30,15 @@ function setUpHtml() {
 			checkbox.prop('checked',true);
 		}
 		checkbox.change(function() {
-			console.log("CHANGE");
-			console.log(currentCurrencies);
-			console.log(this.value);
-			console.log($.inArray(this.value, currentCurrencies),1)
 			if(this.checked) {
 				currentCurrencies.push(this.value);
 			} else {
 				currentCurrencies.splice( $.inArray(this.value, currentCurrencies),1);
 			}
-			console.log(currentCurrencies);
 			
 			requestMultipleData();
 		});
 	}
-	
 	
 	//NOG INSTELLEN DAT JE VOOR EEN CANDLE MAAR EEN CURRENCY KAN SELECTEREN
 	$("#graph-type").change(function () {
