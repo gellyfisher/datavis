@@ -58,6 +58,66 @@ function requestData(currency="BTC") {
 	});
 }
 
+function requestDataCurrentPrizes(currencies) {
+	console.log(currencies)
+	if (currencies.length == 0) {
+		return null;
+	}
+	let url="https://min-api.cryptocompare.com/data/pricemulti"
+
+	params={
+	    fsyms: currencies.join(),
+	    tsyms: "EUR",
+	}
+
+	$.ajax({
+	    type: "GET",
+	    url: url,
+		data: params,
+	    success : handlereturnedDataCurrentPrizes
+	});
+}
+
+function handlereturnedDataCurrentPrizes(data) {
+	if (graphType==="donut") {
+		drawDonutChart(data);
+	}
+
+}
+
+function requestData(currency="BTC") {
+	let url="https://min-api.cryptocompare.com/data/histo";
+	let amount;
+	let timeInBetween=(end-start)/(60*1000*numPoints)
+	let endTimeStamp=Math.floor(end.getTime() / 1000);
+	endTimeStamp-=endTimeStamp%3600 //fix it for hourly data
+
+	if (timeInBetween>=24*60) {
+		url+="day";
+		amount=Math.round(timeInBetween/1440);
+	} else if (timeInBetween>0) {
+		url+="hour";
+		amount=Math.ceil(timeInBetween/60);
+	} else {
+		throw "invalid timeInBetween for the data request";
+	}
+
+	params={
+	    fsym: currency,
+	    tsym: "EUR",
+		limit: numPoints,
+	    aggregate: amount, //amount of days/hours/minutes in between data points
+		toTs: endTimeStamp //last unix timestamp included
+	}
+
+	$.ajax({
+	    type: "GET",
+	    url: url,
+		data: params,
+	    success : handleData
+	});
+}
+
 function handleData(recv) {
 	if (recv.Response==="Error") {
 		throw "Error: "+recv.Message
@@ -90,7 +150,8 @@ function updateGraphs(data) {
 	if (graphType==="candle") {
 		drawCandleChart(data);
 	} else if (graphType==="donut") {
-		drawDonutChart([]);
+		// drawDonutChart([]);
+		console.log('drawing donut chart')
 	} else if (graphType==="line") {
 		drawLineChart(data);
 	} else {

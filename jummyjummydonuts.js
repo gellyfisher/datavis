@@ -1,62 +1,15 @@
-var data1 = [{
-    indx: 0,
-    name: "one",
-    value: 130
-  },
-  {
-    indx: 1,
-    name: "two",
-    value: 80
-  },
-  {
-    indx: 2,
-    name: "three",
-    value: 35
-  },
-  {
-    indx: 3,
-    name: "four",
-    value: 175
-  },
-  {
-    indx: 4,
-    name: "five",
-    value: 50
-  }
-];
 
-var data2 = [{
-    indx: 0,
-    name: "one",
-    value: 20
-  },
-  {
-    indx: 1,
-    name: "two",
-    value: 46
-  },
-  {
-    indx: 2,
-    name: "three",
-    value: 15
-  },
-  {
-    indx: 3,
-    name: "four",
-    value: 80
-  },
-  {
-    indx: 4,
-    name: "five",
-    value: 43
-  }
-];
+var coincolors = { "ETH": "#3ca900", "BTC": "#ffb10a", "LTC": "#1852af" }
 
-var currentdata = data1
-var path;
+var coincolorsarr = ["#3ca900", "#ffb10a", "#1852af"]
+
+var donut_chart;
+var arc;
 var pie;
 
 function setUpDonutChart() {
+  console.log("SETTING UP DONUT CHART")
+
 
   margin = {
     top: 20,
@@ -76,13 +29,17 @@ function setUpDonutChart() {
 
   pie = d3.pie()
     .padAngle(0.02)
-    .startAngle(1.1 * Math.PI)
-    .endAngle(3.1 * Math.PI)
     .value(function(d) {
-      return d.value;
+      var val;
+      coin = d[0]
+      val = d[1]
+      for (var key in val) {
+        return val[key]
+      }
+      return 0;
     });
 
-  donut_chart = d3.select("#graph2").append('svg')
+  donut_chart = d3.select("#graph").append('svg')
     .attr("width", donut_width + margin.left + margin.right)
     .attr("height", donut_height + margin.top + margin.bottom)
     .append("g")
@@ -91,24 +48,60 @@ function setUpDonutChart() {
       ((donut_height / 2) + margin.top) + ")");
 
 
-  donut_chart.append("text")
-    .attr("x", -donut_width / 2)
-    .attr("y", -height / 2)
-    .text("change_testing_dataset")
-    .style("cursor", "hand")
-    .on("click", swap_dataset);
-
+  currencies = ["ETH", "BTC", "LTC", "BCH", "DASH"]
+  requestDataCurrentPrizes(currencies)
 }
 
 function drawDonutChart(data) {
-    colors = ["#8b0000", "#f091e7", "#f8ab52", "#ADD6FB", "#28e57a"];
-    donut_chart.selectAll("path")
-      .data(pie(currentdata))
-      .enter().append("path")
-      .style("fill", function(d) {
-        return colors[d.data.indx];
-      })
-      .attr("d", arc)
+  console.log("DRAWING DONUT CHART")
+
+  var data_array = new Array();
+
+  totalvalue = 0
+  for (var entry in data) {
+    totalvalue = totalvalue + data[entry]["EUR"];
+  }
+  console.log("totalvalue")
+  console.log(totalvalue)
+
+  for (var key in data) {
+    data_array.push([key, data[key]])
+  }
+
+  donut_chart.selectAll("path")
+  	.attr("d", arc)
+    .data(pie(data_array))
+    .enter().append("g");
+
+  donut_chart.selectAll("g")
+    .append("path")
+    .style("fill", function(d) {
+      return getColor(d.index)
+      // return coincolorsarr[d.index]
+    })
+    .attr("d", arc);
+
+  var g = donut_chart.selectAll("g");
+
+  console.log(g)
+
+  g.append("text")
+    .attr("transform", function(d) {
+      var _d = arc.centroid(d);
+      _d[0] *= 1.5;	//multiply by a constant factor
+      _d[1] *= 1.5;	//multiply by a constant factor
+      return "translate(" + _d + ")";
+    })
+    .attr("dy", ".50em")
+    .style("text-anchor", "middle")
+    .text(function(d) {
+      for (var key in d.data) {
+        percentage = d.data[1]["EUR"] / totalvalue
+        if (percentage > 0.05) {
+          return d.data[0]
+        }
+      }
+    });
 }
 
 function arcTween(a) {
@@ -119,5 +112,18 @@ function arcTween(a) {
   };
 }
 
+function getColor(index) {
+  var letters = '0123456789ABCDEF';
+  var color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(random(index) * 16)];
+    index += 1
+    index += random(index)
+  }
+  return color;
+}
 
-setUpDonutChart()
+function random(seed) {
+    var x = Math.sin(seed) * 10000;
+    return x - Math.floor(x);
+}
