@@ -11,7 +11,7 @@ const padding = {top: 20, left: 40, right: 100, bottom: 50}; //deze waardes kunn
 
 let graphType="line";
 
-let currencyNames=[{shortName:"XMR",longName :"Monero"},{shortName:"ETH",longName :"etherium"},{shortName:"BTC",longName :"bitcoin"},{shortName:"MLN",longName :"melon"},{shortName:"DASH",longName :"dash"}]; // all possible currencies
+let currencyNames=[{shortName:"XMR",longName :"Monero"},{shortName:"ETH",longName :"Etherium"},{shortName:"BTC",longName :"Bitcoin"},{shortName:"MLN",longName :"Melon"},{shortName:"DASH",longName :"Dash"}]; // all possible currencies
 let currentCurrencies=["XMR","ETH","MLN"]; // a subset of the short names in currencyNames which will be drawn.
 
 $(document).ready(function() {	
@@ -21,24 +21,53 @@ $(document).ready(function() {
 	requestMultipleData();
 });
 
+
 function setUpHtml() {
 	$("#graph-type").val(graphType); //set initial value of the dropdown
 	
 	for (let i=0;i<currencyNames.length;i++) {
-		let checkbox=addCheckbox(currencyNames[i]);
-		if ($.inArray(currencyNames[i].shortName, currentCurrencies)!==-1) {
-			checkbox.prop('checked',true);
-		}
-		checkbox.change(function() {
-			if(this.checked) {
-				currentCurrencies.push(this.value);
-			} else {
-				currentCurrencies.splice( $.inArray(this.value, currentCurrencies),1);
-			}
+		if ($.inArray(currencyNames[i].shortName, currentCurrencies)!==-1) { //these currencies are already selected
+			$("#cryptoSelected").append("<li value='"+currencyNames[i].shortName+"'>"+currencyNames[i].longName+"</li>");
 			
-			requestMultipleData();
-		});
+		} else {
+			$("#cryptoResult").append("<li value='"+currencyNames[i].shortName+"'>"+currencyNames[i].longName+"</li>");
+		}
 	}
+	
+	function selectCrypto() {
+		let val=$(this).attr('value');
+		currentCurrencies.push(val);
+		$(this).appendTo("#cryptoSelected");
+		$(this).unbind("click")
+		$(this).click(deselectCrypto);
+		requestMultipleData();
+	}
+	
+	function deselectCrypto() {
+		let val=$(this).attr('value');
+		currentCurrencies.splice( $.inArray(val, currentCurrencies),1);
+		$(this).appendTo("#cryptoResult");
+		$(this).unbind("click")
+		$(this).click(selectCrypto);
+		requestMultipleData();
+	}
+	
+	$("#cryptoResult li").click(selectCrypto);
+	$("#cryptoSelected li").click(deselectCrypto);
+	
+	$("#cryptoSelecter").keyup(function() {
+		let query=$(this).val();
+		$("#cryptoResult li").filter(function (index) { // hide the elements not matching the query
+			return !$(this).text().toLowerCase().includes(query.toLowerCase());
+		  })
+		.css( "display", "none" );
+		
+		$("#cryptoResult li").filter(function (index) { //show the elements that do match the query
+			return $(this).text().toLowerCase().includes(query.toLowerCase());
+		  })
+		.css( "display", "block" )
+	});
+	
 	
 	//NOG INSTELLEN DAT JE VOOR EEN CANDLE MAAR EEN CURRENCY KAN SELECTEREN
 	$("#graph-type").change(function () {
@@ -47,17 +76,6 @@ function setUpHtml() {
 		setUp();
 		requestMultipleData();
 	});
-}
-
-function addCheckbox(name) {
-   let container = $("#checkBoxContainer");
-   let inputs = container.find('input');
-   let id = inputs.length+1;
-
-   let checkbox=$('<input />', { type: 'checkbox', id: 'cb'+id,name:'currencies', value: name.shortName }).appendTo(container);
-   $('<label />', { 'for': 'cb'+id, text: name.longName }).appendTo(container);
-   $('<br />').appendTo(container);
-   return checkbox;
 }
 
 function requestMultipleData() {

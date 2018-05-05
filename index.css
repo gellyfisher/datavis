@@ -10,11 +10,59 @@ svg text::selection,fieldset::selection {
 }
 
 div.left {
-    width: 80%;
+    width: 70%;
     height: 200px;
     float: left;
+	margin-left:10px;
 }
 div.right {
-	width: 20%;
-	float:right;
+	width: 25%;
+	float:left;
+	display: inline-block;
+}
+
+#cryptoSelecter {
+	width:100%;
+	box-sizing:border-box;
+    font-size: 16px; /* Increase font-size */
+    padding: 12px 20px 12px 40px; /* Add some padding */
+    border: 1px solid #ddd; /* Add a grey border */
+    margin-bottom: 12px; /* Add some space below the input */
+}
+
+#cryptoResult,#cryptoSelected {
+    /* Remove default list styling */
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#cryptoSelected li {
+	border: 1px solid #ddd; /* Add a border to all links */
+    margin-top: -1px; /* Prevent double borders */
+    background-color: #a6f6a6; /* Grey background color */
+    padding: 12px 12px 12px 40px; /* Add some padding */
+    text-decoration: none; /* Remove default text underline */
+    font-size: 18px; /* Increase the font-size */
+    color: black; /* Add a black text color */
+	display:block;
+}
+
+#cryptoSelected li:hover {
+	background-color: #9e9;
+}
+
+#cryptoResult li {
+    border: 1px solid #ddd; /* Add a border to all links */
+    margin-top: -1px; /* Prevent double borders */
+    background-color: #f6f6f6; /* Grey background color */
+    padding: 12px 12px 12px 40px; /* Add some padding */
+    text-decoration: none; /* Remove default text underline */
+    font-size: 18px; /* Increase the font-size */
+    color: black; /* Add a black text color */
+	display:block;
+}
+
+#cryptoResult li:hover {
+    background-color: #eee; /* Add a hover effect to all links, except for headers */
 }
