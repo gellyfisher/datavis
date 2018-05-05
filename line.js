@@ -79,7 +79,7 @@ function drawLineChart(data) {
 	yScale.domain([0,d3.max(data,d=> d3.max(d.data,D=>D.high))]);
 	
 	for (let i=0;i<currencyNames.length;i++) {
-		graph.select("path."+currencyNames[i]).remove();
+		graph.select("path."+currencyNames[i].shortName).remove();
 	}
 	
 	for (let i=0;i<data.length;i++) {

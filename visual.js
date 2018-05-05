@@ -5,14 +5,14 @@ start.setDate(end.getDate()-numPoints);
 
 let minimumDate=new Date(2009,0,1,0,0,0,0).getTime(); //1 januari 2009 (eerste cryptocurrency was in 2009)
 
-const width = 600;
-const height = 300;
+const width = 800;
+const height = 400;
 const padding = {top: 20, left: 40, right: 100, bottom: 50}; //deze waardes kunnen nog aangepast worden
 
 let graphType="line";
 
-let currencyNames=["XMR","ETH","MLN","BTC","DASH"]; // all possible currencies
-let currentCurrencies=["XMR","ETH","MLN"]; // a subset of currencyNames to be drawn.
+let currencyNames=[{shortName:"XMR",longName :"Monero"},{shortName:"ETH",longName :"etherium"},{shortName:"BTC",longName :"bitcoin"},{shortName:"MLN",longName :"melon"},{shortName:"DASH",longName :"dash"}]; // all possible currencies
+let currentCurrencies=["XMR","ETH","MLN"]; // a subset of the short names in currencyNames which will be drawn.
 
 $(document).ready(function() {	
 	setUpHtml();
@@ -26,7 +26,7 @@ function setUpHtml() {
 	
 	for (let i=0;i<currencyNames.length;i++) {
 		let checkbox=addCheckbox(currencyNames[i]);
-		if ($.inArray(currencyNames[i], currentCurrencies)!==-1) {
+		if ($.inArray(currencyNames[i].shortName, currentCurrencies)!==-1) {
 			checkbox.prop('checked',true);
 		}
 		checkbox.change(function() {
@@ -54,8 +54,8 @@ function addCheckbox(name) {
    let inputs = container.find('input');
    let id = inputs.length+1;
 
-   let checkbox=$('<input />', { type: 'checkbox', id: 'cb'+id,name:'currencies', value: name }).appendTo(container);
-   $('<label />', { 'for': 'cb'+id, text: name }).appendTo(container);
+   let checkbox=$('<input />', { type: 'checkbox', id: 'cb'+id,name:'currencies', value: name.shortName }).appendTo(container);
+   $('<label />', { 'for': 'cb'+id, text: name.longName }).appendTo(container);
    $('<br />').appendTo(container);
    return checkbox;
 }

@@ -8,3 +8,13 @@ svg text,fieldset{
 svg text::selection,fieldset::selection {
     background: none;
 }
+
+div.left {
+    width: 80%;
+    height: 200px;
+    float: left;
+}
+div.right {
+	width: 20%;
+	float:right;
+}
