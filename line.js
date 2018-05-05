@@ -61,17 +61,17 @@ function setUpLineChart() {
 
 function drawIndicator(container) {
 	let mouseX=d3.mouse(container)[0];
-	let xCoord=Math.min(Math.max(padding.left,mouseX),width-padding.right)
-	
 	graph.select(".indicatorLine").remove();
 	
-	graph.append("line")
-		.attr("class","indicatorLine")
-		.attr("x1",xCoord)
-		.attr("x2",xCoord)
-		.attr("y1",padding.top)
-		.attr("y2",height-padding.bottom)
-		.attr("stroke", "#c77");
+	if (mouseX>=padding.left && mouseX<=width-padding.right) {
+		graph.append("line")
+			.attr("class","indicatorLine")
+			.attr("x1",mouseX)
+			.attr("x2",mouseX)
+			.attr("y1",padding.top)
+			.attr("y2",height-padding.bottom)
+			.attr("stroke", "#c77");
+	}	
 }
 
 function drawLineChart(data) {	
@@ -113,7 +113,7 @@ function drawLineChart(data) {
 		.attr("x", 20) 
 		.attr("dy", "0.75em")
 		.attr("y", function(d, i) { return 60+20*i; })
-		.text(function(d) {return d.currency});
+		.text(function(d) {return findLongName(d.currency)});
 	
 	legend.append("text")
 		 .attr("x",0)

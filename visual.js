@@ -21,6 +21,15 @@ $(document).ready(function() {
 	requestMultipleData();
 });
 
+function findLongName(shortName) {
+	for (let i=0;i<currencyNames.length;i++) {
+		if (shortName===currencyNames[i].shortName) {
+			return currencyNames[i].longName;
+		}
+	}
+	
+	return shortName; //in case we didn't find the longname we just return the short name as a default...
+}
 
 function setUpHtml() {
 	$("#graph-type").val(graphType); //set initial value of the dropdown
