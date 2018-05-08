@@ -85,8 +85,8 @@ function drawLineChart(data) {
 	for (let i=0;i<data.length;i++) {
 		graph.append("g").attr("class", "line_graph_line")
 			.append("path").datum(data[i].data)
-			.attr("class",data[i].currency)
-			.attr("class", "line_class")
+			.attr("class", "line_class ")
+			.attr("id",  data[i].currency)
 			.attr("fill", "none")
 			.attr("stroke", cScale(i))
 			.attr("stroke-linejoin", "round")
@@ -161,7 +161,9 @@ function drawLineChart(data) {
   mousePerLine.append("circle")
     .attr("r", 7)
     .style("stroke", function(d) {
-      return "#ff0000";
+			var graphshit = graph.select("#" + d.currency)
+			var color = graphshit["_groups"][0][0].getAttribute("stroke")
+      return color;
     })
     .style("fill", "none")
     .style("stroke-width", "1px")
@@ -207,21 +209,9 @@ function drawLineChart(data) {
 
         d3.selectAll(".mouse-per-line")
           .attr("transform", function(d, i) {
-            console.log(width/mouse[0])
-						console.log("HERE")
-						console.log(d)
-						console.log(i)
-            var xDate = xScale.invert(mouse[0])
-						console.log("HERE2")
-						console.log(xDate)
-          	var bisect = d3.bisector(function(d) { return d.time; }).right;
-						console.log(d.data)
-						console.log(bisect)
-            // var idx = bisect(d.data, xDate);
-						//
-						// console.log(idx)
 
-						console.log(lines[i])
+            var xDate = xScale.invert(mouse[0])
+          	var bisect = d3.bisector(function(d) { return d.time; }).right;
 
             var beginning = 0,
                 end = lines[i].getTotalLength(),
