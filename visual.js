@@ -31,6 +31,18 @@ function findLongName(shortName) {
 	return shortName; //in case we didn't find the longname we just return the short name as a default...
 }
 
+function changePeriod(amount,type) {
+	start=new Date(end);
+	if (type==="D") {
+		start.setDate(end.getDate()-amount);
+	} else if (type==="M") {
+		start.setMonth(end.getMonth()-amount);
+	} else if (type==="Y") {
+		start.setFullYear(end.getFullYear()-amount);
+	}
+	requestMultipleData();
+}
+
 function setUpHtml() {
 	$("#graph-type").val(graphType); //set initial value of the dropdown
 	
