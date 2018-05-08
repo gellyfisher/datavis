@@ -79,6 +79,9 @@ function drawLineChart(data) {
 		graph.select("path."+currencyNames[i].shortName).remove();
 	}
 
+	d3.selectAll(".line_graph_line").remove()
+	d3.selectAll(".mouse-per-line").remove()
+
 	for (let i=0;i<data.length;i++) {
 		graph.append("g").attr("class", "line_graph_line")
 			.append("path").datum(data[i].data)
