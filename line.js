@@ -53,6 +53,14 @@ function setUpLineChart() {
 		.attr("transform", `translate(${padding.left}, 0)`)
 		.call(yAxis);
 		
+	graph.append("text")
+	  .attr("transform",`rotate(-90)`)
+      .attr("y", 0)
+      .attr("x",-height/2)
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .text("Price in Euro");  
+		
 	line = d3.line()
 			.curve(d3.curveBundle)
     		.x(d => xScale(d.time))
