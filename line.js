@@ -4,7 +4,6 @@ let cScale;
 let legend;
 let mouseCoordX=0;
 let mouseCoordY=0;
-let mouseG;
 
 let saveData;
 
@@ -78,11 +77,6 @@ function setUpLineChart() {
 			.curve(d3.curveBundle)
     		.x(d => xScale(d.time))
     		.y(d => yScale((d.high+d.low+d.close)/3));
-		
-
-	/* set up indicator events*/
-	mouseG = graph.append("g")
-		.attr("class", "mouse-over-effects")
 
     graph.on('mousemove', function() {getMouseCoordinates(this);drawIndicator();});
 }
@@ -172,12 +166,12 @@ function drawLineChart(data) {
 function drawIndicator() {
 	let data=saveData;
 	
-	mouseG.select(".mouse_line").remove();
-	mouseG.selectAll(".mouseCircle").remove();
-	mouseG.selectAll(".mouseText").remove();
+	graph.select(".mouse_line").remove();
+	graph.selectAll("circle.mouseCircle").remove();
+	graph.selectAll("text.mouseText").remove();
 	
 	if (mouseCoordX>=padding.left && mouseCoordX<=width-padding.right) {
-		mouseG.append("line")
+		graph.append("line")
 			.attr("class","mouse_line")
 			.attr("x1",mouseCoordX)
 			.attr("x2",mouseCoordX)
@@ -186,7 +180,7 @@ function drawIndicator() {
 			.style("stroke", "black")
 			.style("stroke-width", "1px")
 	
-		mouseCircles=mouseG.selectAll("circle.mouseCircle").data(data,d=>d.currency);
+		mouseCircles=graph.selectAll("circle.mouseCircle").data(data,d=>d.currency);
 		mouseCircles.exit().remove();
 		mouseCircles.enter()
 			.append("circle")
@@ -201,7 +195,7 @@ function drawIndicator() {
 			.style("fill", "none")
 			.style("stroke-width", "1px")
 			
-		mouseTexts=mouseG.selectAll("text").data(data,d=>d.currency);
+		mouseTexts=graph.selectAll("text.mouseText").data(data,d=>d.currency);
 		mouseTexts.exit().remove();
 		mouseTexts.enter()
 			.append("text")
