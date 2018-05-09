@@ -5,83 +5,99 @@ let legend;
 
 function setUpLineChart() {
 	numPoints=99;
-
+	
 	graph=d3.select("div#graph")
 		.append("svg")
 		.attr("width", width)
 		.attr("height", height);
-
-	// graph.on("mousemove", function() {drawIndicator(this)});
-
+		
+	graph.on("mousemove", function() {drawIndicator(this)});
+	
 	/* we can use the same functions to handle the events */
-	d3.select("div#graph").on("wheel", scrollCandle);
-
+	d3.select("div#graph").on("wheel", scrollCandle);	
+	
 	d3.select("div#graph").on("mousedown", function() {startDragCandle(this)});
 	d3.select("div#graph").on("mousemove", function() {dragCandle(this)});
 	d3.select("div#graph").on("mouseup", function() {endDragCandle(this)});
 
-	xScale = d3.scaleTime()
+	xScale = d3.scaleTime()                      
 				.range([padding.left, width - padding.right])
 				.domain([start,end]);
-
+	  
 	yScale = d3.scaleLinear()
 				.range([height - padding.bottom, padding.top])
 				.domain([0,7500]);
-
+				
 	cScale = d3.scaleOrdinal().range(d3.schemeCategory10);
-
-	xAxis = d3.axisBottom()
+						
+	xAxis = d3.axisBottom() 
 				.scale(xScale)
 				.tickFormat(timeFormat);
-
+						
 	yAxis = d3.axisLeft()
 				.scale(yScale)
-
-	graph.append("g")
+					
+	graph.append("g") 
 		.attr("class", "x axis")
-		.attr("id", "line_x_axis")
 		.attr("transform", `translate(0, ${height - padding.bottom})`)
 		.call(xAxis)
-		.selectAll("text")
+		.selectAll("text")	   
 		.style("text-anchor", "end")
 		.attr("dx", "-.8em")
 		.attr("dy", ".15em")
 		.attr("transform", "rotate(-30)");  // rotate the axis labels
-
-
-	graph.append("g")
+		
+	  
+	graph.append("g") 
 		.attr("class", "y axis")
-		.attr("id", "line_y_axis")
 		.attr("transform", `translate(${padding.left}, 0)`)
 		.call(yAxis);
-
+		
 	graph.append("text")
 	  .attr("transform",`rotate(-90)`)
       .attr("y", 0)
       .attr("x",-height/2)
       .attr("dy", "1em")
       .style("text-anchor", "middle")
-      .text("Price in Euro");
-
+      .text("Price in Euro");  
+	  
+	legend=graph.append("g")
+			.attr("class","legend")
+			.attr("transform", "translate(" + (width -padding.right+20) + "," + 0+ ")")
+	legend.append("text")
+		.attr("x",0)
+		.attr("y",50)
+		.text("Categories");
+		
 	line = d3.line()
 			.curve(d3.curveBundle)
     		.x(d => xScale(d.time))
     		.y(d => yScale((d.high+d.low+d.close)/3));
-
 }
 
+function drawIndicator(container) {
+	let mouseX=d3.mouse(container)[0];
+	graph.select(".indicatorLine").remove();
+	
+	if (mouseX>=padding.left && mouseX<=width-padding.right) {
+		graph.append("line")
+			.attr("class","indicatorLine")
+			.attr("x1",mouseX)
+			.attr("x2",mouseX)
+			.attr("y1",padding.top)
+			.attr("y2",height-padding.bottom)
+			.attr("stroke", "#c77");
+	}	
+}
 
-function drawLineChart(data) {
+function drawLineChart(data) {	
 	xScale.domain([d3.min(data,d=> d3.min(d.data,D=>D.time)),d3.max(data,d=> d3.max(d.data,D=>D.time))]);
 	yScale.domain([0,d3.max(data,d=> d3.max(d.data,D=>D.high))]);
-
+	
 	for (let i=0;i<currencyNames.length;i++) {
 		graph.select("path."+currencyNames[i].shortName).remove();
 	}
-
-	d3.selectAll(".line_graph_line").remove()
-	d3.selectAll(".mouse-per-line").remove()
-
+	
 	for (let i=0;i<data.length;i++) {
 		graph.append("g").attr("class", "line_graph_line")
 			.append("path").datum(data[i].data)
@@ -94,36 +110,47 @@ function drawLineChart(data) {
 			.attr("stroke-width", 1.5)
 			.attr("d", line);
 	}
+		  
+	legendRects = legend.selectAll("rect.legend").data(data,d => d.currency);
+	legendRects.exit()
+				.transition()
+				.attr("x", padding.right) 
+				.remove();
+				
+	legendRects.enter()
+			.append("rect")
+			.attr("class","legend")
+			.attr("x", padding.right) 
+			.attr("y", function(d, i) { return 60+20*i; })
+			.merge(legendRects)
+			.transition()
+			.attr("x", 0) 
+			.attr("y", function(d, i) { return 60+20*i; })
+			.attr("width", 10)
+			.attr("height", 10)
+			.style("fill", function(d, i) { return cScale(i); }); 
+	
+	legendTexts=legend.selectAll("text.legend").data(data,d => d.currency);
+	legendTexts.exit()
+				.transition()
+				.attr("x", padding.right+20) 
+				.remove();
 
-	legend = graph.selectAll(".legend").data(data);
-
-	legend.exit().remove();
-
-    legend=legend.enter()
-   		.append("g")
-    	.attr("class","legend")
-		.attr("transform", "translate(" + (width -padding.right+20) + "," + 0+ ")");
-
-	legend.append("rect")
-		.attr("x", 0)
-		.attr("y", function(d, i) { return 60+20*i; })
-		.attr("width", 10)
-		.attr("height", 10)
-		.style("fill", function(d, i) { return cScale(i); });
-
-	legend.append("text")
-		.attr("x", 20)
+	legendTexts.enter()
+		.append("text")
+		.attr("class","legend")
+		.attr("x", padding.right+20) 
 		.attr("dy", "0.75em")
 		.attr("y", function(d, i) { return 60+20*i; })
-		.text(function(d) {return findLongName(d.currency)});
-
-	legend.append("text")
-		 .attr("x",0)
-		 .attr("y",50)
-		 .text("Categories");
+		.merge(legendTexts)
+		.transition()
+		.attr("x", 20) 
+		.attr("dy", "0.75em")
+		.attr("y", function(d, i) { return 60+20*i; })
+		.text(function(d) {console.log(d.currency,findLongName(d.currency));return findLongName(d.currency)});
 
 	/*padding.right=legend.node().getBBox().width+20; // get width of our legend*/
-
+	
 	graph.select(".x.axis")
 		.transition()
 		.call(xAxis)
@@ -133,7 +160,7 @@ function drawLineChart(data) {
 		.attr("dy", ".15em")
 		.attr("transform", "rotate(-30)");
 
-  graph.select(".y.axis")
+graph.select(".y.axis")
 	.transition()
 	.call(yAxis);
 

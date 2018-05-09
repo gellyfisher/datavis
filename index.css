@@ -21,6 +21,24 @@ div.right {
 	display: inline-block;
 }
 
+#periodSelector {
+	width: 800px;
+    height: auto;
+    margin: auto;
+    padding: 10px;
+	float:left;
+}
+
+.period {
+	float: left;
+    background-color: #f6f6f6; /* Grey background color */
+    padding: 12px; /* Add some padding */
+    font-size: 18px; /* Increase the font-size */
+    color: black; /* Add a black text color */
+	display:block;
+	width:auto;
+}
+
 #cryptoSelecter {
 	width:100%;
 	box-sizing:border-box;
