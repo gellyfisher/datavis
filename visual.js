@@ -11,7 +11,11 @@ const padding = {top: 20, left: 60, right: 100, bottom: 50}; //deze waardes kunn
 
 let graphType="line";
 
-let currencyNames=[{shortName:"XMR",longName :"Monero"},{shortName:"ETH",longName :"Etherium"},{shortName:"BTC",longName :"Bitcoin"},{shortName:"MLN",longName :"Melon"},{shortName:"DASH",longName :"Dash"}]; // all possible currencies
+// list of all possible currencies together with their short name
+let currencyNames=[{shortName:"XMR",longName :"Monero"},{shortName:"ETH",longName :"Ethereum"},{shortName:"BTC",longName :"Bitcoin"},{shortName:"STC",longName:"Swiftcoin"},
+					{shortName:"MLN",longName :"Melon"},{shortName:"DASH",longName :"Dash"},{shortName:"LTC",longName:"Litecoin"},{shortName:"NMC",longName:"Namecoin"},
+					{shortName:"XPM",longName:"Primecoin"},{shortName:"XRP",longName:"Ripple"},{shortName:"BCH",longName:"Bitcoin Cash"},{shortName:"ZEC",longName:"Zcash"},
+					{shortName:"TBC",longName:"Tonal Bitcoin"},{shortName:"XZC",longName:"Zcoin"},{shortName:"ETC",longName:"Ethereum Classic"}]; 
 let currentCurrencies=["XMR","ETH","MLN"]; // a subset of the short names in currencyNames which will be drawn.
 
 $(document).ready(function() {	

@@ -11,22 +11,30 @@ svg text::selection,fieldset::selection {
 
 div.left {
     width: 70%;
-    height: 200px;
     float: left;
 	margin-left:10px;
+	clear:left;
 }
+
 div.right {
 	width: 25%;
-	float:left;
+	float:right;
 	display: inline-block;
+	vertical-align: top;
+}
+
+.chartType {
+	width: 300px;
+    height: auto;
+    padding: 10px;
 }
 
 #periodSelector {
-	width: 800px;
+	width: 300px;
     height: auto;
-    margin: auto;
     padding: 10px;
 	float:left;
+	position:absolute;
 }
 
 .period {
@@ -37,6 +45,10 @@ div.right {
     color: black; /* Add a black text color */
 	display:block;
 	width:auto;
+}
+
+.period:hover {
+	background-color: #eee;
 }
 
 #cryptoSelecter {
@@ -50,9 +62,12 @@ div.right {
 
 #cryptoResult,#cryptoSelected {
     /* Remove default list styling */
+	border-top: 1px solid #ddd;
+	overflow: auto;
+	max-height:250px;
     list-style-type: none;
     padding: 0;
-    margin: 0;
+    margin: 0 0 12px 0;
 }
 
 #cryptoSelected li {
