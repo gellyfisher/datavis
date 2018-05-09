@@ -10,8 +10,6 @@ function setUpLineChart() {
 		.append("svg")
 		.attr("width", width)
 		.attr("height", height);
-		
-	graph.on("mousemove", function() {drawIndicator(this)});
 	
 	/* we can use the same functions to handle the events */
 	d3.select("div#graph").on("wheel", scrollCandle);	
@@ -39,6 +37,7 @@ function setUpLineChart() {
 					
 	graph.append("g") 
 		.attr("class", "x axis")
+		.attr("id","line_x_axis")
 		.attr("transform", `translate(0, ${height - padding.bottom})`)
 		.call(xAxis)
 		.selectAll("text")	   
@@ -50,6 +49,7 @@ function setUpLineChart() {
 	  
 	graph.append("g") 
 		.attr("class", "y axis")
+		.attr("id","line_y_axis")
 		.attr("transform", `translate(${padding.left}, 0)`)
 		.call(yAxis);
 		
@@ -95,7 +95,7 @@ function drawLineChart(data) {
 	yScale.domain([0,d3.max(data,d=> d3.max(d.data,D=>D.high))]);
 	
 	for (let i=0;i<currencyNames.length;i++) {
-		graph.select("path."+currencyNames[i].shortName).remove();
+		graph.select("path#"+currencyNames[i].shortName).remove();
 	}
 	
 	for (let i=0;i<data.length;i++) {
@@ -160,9 +160,9 @@ function drawLineChart(data) {
 		.attr("dy", ".15em")
 		.attr("transform", "rotate(-30)");
 
-graph.select(".y.axis")
-	.transition()
-	.call(yAxis);
+	graph.select(".y.axis")
+		.transition()
+		.call(yAxis);
 
 
 	var mouseG = graph.append("g")
