@@ -2,6 +2,11 @@
 let line;
 let cScale;
 let legend;
+let mouseCoordX=0;
+let mouseCoordY=0;
+let mouseG;
+
+let saveData;
 
 function setUpLineChart() {
 	numPoints=99;
@@ -73,21 +78,33 @@ function setUpLineChart() {
 			.curve(d3.curveBundle)
     		.x(d => xScale(d.time))
     		.y(d => yScale((d.high+d.low+d.close)/3));
+		
+
+	/* set up indicator events*/
+	mouseG = graph.append("g")
+		.attr("class", "mouse-over-effects")
+
+    graph.on('mousemove', function() {getMouseCoordinates(this);drawIndicator();});
 }
 
-function drawLineChart(data) {	
+function getMouseCoordinates(container) {
+	mouseCoordX=d3.mouse(container)[0];
+	mouseCoordY=d3.mouse(container)[1];
+}
+
+function drawLineChart(data) {
+	saveData=data;
 	xScale.domain([d3.min(data,d=> d3.min(d.data,D=>D.time)),d3.max(data,d=> d3.max(d.data,D=>D.time))]);
 	yScale.domain([0,d3.max(data,d=> d3.max(d.data,D=>D.high))]);
 	
 	for (let i=0;i<currencyNames.length;i++) {
-		graph.select("path#"+currencyNames[i].shortName).remove();
+		graph.select("#"+currencyNames[i].shortName).remove();
 	}
 	
 	for (let i=0;i<data.length;i++) {
-		graph.append("g").attr("class", "line_graph_line")
+		graph.append("g").attr("id",  data[i].currency)
 			.append("path").datum(data[i].data)
-			.attr("class", "line_class ")
-			.attr("id",  data[i].currency)
+			.attr("class", "line_class")
 			.attr("fill", "none")
 			.attr("stroke", cScale(i))
 			.attr("stroke-linejoin", "round")
@@ -129,10 +146,10 @@ function drawLineChart(data) {
 		.attr("y", function(d, i) { return 60+20*i; })
 		.merge(legendTexts)
 		.transition()
-		.attr("x", 20) 
+		.attr("x", 20)
 		.attr("dy", "0.75em")
 		.attr("y", function(d, i) { return 60+20*i; })
-		.text(function(d) {console.log(d.currency,findLongName(d.currency));return findLongName(d.currency)});
+		.text(function(d) {return findLongName(d.currency)});
 
 	/*padding.right=legend.node().getBBox().width+20; // get width of our legend*/
 	
@@ -149,101 +166,72 @@ function drawLineChart(data) {
 		.transition()
 		.call(yAxis);
 
+	drawIndicator();
+}
 
-	var mouseG = graph.append("g")
-		.attr("class", "mouse-over-effects")
+function drawIndicator() {
+	let data=saveData;
+	
+	mouseG.select(".mouse_line").remove();
+	mouseG.selectAll(".mouseCircle").remove();
+	mouseG.selectAll(".mouseText").remove();
+	
+	if (mouseCoordX>=padding.left && mouseCoordX<=width-padding.right) {
+		mouseG.append("line")
+			.attr("class","mouse_line")
+			.attr("x1",mouseCoordX)
+			.attr("x2",mouseCoordX)
+			.attr("y1",padding.top)
+			.attr("y2",height-padding.bottom)
+			.style("stroke", "black")
+			.style("stroke-width", "1px")
+	
+		mouseCircles=mouseG.selectAll("circle.mouseCircle").data(data,d=>d.currency);
+		mouseCircles.exit().remove();
+		mouseCircles.enter()
+			.append("circle")
+			.attr("class","mouseCircle")
+			.attr("r", 7)
+			.merge(mouseCircles)
+			.attr("cx",mouseCoordX)
+			.attr("cy",function (d,i) {
+				return getY(i);
+			})
+			.style("stroke", function(d, i) { return cScale(i); })
+			.style("fill", "none")
+			.style("stroke-width", "1px")
+			
+		mouseTexts=mouseG.selectAll("text").data(data,d=>d.currency);
+		mouseTexts.exit().remove();
+		mouseTexts.enter()
+			.append("text")
+			.attr("class","mouseText")
+			.merge(mouseTexts)
+			.attr("x",mouseCoordX)
+			.attr("y",function (d,i) {
+				return getY(i);
+			})
+			.attr("transform", "translate(10,3)")
+			.text(function (d,i) {return yScale.invert(getY(i)).toFixed(2)});
+	}
+}
 
-	mouseG.append("path")
-	.attr("class", "mouse-line")
-	.attr("y", padding.top)
-	.attr('length', "30px")
-	.style("stroke", "black")
-	.style("stroke-width", "1px")
-	.style("opacity", "0")
+function getY(i) { //hulp functie om de y coordinaat op een gegeven x coordinaat te bepalen van de ide kromme
+	let lines=document.getElementsByClassName('line_class');
+	let beginning = 0,
+			end = lines[i].getTotalLength(),
+			target;
+	let pos;
 
-	var lines = document.getElementsByClassName('line_class');
-
-  var mousePerLine = mouseG.selectAll('.mouse-per-line')
-    .data(data)
-    .enter()
-    .append("g")
-    .attr("class", "mouse-per-line");
-
-
-  mousePerLine.append("circle")
-    .attr("r", 7)
-    .style("stroke", function(d) {
-			var graphshit = graph.select("#" + d.currency)
-			var color = graphshit["_groups"][0][0].getAttribute("stroke")
-      return color;
-    })
-    .style("fill", "none")
-    .style("stroke-width", "1px")
-    .style("opacity", "0");
-		mousePerLine.append("text")
-      .attr("transform", "translate(10,3)");
-
-		var y_axis_width = graph.select("#line_y_axis").node().getBBox().width
-		var y_axis_x_start = graph.select("#line_y_axis").node().getBBox().x
-
-    mouseG.append('svg:rect') // append a rect to catch mouse movements on canvas
-      .attr('width', width - padding.left - padding.right - y_axis_width) // can't catch mouse events on a g element
-      .attr('height', height - padding.bottom - padding.top)
-			.attr("x", y_axis_x_start + y_axis_width + padding.left)
-			.attr("y", padding.top)
-      .attr('fill', 'none')
-      .attr('pointer-events', 'all')
-      .on('mouseout', function() { // on mouse out hide line, circles and text
-        d3.select(".mouse-line")
-          .style("opacity", "0");
-        d3.selectAll(".mouse-per-line circle")
-          .style("opacity", "0");
-        d3.selectAll(".mouse-per-line text")
-          .style("opacity", "0");
-      })
-      .on('mouseover', function() { // on mouse in show line, circles and text
-        d3.select(".mouse-line")
-          .style("opacity", "1");
-        d3.selectAll(".mouse-per-line circle")
-          .style("opacity", "1");
-        d3.selectAll(".mouse-per-line text")
-          .style("opacity", "1");
-      })
-      .on('mousemove', function() { // mouse moving over canvas
-        var mouse = d3.mouse(this);
-        d3.select(".mouse-line")
-          .attr("d", function() {
-            var d = "M" + mouse[0] + "," + height;
-            d += " " + mouse[0] + "," + 0;
-            return d;
-          });
-
-
-        d3.selectAll(".mouse-per-line")
-          .attr("transform", function(d, i) {
-
-            var xDate = xScale.invert(mouse[0])
-          	var bisect = d3.bisector(function(d) { return d.time; }).right;
-
-            var beginning = 0,
-                end = lines[i].getTotalLength(),
-                target = null;
-
-            while (true){
-              target = Math.floor((beginning + end) / 2);
-              pos = lines[i].getPointAtLength(target);
-              if ((target === end || target === beginning) && pos.x !== mouse[0]) {
-                  break;
-              }
-              if (pos.x > mouse[0])      end = target;
-              else if (pos.x < mouse[0]) beginning = target;
-              else break; //position found
-            }
-
-            d3.select(this).select('text')
-              .text(yScale.invert(pos.y).toFixed(2));
-
-            return "translate(" + mouse[0] + "," + pos.y +")";
-          });
-      });
+	while (true){
+	  target = Math.floor((beginning + end) / 2);
+	  pos = lines[i].getPointAtLength(target);
+	  if ((target === end || target === beginning) && pos.x !== mouseCoordX) {
+		  break;
+	  }
+	  if (pos.x >  mouseCoordX)      end = target;
+	  else if (pos.x <  mouseCoordX) beginning = target;
+	  else break; //position found
+	}
+	return pos.y;
 }
