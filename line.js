@@ -60,6 +60,14 @@ function setUpLineChart() {
       .attr("dy", "1em")
       .style("text-anchor", "middle")
       .text("Price in Euro");  
+	  
+	legend=graph.append("g")
+			.attr("class","legend")
+			.attr("transform", "translate(" + (width -padding.right+20) + "," + 0+ ")")
+	legend.append("text")
+		.attr("x",0)
+		.attr("y",50)
+		.text("Categories");
 		
 	line = d3.line()
 			.curve(d3.curveBundle)
@@ -101,32 +109,43 @@ function drawLineChart(data) {
 			.attr("d", line);
 	}
 		  
-	legend = graph.selectAll(".legend").data(data);
+	legendRects = legend.selectAll("rect.legend").data(data,d => d.currency);
+	legendRects.exit()
+				.transition()
+				.attr("x", padding.right) 
+				.remove();
+				
+	legendRects.enter()
+			.append("rect")
+			.attr("class","legend")
+			.attr("x", padding.right) 
+			.attr("y", function(d, i) { return 60+20*i; })
+			.merge(legendRects)
+			.transition()
+			.attr("x", 0) 
+			.attr("y", function(d, i) { return 60+20*i; })
+			.attr("width", 10)
+			.attr("height", 10)
+			.style("fill", function(d, i) { return cScale(i); }); 
 	
-	legend.exit().remove();
-	
-    legend=legend.enter()
-   		.append("g")
-    	.attr("class","legend")
-		.attr("transform", "translate(" + (width -padding.right+20) + "," + 0+ ")");
-		
-	legend.append("rect")
-		.attr("x", 0) 
+	legendTexts=legend.selectAll("text.legend").data(data,d => d.currency);
+	legendTexts.exit()
+				.transition()
+				.attr("x", padding.right+20) 
+				.remove();
+
+	legendTexts.enter()
+		.append("text")
+		.attr("class","legend")
+		.attr("x", padding.right+20) 
+		.attr("dy", "0.75em")
 		.attr("y", function(d, i) { return 60+20*i; })
-		.attr("width", 10)
-		.attr("height", 10)
-		.style("fill", function(d, i) { return cScale(i); }); 
-		
-	legend.append("text")
+		.merge(legendTexts)
+		.transition()
 		.attr("x", 20) 
 		.attr("dy", "0.75em")
 		.attr("y", function(d, i) { return 60+20*i; })
-		.text(function(d) {return findLongName(d.currency)});
-	
-	legend.append("text")
-		 .attr("x",0)
-		 .attr("y",50)
-		 .text("Categories");
+		.text(function(d) {console.log(d.currency,findLongName(d.currency));return findLongName(d.currency)});
 
 	/*padding.right=legend.node().getBBox().width+20; // get width of our legend*/
 	
