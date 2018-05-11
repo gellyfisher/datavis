@@ -7,7 +7,7 @@ let minimumDate=new Date(2009,0,1,0,0,0,0).getTime(); //1 januari 2009 (eerste c
 
 const width = 800;
 const height = 400;
-const padding = {top: 20, left: 60, right: 100, bottom: 50}; //deze waardes kunnen nog aangepast worden
+const padding = {top: 20, left: 60, right: 200, bottom: 50}; //deze waardes kunnen nog aangepast worden
 
 let graphType="line";
 

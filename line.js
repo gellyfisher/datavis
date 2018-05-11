@@ -41,7 +41,6 @@ function setUpLineChart() {
 					
 	graph.append("g") 
 		.attr("class", "x axis")
-		.attr("id","line_x_axis")
 		.attr("transform", `translate(0, ${height - padding.bottom})`)
 		.call(xAxis)
 		.selectAll("text")	   
@@ -53,7 +52,6 @@ function setUpLineChart() {
 	  
 	graph.append("g") 
 		.attr("class", "y axis")
-		.attr("id","line_y_axis")
 		.attr("transform", `translate(${padding.left}, 0)`)
 		.call(yAxis);
 		
@@ -145,7 +143,8 @@ function drawLineChart(data) {
 		.attr("y", function(d, i) { return 60+20*i; })
 		.text(function(d) {return findLongName(d.currency)});
 
-	/*padding.right=legend.node().getBBox().width+20; // get width of our legend*/
+	//padding.right=legend.node().getBBox().width+20; // get width of our legend*/
+	//console.log(padding.right);
 	
 	graph.select(".x.axis")
 		.transition()

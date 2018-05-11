@@ -14,7 +14,7 @@ function setUpCandleChart() {
 		.attr("width", width)
 		.attr("height", height);
 	
-	d3.select("div#graph").on("wheel", scrollCandle);	
+	d3.select("div#graph").on("wheel", function () {scrollCandle(this)});	
 	
 	d3.select("div#graph").on("mousedown", function() {startDragCandle(this)});
 	d3.select("div#graph").on("mousemove", function() {dragCandle(this)});
@@ -114,20 +114,26 @@ function dragLeftCandle(dist) { // nu gaan we vooruit in de tijd
 	requestMultipleData();
 }
 
-function scrollCandle() {
-	/*change this such that it zooms into the current mouse position... instead of zooming in the middle*/
+function scrollCandle(container) {
+	let mouseX=d3.event.clientX-18; //d3.mouse(container)[0] werkt hier precies niet
+									// 18 is de marge van de body en de div samen... ja lelijk.
+	console.log(mouseX-padding.left)
+	let effectiveWidth=width-padding.left-padding.right
+	let scale=(mouseX-padding.left)/effectiveWidth //how much to the left is the mouse
+	scale=Math.max(0,scale);
+	scame=Math.min(1,scale); // make sure scale is between 0 and 1
 	
 	if (d3.event.deltaY< 0) { //scroll up
-		let dist=(end-start)/4;
+		let dist=(end-start)/2; //distance from center to start/end
 	
-		start=new Date(start.getTime()+dist);
-		end=new Date(end.getTime()-dist);
+		start=new Date(start.getTime()+scale*dist);
+		end=new Date(end.getTime()-(1-scale)*dist);
 		
 	} else { //scroll down
 		let dist=(end-start)/2;
 	
-		start=new Date(Math.max(start.getTime()-dist,minimumDate));
-		end=new Date(Math.min(end.getTime()+dist,(new Date()).getTime()));
+		start=new Date(Math.max(start.getTime()-scale*dist,minimumDate));
+		end=new Date(Math.min(end.getTime()+(1-scale)*dist,(new Date()).getTime()));
 	 }
 	 
 	 requestMultipleData();
