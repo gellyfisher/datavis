@@ -9,7 +9,7 @@ const width = 800;
 const height = 400;
 const padding = {top: 20, left: 60, right: 200, bottom: 50}; //deze waardes kunnen nog aangepast worden
 
-let graphType="line";
+let graphType="compare";
 
 // list of all possible currencies together with their short name
 let currencyNames=[{shortName:"XMR",longName :"Monero"},{shortName:"ETH",longName :"Ethereum"},{shortName:"BTC",longName :"Bitcoin"},{shortName:"STC",longName:"Swiftcoin"},
@@ -24,31 +24,6 @@ $(document).ready(function() {
     setUp();
 	requestMultipleData();
 });
-
-function findLongName(shortName) {
-	for (let i=0;i<currencyNames.length;i++) {
-		if (shortName===currencyNames[i].shortName) {
-			return currencyNames[i].longName;
-		}
-	}
-	
-	return shortName; //in case we didn't find the longname we just return the short name as a default...
-}
-
-function changePeriod(amount,type) {
-	start=new Date(end);
-	if (type==="D") {
-		numPoints=Math.min(99,amount*24);
-		start.setDate(end.getDate()-amount);
-	} else if (type==="M") {
-		numPoints=99;
-		start.setMonth(end.getMonth()-amount);
-	} else if (type==="Y") {
-		numPoints=99;
-		start.setFullYear(end.getFullYear()-amount);
-	}
-	requestMultipleData();
-}
 
 function setUpHtml() {
 	$("#graph-type").val(graphType); //set initial value of the dropdown
@@ -185,8 +160,8 @@ function requestData(currency="BTC") {
 function setUp() {
 	if (graphType==="candle") {
 		setUpCandleChart();
-	} else if (graphType==="donut") {
-		//functie voor setup van donut
+	} else if (graphType==="compare") {
+		setUpCompareChart();
 	} else if (graphType==="line") {
 		setUpLineChart();
 	} else {
@@ -197,8 +172,8 @@ function setUp() {
 function updateGraphs(data) {
 	if (graphType==="candle") {
 		drawCandleChart(data[0].data);
-	} else if (graphType==="donut") {
-		//functie om donut te tekenen
+	} else if (graphType==="compare") {
+		drawCompareChart(data);
 	} else if (graphType==="line") {
 		drawLineChart(data);
 	} else {
