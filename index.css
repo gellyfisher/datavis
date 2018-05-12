@@ -20,7 +20,9 @@ div.right {
 	width: 25%;
 	float:right;
 	display: inline-block;
-	vertical-align: top;
+	position:absolute;
+	top:8px;
+	right:8px;
 }
 
 .chartType {
@@ -34,7 +36,6 @@ div.right {
     height: auto;
     padding: 10px;
 	float:left;
-	position:absolute;
 }
 
 .period {

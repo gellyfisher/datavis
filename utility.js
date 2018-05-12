@@ -22,3 +22,23 @@ function changePeriod(amount,type) {
 	}
 	requestMultipleData();
 }
+
+function getY(i) { //hulp functie om de y coordinaat op een gegeven x coordinaat te bepalen van de ide kromme
+	let lines=document.getElementsByClassName('line_class');
+	let beginning = 0,
+			end = lines[i].getTotalLength(),
+			target;
+	let pos;
+
+	while (true){
+	  target = Math.floor((beginning + end) / 2);
+	  pos = lines[i].getPointAtLength(target);
+	  if ((target === end || target === beginning) && pos.x !== mouseCoordX) {
+		  break;
+	  }
+	  if (pos.x >  mouseCoordX)      end = target;
+	  else if (pos.x <  mouseCoordX) beginning = target;
+	  else break; //position found
+	}
+	return pos.y;
+}

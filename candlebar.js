@@ -14,11 +14,11 @@ function setUpCandleChart() {
 		.attr("width", width)
 		.attr("height", height);
 	
-	d3.select("div#graph").on("wheel", function () {scrollCandle(this)});	
+	d3.select("div#graph").on("wheel", function () {scrollGraph(this)});	
 	
-	d3.select("div#graph").on("mousedown", function() {startDragCandle(this)});
-	d3.select("div#graph").on("mousemove", function() {dragCandle(this)});
-	d3.select("div#graph").on("mouseup", function() {endDragCandle(this)});
+	d3.select("div#graph").on("mousedown", function() {startDragGraph(this)});
+	d3.select("div#graph").on("mousemove", function() {dragGraph(this)});
+	d3.select("div#graph").on("mouseup", function() {endDragGraph(this)});
 	
 	xScale = d3.scaleTime()                      
 				.range([padding.left, width - padding.right])
@@ -50,93 +50,6 @@ function setUpCandleChart() {
 		.attr("class", "y axis")
 		.attr("transform", `translate(${padding.left}, 0)`)
 		.call(yAxis);
-}
-
-function startDragCandle(container) {
-	dragging=true;
-	let mouseX=d3.mouse(container)[0];
-	
-	prevMouseX=mouseX;
-}
-
-function endDragCandle(container) {
-	dragging=false;
-	let mouseX=d3.mouse(container)[0];
-	
-	let timeInBetween=(end-start)/(numPoints);
-	let effectiveWidth=width-padding.left-padding.right
-	
-	let scale=Math.floor(numPoints*Math.abs(mouseX-prevMouseX)/effectiveWidth);
-	
-	if (mouseX>prevMouseX) {
-		dragRightCandle(scale*timeInBetween);
-	} else if (mouseX<prevMouseX) {
-		dragLeftCandle(scale*timeInBetween);
-	}
-}
-
-function dragCandle(container) {
-	//We will only allow the dragging at most once in 150 ms. Otherwise this function is executed too often.
-	
-    if (dragging && (prevTime + 150 - Date.now()) < 0) {
-		let mouseX=d3.mouse(container)[0];
-	
-		let timeInBetween=(end-start)/(numPoints);
-		let effectiveWidth=width-padding.left-padding.right;
-		
-		let scale=Math.floor(numPoints*Math.abs(mouseX-prevMouseX)/effectiveWidth);
-		
-		if (mouseX>prevMouseX) {
-			dragRightCandle(scale*timeInBetween);
-		} else if (mouseX<prevMouseX) {
-			dragLeftCandle(scale*timeInBetween);
-		}
-		prevMouseX=mouseX;
-		prevTime = Date.now();
-    }
-}
-
-function dragRightCandle(dist) { //in dit geval gaan we terug in de tijd
-	dist=Math.min(dist,start.getTime()-minimumDate);
-	
-	start=new Date(start.getTime()-dist);
-	end=new Date(end.getTime()-dist);
-	
-	requestMultipleData();
-}
-
-function dragLeftCandle(dist) { // nu gaan we vooruit in de tijd
-	dist=Math.min(dist,(new Date()).getTime()-end.getTime());
-	
-	start=new Date(start.getTime()+dist);
-	end=new Date(end.getTime()+dist);
-	
-	requestMultipleData();
-}
-
-function scrollCandle(container) {
-	let mouseX=d3.event.clientX-18; //d3.mouse(container)[0] werkt hier precies niet
-									// 18 is de marge van de body en de div samen... ja lelijk.
-	console.log(mouseX-padding.left)
-	let effectiveWidth=width-padding.left-padding.right
-	let scale=(mouseX-padding.left)/effectiveWidth //how much to the left is the mouse
-	scale=Math.max(0,scale);
-	scame=Math.min(1,scale); // make sure scale is between 0 and 1
-	
-	if (d3.event.deltaY< 0) { //scroll up
-		let dist=(end-start)/2; //distance from center to start/end
-	
-		start=new Date(start.getTime()+scale*dist);
-		end=new Date(end.getTime()-(1-scale)*dist);
-		
-	} else { //scroll down
-		let dist=(end-start)/2;
-	
-		start=new Date(Math.max(start.getTime()-scale*dist,minimumDate));
-		end=new Date(Math.min(end.getTime()+(1-scale)*dist,(new Date()).getTime()));
-	 }
-	 
-	 requestMultipleData();
 }
 
 function drawCandleChart(data) {

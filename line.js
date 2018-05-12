@@ -16,11 +16,15 @@ function setUpLineChart() {
 		.attr("height", height);
 	
 	/* we can use the same functions to handle the events */
-	d3.select("div#graph").on("wheel", scrollCandle);	
+	graph.on("wheel", scrollGraph);	
 	
-	d3.select("div#graph").on("mousedown", function() {startDragCandle(this)});
-	d3.select("div#graph").on("mousemove", function() {dragCandle(this)});
-	d3.select("div#graph").on("mouseup", function() {endDragCandle(this)});
+	graph.on("mousedown", function() {startDragGraph(this)});
+	graph.on("mousemove", function() {
+			dragGraph(this);
+			getMouseCoordinates(this);
+			drawIndicator();
+		});
+	graph.on("mouseup", function() {endDragGraph(this)});
 
 	xScale = d3.scaleTime()                      
 				.range([padding.left, width - padding.right])
@@ -28,7 +32,7 @@ function setUpLineChart() {
 	  
 	yScale = d3.scaleLinear()
 				.range([height - padding.bottom, padding.top])
-				.domain([0,7500]);
+				.domain([0,10]);
 				
 	cScale = d3.scaleOrdinal().range(d3.schemeCategory10);
 						
@@ -38,7 +42,7 @@ function setUpLineChart() {
 						
 	yAxis = d3.axisLeft()
 				.scale(yScale)
-					
+	
 	graph.append("g") 
 		.attr("class", "x axis")
 		.attr("transform", `translate(0, ${height - padding.bottom})`)
@@ -48,7 +52,6 @@ function setUpLineChart() {
 		.attr("dx", "-.8em")
 		.attr("dy", ".15em")
 		.attr("transform", "rotate(-30)");  // rotate the axis labels
-		
 	  
 	graph.append("g") 
 		.attr("class", "y axis")
@@ -62,21 +65,33 @@ function setUpLineChart() {
       .attr("dy", "1em")
       .style("text-anchor", "middle")
       .text("Price in Euro");  
-	  
+		
 	legend=graph.append("g")
 			.attr("class","legend")
 			.attr("transform", "translate(" + (width -padding.right+20) + "," + 0+ ")")
+			
 	legend.append("text")
 		.attr("x",0)
 		.attr("y",50)
-		.text("Categories");
-		
-	line = d3.line()
+		.text("Currencies");
+	
+	setUpLine();
+}
+
+function setUpLine() {
+	if (graphType==="compare") {
+		line = d3.line()
+			.curve(d3.curveBundle)
+			.x(d => xScale(d.time))
+			.y(function (d,i,data) {
+				return yScale((d.high+d.low+d.close)/(data[0].high+data[0].low+data[0].close));
+			});
+	} else if (graphType==="line") {
+		line = d3.line()
 			.curve(d3.curveBundle)
     		.x(d => xScale(d.time))
     		.y(d => yScale((d.high+d.low+d.close)/3));
-
-    graph.on('mousemove', function() {getMouseCoordinates(this);drawIndicator();});
+	}
 }
 
 function getMouseCoordinates(container) {
@@ -87,7 +102,12 @@ function getMouseCoordinates(container) {
 function drawLineChart(data) {
 	saveData=data;
 	xScale.domain([d3.min(data,d=> d3.min(d.data,D=>D.time)),d3.max(data,d=> d3.max(d.data,D=>D.time))]);
-	yScale.domain([0,d3.max(data,d=> d3.max(d.data,D=>D.high))]);
+	
+	if (graphType==="compare") {
+		yScale.domain([0,d3.max(data,d=> d3.max(d.data,D=>(D.high+D.low+D.close)/(d.data[0].high+d.data[0].low+d.data[0].close)))]);
+	} else {
+		yScale.domain([0,d3.max(data,d=> d3.max(d.data,D=>D.high))]);
+	}
 	
 	for (let i=0;i<currencyNames.length;i++) {
 		graph.select("#"+currencyNames[i].shortName).remove();
@@ -105,6 +125,25 @@ function drawLineChart(data) {
 			.attr("d", line);
 	}
 		  
+	drawLegend(data);
+	
+	graph.select(".x.axis")
+		.transition()
+		.call(xAxis)
+		.selectAll("text")	 // rotate the axis labels
+		.style("text-anchor", "end")
+		.attr("dx", "-.8em")
+		.attr("dy", ".15em")
+		.attr("transform", "rotate(-30)");
+
+	graph.select(".y.axis")
+		.transition()
+		.call(yAxis);
+
+	drawIndicator();
+}
+
+function drawLegend(data) {
 	legendRects = legend.selectAll("rect.legend").data(data,d => d.currency);
 	legendRects.exit()
 				.transition()
@@ -142,27 +181,12 @@ function drawLineChart(data) {
 		.attr("dy", "0.75em")
 		.attr("y", function(d, i) { return 60+20*i; })
 		.text(function(d) {return findLongName(d.currency)});
-
-	//padding.right=legend.node().getBBox().width+20; // get width of our legend*/
-	//console.log(padding.right);
-	
-	graph.select(".x.axis")
-		.transition()
-		.call(xAxis)
-		.selectAll("text")	 // rotate the axis labels
-		.style("text-anchor", "end")
-		.attr("dx", "-.8em")
-		.attr("dy", ".15em")
-		.attr("transform", "rotate(-30)");
-
-	graph.select(".y.axis")
-		.transition()
-		.call(yAxis);
-
-	drawIndicator();
 }
 
 function drawIndicator() {
+	if (saveData===undefined) {
+		return;
+	}
 	let data=saveData;
 	
 	graph.select(".mouse_line").remove();
@@ -207,24 +231,4 @@ function drawIndicator() {
 			.attr("transform", "translate(10,3)")
 			.text(function (d,i) {return yScale.invert(getY(i)).toFixed(2)});
 	}
-}
-
-function getY(i) { //hulp functie om de y coordinaat op een gegeven x coordinaat te bepalen van de ide kromme
-	let lines=document.getElementsByClassName('line_class');
-	let beginning = 0,
-			end = lines[i].getTotalLength(),
-			target;
-	let pos;
-
-	while (true){
-	  target = Math.floor((beginning + end) / 2);
-	  pos = lines[i].getPointAtLength(target);
-	  if ((target === end || target === beginning) && pos.x !== mouseCoordX) {
-		  break;
-	  }
-	  if (pos.x >  mouseCoordX)      end = target;
-	  else if (pos.x <  mouseCoordX) beginning = target;
-	  else break; //position found
-	}
-	return pos.y;
 }

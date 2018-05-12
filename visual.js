@@ -9,14 +9,14 @@ const width = 800;
 const height = 400;
 const padding = {top: 20, left: 60, right: 200, bottom: 50}; //deze waardes kunnen nog aangepast worden
 
-let graphType="compare";
+let graphType="line";
 
 // list of all possible currencies together with their short name
 let currencyNames=[{shortName:"XMR",longName :"Monero"},{shortName:"ETH",longName :"Ethereum"},{shortName:"BTC",longName :"Bitcoin"},{shortName:"STC",longName:"Swiftcoin"},
 					{shortName:"MLN",longName :"Melon"},{shortName:"DASH",longName :"Dash"},{shortName:"LTC",longName:"Litecoin"},{shortName:"NMC",longName:"Namecoin"},
 					{shortName:"XPM",longName:"Primecoin"},{shortName:"XRP",longName:"Ripple"},{shortName:"BCH",longName:"Bitcoin Cash"},{shortName:"ZEC",longName:"Zcash"},
 					{shortName:"TBC",longName:"Tonal Bitcoin"},{shortName:"XZC",longName:"Zcoin"},{shortName:"ETC",longName:"Ethereum Classic"}]; 
-let currentCurrencies=["XMR","ETH","MLN"]; // a subset of the short names in currencyNames which will be drawn.
+let currentCurrencies=["XMR","DASH","LTC"]; // a subset of the short names in currencyNames which will be drawn.
 
 $(document).ready(function() {	
 	setUpHtml();
@@ -160,9 +160,7 @@ function requestData(currency="BTC") {
 function setUp() {
 	if (graphType==="candle") {
 		setUpCandleChart();
-	} else if (graphType==="compare") {
-		setUpCompareChart();
-	} else if (graphType==="line") {
+	} else if (graphType==="line" || graphType==="compare") {
 		setUpLineChart();
 	} else {
 		throw "Invalid graph type.";
@@ -172,9 +170,7 @@ function setUp() {
 function updateGraphs(data) {
 	if (graphType==="candle") {
 		drawCandleChart(data[0].data);
-	} else if (graphType==="compare") {
-		drawCompareChart(data);
-	} else if (graphType==="line") {
+	} else if (graphType==="line" || graphType==="compare") {
 		drawLineChart(data);
 	} else {
 		throw "Invalid graph type.";
