@@ -6,7 +6,7 @@ start.setDate(end.getDate()-numPoints);
 let minimumDate=new Date(2009,0,1,0,0,0,0).getTime(); //1 januari 2009 (eerste cryptocurrency was in 2009)
 
 const width = 800;
-const height = 400;
+const height = 300;
 const padding = {top: 20, left: 60, right: 200, bottom: 50}; //deze waardes kunnen nog aangepast worden
 
 let graphType="line";
@@ -161,6 +161,7 @@ function setUp() {
 	if (graphType==="candle") {
 		setUpCandleChart();
 	} else if (graphType==="line" || graphType==="compare") {
+		setUpBarChart();
 		setUpLineChart();
 	} else {
 		throw "Invalid graph type.";
@@ -171,6 +172,7 @@ function updateGraphs(data) {
 	if (graphType==="candle") {
 		drawCandleChart(data[0].data);
 	} else if (graphType==="line" || graphType==="compare") {
+		drawBarChart(data);
 		drawLineChart(data);
 	} else {
 		throw "Invalid graph type.";
