@@ -68,11 +68,12 @@ function setUpLineChart() {
 		
 	legend=graph.append("g")
 			.attr("class","legend")
-			.attr("transform", "translate(" + (width -padding.right+20) + "," + 0+ ")")
+			.attr("transform", "translate(" + (width -padding.right+40) + "," + 0+ ")")
 			
 	legend.append("text")
 		.attr("x",0)
 		.attr("y",50)
+		.attr("font-weight","bold")
 		.text("Currencies");
 	
 	setUpLine();

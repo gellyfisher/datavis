@@ -33,7 +33,7 @@ div.right {
 }
 
 #periodSelector {
-	width: 270px;
+	width: 280px;
     height: auto;
     padding: 10px;
 	overflow: hidden;
@@ -42,9 +42,11 @@ div.right {
 
 .period {
 	float: left;
-    background-color: #f6f6f6; /* Grey background color */
-    padding: 10px; /* Add some padding */
-    font-size: 18px; /* Increase the font-size */
+    background-color: white; /* Grey background color */
+    padding: 9px; /* Add some padding */
+	margin: 1px;
+	border: 1px solid #ddd; /* Add a grey border */
+	box-sizing:border-box;
     color: black; /* Add a black text color */
 	display:block;
 	width:auto;

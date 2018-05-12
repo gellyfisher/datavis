@@ -14,7 +14,7 @@ function setUpBarChart() {
 			.paddingInner(0.05);  
 	  
 	ybarScale = d3.scaleLinear()
-				.range([padding.bottom, barheight-padding.top])
+				.range([0, barheight])
 				.domain([0,10]);
 				
 	cbarScale = d3.scaleSequential()             
@@ -36,12 +36,13 @@ function drawBarChart(data) {
     bars.enter()
         .append("rect")
         .attr("x", (d, i) => xbarScale(i))
-        .attr("y", d => ybarScale(0))
+        .attr("y", barheight)
     	.attr("width", xbarScale.bandwidth()) 
         .attr("height", d => ybarScale(0))
     	.attr("fill", d => cbarScale(d.volumeto))
       .merge(bars)
     	.transition()
+		.attr("width", xbarScale.bandwidth()) 
         .attr("x", (d, i) => xbarScale(i)) 
     	.attr("y", d => barheight - ybarScale(d.volumeto))
     	.attr("height", d => ybarScale(d.volumeto))
