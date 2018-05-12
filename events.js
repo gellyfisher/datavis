@@ -63,21 +63,18 @@ function dragLeftGraph(dist) { // nu gaan we vooruit in de tijd
 function scrollGraph(container) {
 	let mouseX=d3.event.clientX-18; //d3.mouse(container)[0] werkt hier precies niet
 									// 18 is de marge van de body en de div samen... ja lelijk.
-	console.log(mouseX-padding.left)
 	let effectiveWidth=width-padding.left-padding.right
 	let scale=(mouseX-padding.left)/effectiveWidth //how much to the left is the mouse
 	scale=Math.max(0,scale);
-	scame=Math.min(1,scale); // make sure scale is between 0 and 1
+	scale=Math.min(1,scale); // make sure scale is between 0 and 1
+	
+	let dist=(end-start)/2; //distance from center to start/end
 	
 	if (d3.event.deltaY< 0) { //scroll up
-		let dist=(end-start)/2; //distance from center to start/end
-	
 		start=new Date(start.getTime()+scale*dist);
 		end=new Date(end.getTime()-(1-scale)*dist);
 		
-	} else { //scroll down
-		let dist=(end-start)/2;
-	
+	} else { //scroll down	
 		start=new Date(Math.max(start.getTime()-scale*dist,minimumDate));
 		end=new Date(Math.min(end.getTime()+(1-scale)*dist,(new Date()).getTime()));
 	 }
