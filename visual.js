@@ -40,26 +40,29 @@ function setUpHtml() {
 	function selectCrypto() {
 		let val=$(this).attr('value');
 		currentCurrencies.push(val);
+		
+		requestMultipleData();
+		
 		$(this).prependTo("#cryptoSelected");
 		$(this).unbind("click")
 		$(this).click(deselectCrypto);
-		requestMultipleData();
+		filterResult();
 	}
 	
 	function deselectCrypto() {
 		let val=$(this).attr('value');
 		currentCurrencies.splice( $.inArray(val, currentCurrencies),1);
+		
+		requestMultipleData();
+		
 		$(this).appendTo("#cryptoResult");
 		$(this).unbind("click")
 		$(this).click(selectCrypto);
-		requestMultipleData();
+		filterResult();
 	}
 	
-	$("#cryptoResult li").click(selectCrypto);
-	$("#cryptoSelected li").click(deselectCrypto);
-	
-	$("#cryptoSelecter").keyup(function() {
-		let query=$(this).val();
+	function filterResult() {
+		let query=$("#cryptoSelecter").val();
 		$("#cryptoResult li").filter(function (index) { // hide the elements not matching the query
 			return !$(this).text().toLowerCase().includes(query.toLowerCase());
 		  })
@@ -69,13 +72,19 @@ function setUpHtml() {
 			return $(this).text().toLowerCase().includes(query.toLowerCase());
 		  })
 		.css( "display", "block" )
-	});
+	}
+	
+	$("#cryptoResult li").click(selectCrypto);
+	$("#cryptoSelected li").click(deselectCrypto);
+	
+	$("#cryptoSelecter").keyup(filterResult);
 	
 	
 	//NOG INSTELLEN DAT JE VOOR EEN CANDLE MAAR EEN CURRENCY KAN SELECTEREN
 	$("#graph-type").change(function () {
 		graphType = this.value; //the selected value
 		$("#graph").empty();
+		$("#volumes").empty();
 		setUp();
 		requestMultipleData();
 	});
@@ -144,7 +153,7 @@ function requestData(currency="BTC") {
 	
 	params={
 	    fsym: currency, 
-	    tsym: "EUR",
+	    tsym: "EUR",		// we're only interested in euro prices
 		limit: numPoints,
 	    aggregate: amount, //amount of days/hours in between data points (API ignores any value more than 30)
 		toTs: endTimeStamp //last unix timestamp included
@@ -153,7 +162,7 @@ function requestData(currency="BTC") {
 	return $.ajax({
 	    type: "GET", 
 	    url: url,
-		data: params,
+		data: params
 	});
 }
 

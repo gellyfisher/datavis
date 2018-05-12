@@ -24,14 +24,9 @@ function setUpBarChart() {
 function drawBarChart(data) {
 	saveData=data;
 	
-	
-	
 	xbarScale.domain(d3.range(data[0].data.length));
 	ybarScale.domain([0,d3.max(data[0].data,d=>d.volumeto)]);
 	cbarScale.domain([0,d3.max(data[0].data,d=>d.volumeto)]);
-	
-	console.log([0,d3.max(data[0].data,d=>d.volumeto)]);
-	console.log(ybarScale(0))
 	
 	let bars = bargraph.selectAll("rect")
     	.data(data[0].data, d => d.time);

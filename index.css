@@ -25,23 +25,25 @@ div.right {
 	right:8px;
 }
 
-.chartType {
-	width: 300px;
-    height: auto;
-    padding: 10px;
-}
-
-#periodSelector {
+#chartType {
 	width: 300px;
     height: auto;
     padding: 10px;
 	float:left;
 }
 
+#periodSelector {
+	width: 270px;
+    height: auto;
+    padding: 10px;
+	overflow: hidden;
+	float:left;
+}
+
 .period {
 	float: left;
     background-color: #f6f6f6; /* Grey background color */
-    padding: 12px; /* Add some padding */
+    padding: 10px; /* Add some padding */
     font-size: 18px; /* Increase the font-size */
     color: black; /* Add a black text color */
 	display:block;
