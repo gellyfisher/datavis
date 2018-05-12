@@ -8,7 +8,7 @@ let mouseCoordY=0;
 let saveData;
 
 function setUpLineChart() {
-	numPoints=99;
+	numPoints=40;
 	
 	graph=d3.select("div#graph")
 		.append("svg")
@@ -80,18 +80,17 @@ function setUpLineChart() {
 }
 
 function setUpLine() {
+	line = d3.line()
+			.curve(d3.curveLinear)
+			.x(d => xScale(d.time));
+			
 	if (graphType==="compare") {
-		line = d3.line()
-			.curve(d3.curveBundle)
-			.x(d => xScale(d.time))
-			.y(function (d,i,data) {
+			line.y(function (d,i,data) {
 				return yScale((d.high+d.low+d.close)/(data[0].high+data[0].low+data[0].close));
 			});
+			
 	} else if (graphType==="line") {
-		line = d3.line()
-			.curve(d3.curveBundle)
-    		.x(d => xScale(d.time))
-    		.y(d => yScale((d.high+d.low+d.close)/3));
+		line.y(d => yScale((d.high+d.low+d.close)/3));
 	}
 }
 
@@ -230,6 +229,6 @@ function drawIndicator() {
 				return getY(i);
 			})
 			.attr("transform", "translate(10,3)")
-			.text(function (d,i) {return yScale.invert(getY(i)).toFixed(2)});
+			.text(function (d,i) {return yScale.invert(getY(i)).toFixed(3)});
 	}
 }

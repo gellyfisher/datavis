@@ -21,8 +21,8 @@ div.right {
 	float:right;
 	display: inline-block;
 	position:absolute;
-	top:8px;
-	right:8px;
+	top:18px;
+	right:18px;
 }
 
 #chartType {
@@ -104,3 +104,6 @@ div.right {
 #cryptoResult li:hover {
     background-color: #eee; /* Add a hover effect to all links, except for headers */
 }
+
+#graph {
+	margin-bottom:20px;
