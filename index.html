@@ -23,14 +23,6 @@
     </head>
 
     <body>
-	<div id="chartType">
-		<label> choose chart type</label>
-		<select id="graph-type">
-		  <option value="line">Line</option>
-		  <option value="candle">Candle</option>
-		  <option value="compare">Compare increments</option>
-		</select>
-	</div>
 
 	<section id="periodSelector">
 		<div id="1day" class="period" onclick="changePeriod(1,'D')"><span>1D</span></div>
@@ -45,6 +37,7 @@
   	<div id="line_graph" class="left"></div>
   	<div id="compare_graph" class="left"></div>
   	<div id="volumes" class="left"></div>
+    <div id="candle_graph" class="left"></div>
 	</div>
 
 	<div class="right">

@@ -10,7 +10,6 @@ let line_graph;
 let line_grap_line;
 
 function setUpLineChart() {
-	numPoints=40;
 
 
 	line_graph = d3.select("div#line_graph")
@@ -94,13 +93,13 @@ function drawLineChart(data) {
 
 
 	for (let i=0;i<currencyNames.length;i++) {
-		line_graph.select("#"+currencyNames[i].shortName).remove();
+		line_graph.select("."+currencyNames[i].shortName).remove();
 	}
 
 	for (let i=0;i<data.length;i++) {
-		line_graph.append("g").attr("id",  data[i].currency)
+		line_graph.append("g").attr("class",  data[i].currency)
 			.append("path").datum(data[i].data)
-			.attr("class", "line_graph_line_class")
+			.attr("class", "line_graph_line_class line_class")
 			.attr("fill", "none")
 			.attr("stroke", cScale(i))
 			.attr("stroke-linejoin", "round")

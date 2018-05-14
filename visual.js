@@ -1,4 +1,4 @@
-let numPoints=30; //amount of data points to fetch
+let numPoints=100; //amount of data points to fetch
 let end=new Date(); //end date of the data we're getting
 let start = new Date(); //start date of the data we're getting
 start.setDate(end.getDate()-numPoints);
@@ -14,6 +14,10 @@ let cScale =  d3.scaleOrdinal().range(d3.schemeCategory10);
 
 let mouseCircleRadius = 6;
 
+let timeFormat = d3.timeFormat("%b %e %Y");
+
+let dragging=false;
+let prevTime=Date.now();
 
 // list of all possible currencies together with their short name
 let currencyNames=[{shortName:"XMR",longName :"Monero"},{shortName:"ETH",longName :"Ethereum"},{shortName:"BTC",longName :"Bitcoin"},{shortName:"STC",longName:"Swiftcoin"},
@@ -173,10 +177,11 @@ function requestData(currency="BTC") {
 }
 
 function setUp() {
-	// setUpCandleChart();
+
 	setUpLineChart();
 	setUpComparisonChart();
 	setUpBarChart();
+	setUpCandleChart();
 
 	setupMouseEvents();
 }
@@ -186,8 +191,8 @@ let saveData;
 function updateGraphs(data) {
 
 	saveData = data
-	// drawCandleChart(data[0].data);
 	drawLineChart(data);
 	drawComparisonChart(data);
 	drawBarChart(data);
+	drawCandleChart(data);
 }

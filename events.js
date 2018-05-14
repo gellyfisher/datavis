@@ -100,10 +100,18 @@ function scrollGraph(container) {
 	 requestMultipleData();
 }
 
+
+let coin; // currently selected currency
+
+function assignCoin(newcoin) {
+	coin = newcoin;
+}
+
 function handleLineClick(d, i) {
-	d3.select("#"+d.currency+">path").attr("stroke-width",2)
-	d3.selectAll("g:not(#"+d.currency+")>path.line_class") //if we don't use path.line_class then the axis will be selected too
+	d3.selectAll("."+d.currency+">path").attr("stroke-width",2)
+	d3.selectAll("g:not(."+d.currency+")>path.line_class") //if we don't use path.line_class then the axis will be selected too
 			.attr("stroke-width",1.5)
 
-	assignBarChart(d.currency)
+	assignCoin(d.currency)
+	updateGraphs(saveData)
 }

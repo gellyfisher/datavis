@@ -11,13 +11,13 @@ function findLongName(shortName) {
 function changePeriod(amount,type) {
 	start=new Date(end);
 	if (type==="D") {
-		numPoints=Math.min(40,amount*24);
+		numPoints=Math.min(100,amount*24);
 		start.setDate(end.getDate()-amount);
 	} else if (type==="M") {
-		numPoints=40;
+		numPoints=100;
 		start.setMonth(end.getMonth()-amount);
 	} else if (type==="Y") {
-		numPoints=40;
+		numPoints=100;
 		start.setFullYear(end.getFullYear()-amount);
 	}
 	requestMultipleData();

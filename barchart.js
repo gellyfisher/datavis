@@ -3,7 +3,6 @@ let bargraph;
 
 let barheight=100; // height of bar chart
 
-let coin; // currently selected currency
 
 function setUpBarChart() {
 	bargraph=d3.select("div#volumes")
@@ -18,21 +17,21 @@ function setUpBarChart() {
 	ybarScale = d3.scaleLinear()
 				.range([0, barheight])
 				.domain([0,10]);
+
+	coin = null
 }
 
-function assignBarChart(newcoin) {
-	coin = newcoin;
-	drawBarChart(saveData)
-}
 
 function drawBarChart(data) {
 	saveData=data;
 
-	if (coin === undefined) {
+	if (coin === null) {
 		return;
 	}
 
 	let found = false;
+	let bardata;
+	let cbarScale;
 	for (key in data) {
 		if (data[key].currency === coin) {
 			bardata = data[key].data

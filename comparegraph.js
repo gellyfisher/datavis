@@ -10,7 +10,6 @@ let compare_graph;
 let compare_graph_line;
 
 function setUpComparisonChart() {
-	numPoints=40;
 
 
 	compare_graph = d3.select("div#compare_graph")
@@ -96,25 +95,26 @@ function drawComparisonChart(data) {
 	saveData=data;
 	compare_xScale.domain([d3.min(data,d=> d3.min(d.data,D=>D.time)),d3.max(data,d=> d3.max(d.data,D=>D.time))]);
 
-  compare_yScale.domain([0,d3.max(data,d=>
-  	d3.max(d.data,function (D) {
-  		if (d.data[0].high+d.data[0].low+d.data[0].close!==0) {
-  			return (D.high+D.low+D.close)/(d.data[0].high+d.data[0].low+d.data[0].close);
-  		} else {
-  			return (D.high+D.low+D.close)/0.005;  //we default the beginning price of a new currency to 0.005
-  		}
+  compare_yScale.domain([0,
+    d3.max(data,d=>
+    	d3.max(d.data,function (D) {
+    		if (d.data[0].high+d.data[0].low+d.data[0].close!==0) {
+    			return (D.high+D.low+D.close)/(d.data[0].high+d.data[0].low+d.data[0].close);
+    		} else {
+    			return (D.high+D.low+D.close)/0.005;  //we default the beginning price of a new currency to 0.005
+    		}
   	}))
   ]);
 
 
 	for (let i=0;i<currencyNames.length;i++) {
-		compare_graph.select("#"+currencyNames[i].shortName).remove();
+		compare_graph.select("."+currencyNames[i].shortName).remove();
 	}
 
 	for (let i=0;i<data.length;i++) {
-		compare_graph.append("g").attr("id",  data[i].currency)
+		compare_graph.append("g").attr("class",  data[i].currency)
 			.append("path").datum(data[i].data)
-			.attr("class", "compare_graph_line_class")
+			.attr("class", "compare_graph_line_class line_class")
 			.attr("fill", "none")
 			.attr("stroke", cScale(i))
 			.attr("stroke-linejoin", "round")
