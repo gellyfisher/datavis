@@ -81,3 +81,11 @@ function scrollGraph(container) {
 
 	 requestMultipleData();
 }
+
+function handleLineClick(d, i) {
+	d3.select("#"+d.currency+">path").attr("stroke-width",2)
+	d3.selectAll("g:not(#"+d.currency+")>path.line_class") //if we don't use path.line_class then the axis will be selected too
+			.attr("stroke-width",1.5)
+
+	assignBarChart(d.currency, cScale(i))
+}
