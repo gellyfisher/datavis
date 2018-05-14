@@ -218,7 +218,7 @@ function drawIndicator() {
 			.style("stroke", "black")
 			.style("stroke-width", "1px")
 
-		mouseCircles=graph.selectAll("circle.mouseCircle").data(data,d=>d.currency);
+		mouseCircles=graph.selectAll("circle.mouseCircle").data(data,d=>d.currency)
 		mouseCircles.exit().remove();
 		mouseCircles.enter()
 			.append("circle")
@@ -234,6 +234,13 @@ function drawIndicator() {
 				return getY(i);
 			})
 			.style("stroke", function(d, i) { return cScale(i); })
+			.style("display",function (d,i) {
+							if (document.getElementsByClassName('line_class')[i].getPointAtLength(0).x<=mouseCoordX) {
+								return ""
+							} else {
+								return "none"
+							};
+						})
 			
 		mouseTexts=graph.selectAll("text.mouseText").data(data,d=>d.currency);
 		mouseTexts.exit().remove();

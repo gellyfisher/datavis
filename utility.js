@@ -29,7 +29,7 @@ function getY(i) { //hulp functie om de y coordinaat op een gegeven x coordinaat
 			end = lines[i].getTotalLength(),
 			target;
 	let pos;
-
+		
 	while (true){
 	  target = Math.floor((beginning + end) / 2);
 	  pos = lines[i].getPointAtLength(target);
