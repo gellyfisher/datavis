@@ -81,9 +81,7 @@ function setUpHtml() {
 
 	$("#cryptoResult li").click(selectCrypto);
 	$("#cryptoSelected li").click(deselectCrypto);
-
 	$("#cryptoSelecter").keyup(filterResult);
-
 
 	//NOG INSTELLEN DAT JE VOOR EEN CANDLE MAAR EEN CURRENCY KAN SELECTEREN
 	$("#graph-type").change(function () {

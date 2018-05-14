@@ -20,12 +20,8 @@ function setUpBarChart() {
 				.domain([0,10]);
 }
 
-function assignBarChart(newcoin, barcolor) {
+function assignBarChart(newcoin) {
 	coin = newcoin;
-
-	cbarScale = d3.scaleSequential()
-				.interpolator(d3.interpolateRgb(shadeColor(barcolor, 40), shadeColor(barcolor, -40)));
-	
 	drawBarChart(saveData)
 }
 
@@ -40,6 +36,8 @@ function drawBarChart(data) {
 	for (key in data) {
 		if (data[key].currency === coin) {
 			bardata = data[key].data
+			cbarScale = d3.scaleSequential()
+				.interpolator(d3.interpolateRgb(shadeColor(cScale(key), 40), shadeColor(cScale(key), -40)));
 			found=true;
 		}
 	}

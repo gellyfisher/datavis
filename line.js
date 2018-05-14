@@ -258,7 +258,7 @@ function drawIndicator() {
 			
 		if (coin!==undefined) {
 			let eachBand = xbarScale.step(); //distance between 2 bands
-			let index = Math.round((mouseCoordX-padding.left) / eachBand);
+			let index = Math.floor((mouseCoordX-padding.left) / eachBand);
 			bargraph.select("#bar"+index).attr("stroke","black");
 			bargraph.selectAll("rect:not(#bar"+index+")").attr("stroke",null);
 		}
