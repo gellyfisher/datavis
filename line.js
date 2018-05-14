@@ -5,7 +5,7 @@ let legend;
 let mouseCoordX=0;
 let mouseCoordY=0;
 
-let mouse_circle_r = 5;
+let mouseCircleRadius = 6;
 
 let saveData;
 
@@ -123,7 +123,7 @@ function drawLineChart(data) {
 			.attr("stroke", cScale(i))
 			.attr("stroke-linejoin", "round")
 			.attr("stroke-linecap", "round")
-			.attr("stroke-width", 1.5)
+			.attr("stroke-width", data[i].currency===coin?2.5:1.5)
 			.attr("d", line);
 	}
 
@@ -210,16 +210,18 @@ function drawIndicator() {
 		mouseCircles.enter()
 			.append("circle")
 			.attr("class","mouseCircle")
-			.attr("r", mouse_circle_r)
+			.attr("r", mouseCircleRadius)
 			.attr("opacity", "0.8")
-		  .style("pointer-events","visible")
+			.style("pointer-events","visible")
+			.style("fill", "none")
+			.merge(mouseCircles)
 			.on("click",  function(d, i) { handleLineClick(d, i); d3.event.stopPropagation(); })
 			.attr("cx",mouseCoordX)
 			.attr("cy",function (d,i) {
 				return getY(i);
 			})
 			.style("stroke", function(d, i) { return cScale(i); })
-			.style("fill", "none")
+			
 		mouseTexts=graph.selectAll("text.mouseText").data(data,d=>d.currency);
 		mouseTexts.exit().remove();
 		mouseTexts.enter()
@@ -237,27 +239,9 @@ function drawIndicator() {
 }
 
 function handleLineClick(d, i) {
-	if (saveData===undefined) {
-		return;
-	}
-	let data = saveData
+	d3.select("#"+d.currency+">path").attr("stroke-width",2)
+	d3.selectAll("g:not(#"+d.currency+")>path.line_class") //if we don't use path.line_class then the axis will be selected too
+			.attr("stroke-width",1.5)
 
-	console.log(d)
-	console.log(d.currency)
-	console.log(data)
-
-	for (key in data) {
-		if (data[key].currency == d.currency) {
-			data = data[key].data
-		}
-	}
-
-	clickedLine = d3.select("#"+d.currency+">path")
-	clickedLine.attr("stroke", cScale(i))
-	console.log(data)
-	pathcolor = clickedLine._groups[0][0].getAttribute("stroke")
-	console.log("assigning bar char")
-
-	assignBarChart(d.currency, pathcolor)
-
+	assignBarChart(d.currency, cScale(i))
 }

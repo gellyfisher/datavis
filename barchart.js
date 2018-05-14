@@ -1,9 +1,9 @@
 let ybarScale,xbarScale,cbarScale;
 let bargraph;
 
-let barheight=100;
+let barheight=100; // height of bar chart
 
-let coin = null;
+let coin; // currently selected currency
 
 function setUpBarChart() {
 	bargraph=d3.select("div#volumes")
@@ -18,16 +18,12 @@ function setUpBarChart() {
 	ybarScale = d3.scaleLinear()
 				.range([0, barheight])
 				.domain([0,10]);
-
-	coin = null;
-
+				
+	//assignBarChart(currentCurrencies[0],cScale(0));
 }
 
 function assignBarChart(newcoin, barcolor) {
-	console.log("assinging new coin")
-	console.log(newcoin)
 	coin = newcoin;
-
 
 	cbarScale = d3.scaleSequential()
 				.interpolator(d3.interpolateRgb(shadeColor(barcolor, 40), shadeColor(barcolor, -40)));
@@ -38,29 +34,22 @@ function assignBarChart(newcoin, barcolor) {
 function drawBarChart(data) {
 	saveData=data;
 
-	console.log("barchart data")
-	console.log(data)
-
-	if (coin == null) {
-		return null;
+	if (coin === undefined) {
+		return;
 	}
 
 	let found = false;
 	for (key in data) {
-		if (data[key].currency == coin) {
-			found = true;
+		if (data[key].currency === coin) {
 			bardata = data[key].data
+			found=true;
 		}
 	}
-
-	if (found === false) {
-		setUpBarChart();
+	
+	if (!found) {
+		throw "specified coin not found";
+		return;
 	}
-
-	console.log(bardata)
-
-
-
 
 	xbarScale.domain(d3.range(bardata.length));
 	ybarScale.domain([0,d3.max(bardata,d=>d.volumeto)]);

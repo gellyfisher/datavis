@@ -105,5 +105,8 @@ div.right {
     background-color: #eee; /* Add a hover effect to all links, except for headers */
 }
 
-#graph {
-	margin-bottom:20px;
+#graph,#volumes {
+	margin-bottom:10px;
+	margin-top:10px;
+}
+
