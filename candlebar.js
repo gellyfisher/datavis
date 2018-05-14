@@ -4,7 +4,7 @@ let candlebar_xScale;
 let candlebar_yScale;
 let candlebar_xAxis;
 let candlebar_yAxis;
-
+let candlebar_bar_width = 4;
 function setUpCandleChart() {
 
 	candlebar_graph=d3.select("div#candle_graph")
@@ -14,9 +14,9 @@ function setUpCandleChart() {
 
 	d3.select("div#candle_graph").on("wheel", function () {scrollGraph(this)});
 
-	d3.select("div#candle_graph").on("mousedown", function() {startDragGraph(this)});
-	d3.select("div#candle_graph").on("mousemove", function() {dragGraph(this)});
-	d3.select("div#candle_graph").on("mouseup", function() {endDragGraph(this)});
+	// d3.select("div#candle_graph").on("mousedown", function() {startDragGraph(this)});
+	// d3.select("div#candle_graph").on("mousemove", function() {dragGraph(this)});
+	// d3.select("div#candle_graph").on("mouseup", function() {endDragGraph(this)});
 
 	candlebar_xScale = d3.scaleTime()
 				.range([padding.left, width - padding.right])
@@ -56,8 +56,6 @@ function drawCandleChart(data) {
 		return;
 	}
 
-	console.log(data)
-
 	let found = false;
 	let candlebardata;
 	for (key in data) {
@@ -67,7 +65,6 @@ function drawCandleChart(data) {
 		}
 	}
 
-	console.log(candlebardata)
 
 	if (!found) {
 		throw "specified coin not found";
@@ -144,15 +141,15 @@ function drawCandleChart(data) {
 
 	rectangles.enter()
 		.append("rect")
-		.attr("width",8)
+		.attr("width",candlebar_bar_width)
 		.attr("y",d => Math.min(candlebar_yScale(d.open),candlebar_yScale(d.close)))
-		.attr("x",d => candlebar_xScale(d.time)-4)
+		.attr("x",d => candlebar_xScale(d.time)-(candlebar_bar_width/2))
 		.attr("height",d => Math.abs(candlebar_yScale(d.close)-candlebar_yScale(d.open)))
 		.attr("stroke-width",1)
 		.merge(rectangles)
 		.transition()
 		.duration(200)
-		.attr("x",d => candlebar_xScale(d.time)-4)
+		.attr("x",d => candlebar_xScale(d.time)-(candlebar_bar_width/2))
 		.attr("fill",d => (d.open<=d.close)?"green":"red")
 		.attr("stroke",d => (d.open<=d.close)?"#2F4F4F":"#AA98A9")
 		.attr("y",d => Math.min(candlebar_yScale(d.open),candlebar_yScale(d.close)))
@@ -171,4 +168,26 @@ function drawCandleChart(data) {
   candlebar_graph.select(".y.axis")
 		.transition()
 		.call(candlebar_yAxis);
+
+	drawCandleIndicator()
+}
+
+function drawCandleIndicator() {
+	if (saveData===undefined) {
+		return;
+	}
+	let data=saveData;
+
+	candlebar_graph.select(".mouse_line").remove();
+
+	if (mouseCoordX>=padding.left && mouseCoordX<=width-padding.right) {
+		candlebar_graph.append("line")
+			.attr("class","mouse_line")
+			.attr("x1",mouseCoordX)
+			.attr("x2",mouseCoordX)
+			.attr("y1",padding.top)
+			.attr("y2",height-padding.bottom)
+			.style("stroke", "black")
+			.style("stroke-width", "1px")
+		}
 }

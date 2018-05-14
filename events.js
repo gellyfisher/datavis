@@ -13,6 +13,7 @@ function setupMouseEvents() {
 			getMouseCoordinates(this);
 			drawLineIndicator();
 			drawComparisonIndicator();
+			drawCandleIndicator();
 		})
 }
 
