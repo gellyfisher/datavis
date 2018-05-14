@@ -255,5 +255,12 @@ function drawIndicator() {
 			})
 			.attr("transform", "translate(10,3)")
 			.text(function (d,i) {return yScale.invert(getY(i)).toFixed(3)});
+			
+		if (coin!==undefined) {
+			let eachBand = xbarScale.step(); //distance between 2 bands
+			let index = Math.floor((mouseCoordX-padding.left) / eachBand);
+			bargraph.select("#bar"+index).attr("stroke","black");
+			bargraph.selectAll("rect:not(#bar"+index+")").attr("stroke",null);
+		}
 	}
 }

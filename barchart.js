@@ -67,6 +67,7 @@ function drawBarChart(data) {
     	.attr("fill", d => cbarScale(d.volumeto))
       .merge(bars)
     	.transition()
+		.attr("id",(d,i)=>"bar"+i)
 		.attr("width", xbarScale.bandwidth())
         .attr("x", (d, i) => xbarScale(i))
     	.attr("y", d => barheight - ybarScale(d.volumeto))
