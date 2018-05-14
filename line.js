@@ -84,11 +84,16 @@ function setUpLineChart() {
 function setUpLine() {
 	line = d3.line()
 			.curve(d3.curveLinear)
-			.x(d => xScale(d.time));
+			.x(d => xScale(d.time))
+			.defined(function (d) {return (d.high!==0)})
 
 	if (graphType==="compare") {
 			line.y(function (d,i,data) {
-				return yScale((d.high+d.low+d.close)/(data[0].high+data[0].low+data[0].close));
+				if (data[0].high+data[0].low+data[0].close!==0) {
+					return yScale((d.high+d.low+d.close)/(data[0].high+data[0].low+data[0].close));
+				} else {
+					return yScale((d.high+d.low+d.close)/0.005); //we default the beginning price of a new currency to 0.005
+				}
 			});
 
 	} else if (graphType==="line") {
@@ -106,7 +111,15 @@ function drawLineChart(data) {
 	xScale.domain([d3.min(data,d=> d3.min(d.data,D=>D.time)),d3.max(data,d=> d3.max(d.data,D=>D.time))]);
 
 	if (graphType==="compare") {
-		yScale.domain([0,d3.max(data,d=> d3.max(d.data,D=>(D.high+D.low+D.close)/(d.data[0].high+d.data[0].low+d.data[0].close)))]);
+		yScale.domain([0,d3.max(data,d=> 
+						d3.max(d.data,function (D) {
+							if (d.data[0].high+d.data[0].low+d.data[0].close!==0) {
+								return (D.high+D.low+D.close)/(d.data[0].high+d.data[0].low+d.data[0].close);
+							} else {
+								return (D.high+D.low+D.close)/0.005;  //we default the beginning price of a new currency to 0.005
+							}
+						}))
+					]);
 	} else {
 		yScale.domain([0,d3.max(data,d=> d3.max(d.data,D=>D.high))]);
 	}

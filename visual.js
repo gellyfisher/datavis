@@ -9,14 +9,14 @@ const width = 800;
 const height = 300;
 const padding = {top: 20, left: 60, right: 200, bottom: 50}; //deze waardes kunnen nog aangepast worden
 
-let graphType="line";
+let graphType="compare";
 
 // list of all possible currencies together with their short name
 let currencyNames=[{shortName:"XMR",longName :"Monero"},{shortName:"ETH",longName :"Ethereum"},{shortName:"BTC",longName :"Bitcoin"},{shortName:"STC",longName:"Swiftcoin"},
 					{shortName:"MLN",longName :"Melon"},{shortName:"DASH",longName :"Dash"},{shortName:"LTC",longName:"Litecoin"},{shortName:"NMC",longName:"Namecoin"},
 					{shortName:"XPM",longName:"Primecoin"},{shortName:"XRP",longName:"Ripple"},{shortName:"BCH",longName:"Bitcoin Cash"},{shortName:"ZEC",longName:"Zcash"},
 					{shortName:"XZC",longName:"Zcoin"},{shortName:"ETC",longName:"Ethereum Classic"}];
-let currentCurrencies=["XMR","DASH","LTC"]; // a subset of the short names in currencyNames which will be drawn.
+let currentCurrencies=["STC"]; // a subset of the short names in currencyNames which will be drawn.
 
 $(document).ready(function() {
 	setUpHtml();
