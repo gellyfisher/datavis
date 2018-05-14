@@ -12,8 +12,11 @@ svg text::selection,fieldset::selection {
 div.left {
     width: 70%;
     float: left;
-	margin-left:10px;
 	clear:left;
+}
+
+div.container {
+    margin-left: 10px;
 }
 
 div.right {
@@ -110,3 +113,12 @@ div.right {
 	margin-top:10px;
 }
 
+.grid line {
+  stroke: lightgrey;
+  stroke-opacity: 0.7;
+  shape-rendering: crispEdges;
+}
+
+.grid path {
+  stroke-width: 0;
+}

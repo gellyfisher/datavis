@@ -9,7 +9,11 @@ const width = 800;
 const height = 300;
 const padding = {top: 20, left: 60, right: 200, bottom: 50}; //deze waardes kunnen nog aangepast worden
 
-let graphType="line";
+
+let cScale =  d3.scaleOrdinal().range(d3.schemeCategory10);
+
+let mouseCircleRadius = 6;
+
 
 // list of all possible currencies together with their short name
 let currencyNames=[{shortName:"XMR",longName :"Monero"},{shortName:"ETH",longName :"Ethereum"},{shortName:"BTC",longName :"Bitcoin"},{shortName:"STC",longName:"Swiftcoin"},
@@ -26,7 +30,7 @@ $(document).ready(function() {
 });
 
 function setUpHtml() {
-	$("#graph-type").val(graphType); //set initial value of the dropdown
+	$("#graph-type").val("line"); //set initial value of the dropdown
 
 	for (let i=0;i<currencyNames.length;i++) {
 		if ($.inArray(currencyNames[i].shortName, currentCurrencies)!==-1) { //these currencies are already selected
@@ -54,12 +58,12 @@ function setUpHtml() {
 		currentCurrencies.splice( $.inArray(val, currentCurrencies),1);
 
 		requestMultipleData();
-		
+
 		if (val===coin) { //this is the selected currency so we should remove the bar chart
 			coin=undefined;
 			$("#volumes>svg").empty();
 		}
-		
+
 		$(this).appendTo("#cryptoResult");
 		$(this).unbind("click")
 		$(this).click(selectCrypto);
@@ -85,7 +89,6 @@ function setUpHtml() {
 
 	//NOG INSTELLEN DAT JE VOOR EEN CANDLE MAAR EEN CURRENCY KAN SELECTEREN
 	$("#graph-type").change(function () {
-		graphType = this.value; //the selected value
 		$("#graph").empty();
 		$("#volumes").empty();
 		setUp();
@@ -170,23 +173,21 @@ function requestData(currency="BTC") {
 }
 
 function setUp() {
-	if (graphType==="candle") {
-		setUpCandleChart();
-	} else if (graphType==="line" || graphType==="compare") {
-		setUpLineChart();
-		setUpBarChart();
-	} else {
-		throw "Invalid graph type.";
-	}
+	// setUpCandleChart();
+	setUpLineChart();
+	setUpComparisonChart();
+	setUpBarChart();
+
+	setupMouseEvents();
 }
 
+let saveData;
+
 function updateGraphs(data) {
-	if (graphType==="candle") {
-		drawCandleChart(data[0].data);
-	} else if (graphType==="line" || graphType==="compare") {
-		drawLineChart(data);
-		drawBarChart(data);
-	} else {
-		throw "Invalid graph type.";
-	}
+
+	saveData = data
+	// drawCandleChart(data[0].data);
+	drawLineChart(data);
+	drawComparisonChart(data);
+	drawBarChart(data);
 }

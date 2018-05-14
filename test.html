@@ -51,11 +51,11 @@ function swap_dataset() {
 svg.selectAll("path")
     .data(pie(data))
   .enter().append("path")
-    .each(function(d) {console.log(d); d.outerRadius = outerRadius - 20; })
+    .each(function(d) { d.outerRadius = outerRadius - 20; })
     .attr("d", arc)
     .on("mouseover", arcTween(outerRadius, 0))
     .on("mouseout", arcTween(outerRadius - 20, 150));
-    
+
 svg.append("text")
     .attr("x", - width / 2)
     .attr("y", - height / 2)

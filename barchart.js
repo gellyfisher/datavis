@@ -41,7 +41,7 @@ function drawBarChart(data) {
 			found=true;
 		}
 	}
-	
+
 	if (!found) {
 		throw "specified coin not found";
 		return;

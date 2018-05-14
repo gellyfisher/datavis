@@ -4,7 +4,7 @@ function findLongName(shortName) {
 			return currencyNames[i].longName;
 		}
 	}
-	
+
 	return shortName; //in case we didn't find the longname we just return the short name as a default...
 }
 
@@ -23,13 +23,13 @@ function changePeriod(amount,type) {
 	requestMultipleData();
 }
 
-function getY(i) { //hulp functie om de y coordinaat op een gegeven x coordinaat te bepalen van de ide kromme
-	let lines=document.getElementsByClassName('line_class');
+function getY(i, line_class) { //hulp functie om de y coordinaat op een gegeven x coordinaat te bepalen van de ide kromme
+	let lines=document.getElementsByClassName(line_class);
 	let beginning = 0,
 			end = lines[i].getTotalLength(),
 			target;
 	let pos;
-		
+
 	while (true){
 	  target = Math.floor((beginning + end) / 2);
 	  pos = lines[i].getPointAtLength(target);

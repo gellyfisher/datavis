@@ -1,3 +1,21 @@
+let mouseCoordX=0;
+let mouseCoordY=0;
+
+function getMouseCoordinates(container) {
+	mouseCoordX=d3.mouse(container)[0];
+	mouseCoordY=d3.mouse(container)[1];
+}
+
+function setupMouseEvents() {
+	graph_container = d3.select("div#container")
+		.on("mousemove", function() {
+			dragGraph(this);
+			getMouseCoordinates(this);
+			drawLineIndicator();
+			drawComparisonIndicator();
+		})
+}
+
 function startDragGraph(container) {
 	dragging=true;
 	let mouseX=d3.mouse(container)[0];

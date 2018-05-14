@@ -1,78 +1,72 @@
 //line specific global variables
-let line;
-let cScale;
-let legend;
-let mouseCoordX=0;
-let mouseCoordY=0;
 
-let mouseCircleRadius = 6;
 
-let saveData;
+let line_graph_legend;
+let line_xScale;
+let line_yScale;
+let line_xAxis;
+let line_yAxis;
+let line_graph;
+let line_grap_line;
 
 function setUpLineChart() {
 	numPoints=40;
 
-	graph=d3.select("div#graph")
+
+	line_graph = d3.select("div#line_graph")
 		.append("svg")
 		.attr("width", width)
 		.attr("height", height);
 
 	/* we can use the same functions to handle the events */
-	graph.on("wheel", scrollGraph);
+	line_graph.on("wheel", scrollGraph);
 
-	graph.on("mousedown", function() {startDragGraph(this)});
-	graph.on("mousemove", function() {
-			dragGraph(this);
-			getMouseCoordinates(this);
-			drawIndicator();
-		});
-	graph.on("mouseup", function() {endDragGraph(this)});
+	line_graph.on("mousedown", function() {startDragGraph(this)});
+	line_graph.on("mouseup", function() {endDragGraph(this)});
 
-	xScale = d3.scaleTime()
+	line_xScale = d3.scaleTime()
 				.range([padding.left, width - padding.right])
 				.domain([start,end]);
 
-	yScale = d3.scaleLinear()
+	line_yScale = d3.scaleLinear()
 				.range([height - padding.bottom, padding.top])
 				.domain([0,10]);
 
-	cScale = d3.scaleOrdinal().range(d3.schemeCategory10);
-
-	xAxis = d3.axisBottom()
-				.scale(xScale)
+	line_xAxis = d3.axisBottom()
+				.scale(line_xScale)
 				.tickFormat(timeFormat);
 
-	yAxis = d3.axisLeft()
-				.scale(yScale)
+	line_yAxis = d3.axisLeft()
+				.scale(line_yScale)
 
-	graph.append("g")
+	line_graph.append("g")
 		.attr("class", "x axis")
 		.attr("transform", `translate(0, ${height - padding.bottom})`)
-		.call(xAxis)
+		.call(line_xAxis)
 		.selectAll("text")
 		.style("text-anchor", "end")
 		.attr("dx", "-.8em")
 		.attr("dy", ".15em")
 		.attr("transform", "rotate(-30)");  // rotate the axis labels
 
-	graph.append("g")
+	line_graph.append("g")
 		.attr("class", "y axis")
 		.attr("transform", `translate(${padding.left}, 0)`)
-		.call(yAxis);
+		.call(line_yAxis);
 
-	graph.append("text")
+	line_graph.append("text")
 	  .attr("transform",`rotate(-90)`)
       .attr("y", 0)
       .attr("x",-height/2)
       .attr("dy", "1em")
       .style("text-anchor", "middle")
-      .text("Price in Euro");
+      .text("Value");
 
-	legend=graph.append("g")
+	line_graph_legend = line_graph.append("g")
 			.attr("class","legend")
 			.attr("transform", "translate(" + (width -padding.right+40) + "," + 0+ ")")
 
-	legend.append("text")
+	line_graph_legend.append("text")
 		.attr("x",0)
 		.attr("y",50)
 		.attr("font-weight","bold")
@@ -82,84 +76,59 @@ function setUpLineChart() {
 }
 
 function setUpLine() {
-	line = d3.line()
+	line_grap_line = d3.line()
 			.curve(d3.curveLinear)
-			.x(d => xScale(d.time))
+			.x(d => line_xScale(d.time))
 			.defined(function (d) {return (d.high!==0)})
 
-	if (graphType==="compare") {
-			line.y(function (d,i,data) {
-				if (data[0].high+data[0].low+data[0].close!==0) {
-					return yScale((d.high+d.low+d.close)/(data[0].high+data[0].low+data[0].close));
-				} else {
-					return yScale((d.high+d.low+d.close)/0.005); //we default the beginning price of a new currency to 0.005
-				}
-			});
+	line_grap_line.y(d => line_yScale((d.high+d.low+d.close)/3));
 
-	} else if (graphType==="line") {
-		line.y(d => yScale((d.high+d.low+d.close)/3));
-	}
 }
 
-function getMouseCoordinates(container) {
-	mouseCoordX=d3.mouse(container)[0];
-	mouseCoordY=d3.mouse(container)[1];
-}
 
 function drawLineChart(data) {
 	saveData=data;
-	xScale.domain([d3.min(data,d=> d3.min(d.data,D=>D.time)),d3.max(data,d=> d3.max(d.data,D=>D.time))]);
+	line_xScale.domain([d3.min(data,d=> d3.min(d.data,D=>D.time)),d3.max(data,d=> d3.max(d.data,D=>D.time))]);
 
-	if (graphType==="compare") {
-		yScale.domain([0,d3.max(data,d=> 
-						d3.max(d.data,function (D) {
-							if (d.data[0].high+d.data[0].low+d.data[0].close!==0) {
-								return (D.high+D.low+D.close)/(d.data[0].high+d.data[0].low+d.data[0].close);
-							} else {
-								return (D.high+D.low+D.close)/0.005;  //we default the beginning price of a new currency to 0.005
-							}
-						}))
-					]);
-	} else {
-		yScale.domain([0,d3.max(data,d=> d3.max(d.data,D=>D.high))]);
-	}
+	line_yScale.domain([0,d3.max(data,d=> d3.max(d.data,D=>D.high))]);
+
 
 	for (let i=0;i<currencyNames.length;i++) {
-		graph.select("#"+currencyNames[i].shortName).remove();
+		line_graph.select("#"+currencyNames[i].shortName).remove();
 	}
 
 	for (let i=0;i<data.length;i++) {
-		graph.append("g").attr("id",  data[i].currency)
+		line_graph.append("g").attr("id",  data[i].currency)
 			.append("path").datum(data[i].data)
-			.attr("class", "line_class")
+			.attr("class", "line_graph_line_class")
 			.attr("fill", "none")
 			.attr("stroke", cScale(i))
 			.attr("stroke-linejoin", "round")
 			.attr("stroke-linecap", "round")
 			.attr("stroke-width", data[i].currency===coin?2.5:1.5)
-			.attr("d", line);
+			.attr("d", line_grap_line);
 	}
 
-	drawLegend(data);
+	drawLineLegend(data);
 
-	graph.select(".x.axis")
+	line_graph.select(".x.axis")
 		.transition()
-		.call(xAxis)
+		.call(line_xAxis)
 		.selectAll("text")	 // rotate the axis labels
 		.style("text-anchor", "end")
 		.attr("dx", "-.8em")
 		.attr("dy", ".15em")
 		.attr("transform", "rotate(-30)");
 
-	graph.select(".y.axis")
+	line_graph.select(".y.axis")
 		.transition()
-		.call(yAxis);
+		.call(line_yAxis);
 
-	drawIndicator();
+	drawLineIndicator();
 }
 
-function drawLegend(data) {
-	legendRects = legend.selectAll("rect.legend").data(data,d => d.currency);
+function drawLineLegend(data) {
+	legendRects = line_graph_legend.selectAll("rect.legend").data(data,d => d.currency);
 	legendRects.exit()
 				.transition()
 				.attr("x", padding.right)
@@ -178,7 +147,7 @@ function drawLegend(data) {
 			.attr("height", 10)
 			.style("fill", function(d, i) { return cScale(i); });
 
-	legendTexts=legend.selectAll("text.legend").data(data,d => d.currency);
+	legendTexts=line_graph_legend.selectAll("text.legend").data(data,d => d.currency);
 	legendTexts.exit()
 				.transition()
 				.attr("x", padding.right+20)
@@ -198,18 +167,18 @@ function drawLegend(data) {
 		.text(function(d) {return findLongName(d.currency)});
 }
 
-function drawIndicator() {
+function drawLineIndicator() {
 	if (saveData===undefined) {
 		return;
 	}
 	let data=saveData;
 
-	graph.select(".mouse_line").remove();
-	graph.selectAll("circle.mouseCircle").remove();
-	graph.selectAll("text.mouseText").remove();
+	line_graph.select(".mouse_line").remove();
+	line_graph.selectAll("circle.mouseCircle").remove();
+	line_graph.selectAll("text.mouseText").remove();
 
 	if (mouseCoordX>=padding.left && mouseCoordX<=width-padding.right) {
-		graph.append("line")
+		line_graph.append("line")
 			.attr("class","mouse_line")
 			.attr("x1",mouseCoordX)
 			.attr("x2",mouseCoordX)
@@ -218,7 +187,7 @@ function drawIndicator() {
 			.style("stroke", "black")
 			.style("stroke-width", "1px")
 
-		mouseCircles=graph.selectAll("circle.mouseCircle").data(data,d=>d.currency)
+			let mouseCircles=line_graph.selectAll("circle.mouseCircle").data(data,d=>d.currency)
 		mouseCircles.exit().remove();
 		mouseCircles.enter()
 			.append("circle")
@@ -231,18 +200,18 @@ function drawIndicator() {
 			.on("click",  function(d, i) { handleLineClick(d, i); d3.event.stopPropagation(); })
 			.attr("cx",mouseCoordX)
 			.attr("cy",function (d,i) {
-				return getY(i);
+				return getY(i, "line_graph_line_class");
 			})
 			.style("stroke", function(d, i) { return cScale(i); })
 			.style("display",function (d,i) {
-							if (document.getElementsByClassName('line_class')[i].getPointAtLength(0).x<=mouseCoordX) {
-								return ""
-							} else {
-								return "none"
-							};
-						})
-			
-		mouseTexts=graph.selectAll("text.mouseText").data(data,d=>d.currency);
+				if (document.getElementsByClassName('line_graph_line_class')[i].getPointAtLength(0).x<=mouseCoordX) {
+					return ""
+				} else {
+					return "none"
+				};
+			})
+
+		mouseTexts=line_graph.selectAll("text.mouseText").data(data,d=>d.currency);
 		mouseTexts.exit().remove();
 		mouseTexts.enter()
 			.append("text")
@@ -251,11 +220,11 @@ function drawIndicator() {
 			.merge(mouseTexts)
 			.attr("x",mouseCoordX)
 			.attr("y",function (d,i) {
-				return getY(i);
+				return getY(i, "line_graph_line_class");
 			})
 			.attr("transform", "translate(10,3)")
-			.text(function (d,i) {return yScale.invert(getY(i)).toFixed(3)});
-			
+			.text(function (d,i) {return line_yScale.invert(getY(i, "line_graph_line_class")).toFixed(3)});
+
 		if (coin!==undefined) {
 			let eachBand = xbarScale.step(); //distance between 2 bands
 			let index = Math.floor((mouseCoordX-padding.left) / eachBand);
@@ -263,4 +232,10 @@ function drawIndicator() {
 			bargraph.selectAll("rect:not(#bar"+index+")").attr("stroke",null);
 		}
 	}
+}
+
+
+function make_y_gridlines() {
+    return d3.axisLeft(y)
+        .ticks(5)
 }
