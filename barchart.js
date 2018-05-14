@@ -28,6 +28,10 @@ function assignBarChart(newcoin, barcolor) {
 	cbarScale = d3.scaleSequential()
 				.interpolator(d3.interpolateRgb(shadeColor(barcolor, 40), shadeColor(barcolor, -40)));
 
+	console.log(newcoin,coin);
+	console.log(saveData);
+	console.log(bargraph);
+	
 	drawBarChart(saveData)
 }
 

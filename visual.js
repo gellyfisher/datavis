@@ -15,7 +15,7 @@ let graphType="line";
 let currencyNames=[{shortName:"XMR",longName :"Monero"},{shortName:"ETH",longName :"Ethereum"},{shortName:"BTC",longName :"Bitcoin"},{shortName:"STC",longName:"Swiftcoin"},
 					{shortName:"MLN",longName :"Melon"},{shortName:"DASH",longName :"Dash"},{shortName:"LTC",longName:"Litecoin"},{shortName:"NMC",longName:"Namecoin"},
 					{shortName:"XPM",longName:"Primecoin"},{shortName:"XRP",longName:"Ripple"},{shortName:"BCH",longName:"Bitcoin Cash"},{shortName:"ZEC",longName:"Zcash"},
-					{shortName:"TBC",longName:"Tonal Bitcoin"},{shortName:"XZC",longName:"Zcoin"},{shortName:"ETC",longName:"Ethereum Classic"}];
+					{shortName:"XZC",longName:"Zcoin"},{shortName:"ETC",longName:"Ethereum Classic"}];
 let currentCurrencies=["XMR","DASH","LTC"]; // a subset of the short names in currencyNames which will be drawn.
 
 $(document).ready(function() {
@@ -54,7 +54,12 @@ function setUpHtml() {
 		currentCurrencies.splice( $.inArray(val, currentCurrencies),1);
 
 		requestMultipleData();
-
+		
+		if (val===coin) { //this is the selected currency so we should remove the bar chart
+			coin=undefined;
+			$("#volumes>svg").empty();
+		}
+		
 		$(this).appendTo("#cryptoResult");
 		$(this).unbind("click")
 		$(this).click(selectCrypto);
