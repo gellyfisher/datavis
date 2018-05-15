@@ -14,6 +14,7 @@ function setupMouseEvents() {
 			drawLineIndicator();
 			drawComparisonIndicator();
 			drawCandleIndicator();
+			drawBarGraphIndicator();
 		})
 }
 

@@ -39,7 +39,7 @@ function setUpComparisonChart() {
 				.scale(compare_yScale)
 
 	compare_graph.append("g")
-		.attr("class", "x axis")
+		.attr("class", "x axis compare")
 		.attr("transform", `translate(0, ${height - padding.bottom})`)
 		.call(compare_xAxis)
 		.selectAll("text")
@@ -49,7 +49,7 @@ function setUpComparisonChart() {
 		.attr("transform", "rotate(-30)");  // rotate the axis labels
 
 	compare_graph.append("g")
-		.attr("class", "y axis")
+		.attr("class", "y axis compare")
 		.attr("transform", `translate(${padding.left}, 0)`)
 		.call(compare_yAxis);
 
@@ -125,7 +125,7 @@ function drawComparisonChart(data) {
 
 	drawComparisonLegend(data);
 
-	compare_graph.select(".x.axis")
+	compare_graph.select(".x.axis.compare")
 		.transition()
 		.call(compare_xAxis)
 		.selectAll("text")	 // rotate the axis labels
@@ -134,7 +134,7 @@ function drawComparisonChart(data) {
 		.attr("dy", ".15em")
 		.attr("transform", "rotate(-30)");
 
-	compare_graph.select(".y.axis")
+	compare_graph.select(".y.axis.compare")
 		.transition()
 		.call(compare_yAxis);
 

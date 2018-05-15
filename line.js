@@ -39,7 +39,7 @@ function setUpLineChart() {
 				.scale(line_yScale)
 
 	line_graph.append("g")
-		.attr("class", "x axis")
+		.attr("class", "x axis line")
 		.attr("transform", `translate(0, ${height - padding.bottom})`)
 		.call(line_xAxis)
 		.selectAll("text")
@@ -49,7 +49,7 @@ function setUpLineChart() {
 		.attr("transform", "rotate(-30)");  // rotate the axis labels
 
 	line_graph.append("g")
-		.attr("class", "y axis")
+		.attr("class", "y axis line")
 		.attr("transform", `translate(${padding.left}, 0)`)
 		.call(line_yAxis);
 
@@ -110,7 +110,7 @@ function drawLineChart(data) {
 
 	drawLineLegend(data);
 
-	line_graph.select(".x.axis")
+	line_graph.select(".x.axis.line")
 		.transition()
 		.call(line_xAxis)
 		.selectAll("text")	 // rotate the axis labels
@@ -119,7 +119,7 @@ function drawLineChart(data) {
 		.attr("dy", ".15em")
 		.attr("transform", "rotate(-30)");
 
-	line_graph.select(".y.axis")
+	line_graph.select(".y.axis.line")
 		.transition()
 		.call(line_yAxis);
 
@@ -223,18 +223,5 @@ function drawLineIndicator() {
 			})
 			.attr("transform", "translate(10,3)")
 			.text(function (d,i) {return line_yScale.invert(getY(i, "line_graph_line_class")).toFixed(3)});
-
-		if (coin!==undefined) {
-			let eachBand = xbarScale.step(); //distance between 2 bands
-			let index = Math.floor((mouseCoordX-padding.left) / eachBand);
-			bargraph.select("#bar"+index).attr("stroke","black");
-			bargraph.selectAll("rect:not(#bar"+index+")").attr("stroke",null);
-		}
 	}
-}
-
-
-function make_y_gridlines() {
-    return d3.axisLeft(y)
-        .ticks(5)
 }
