@@ -1,3 +1,13 @@
+html, body  {
+  background-color: grey;
+  margin: 0;
+  height: 100%;
+}
+
+.container {
+background-color: white;
+}
+
 svg text,fieldset{
     -webkit-user-select: none;
 	 -khtml-user-select: none;

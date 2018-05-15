@@ -24,6 +24,8 @@
 
     <body>
 
+  <button onclick="hideCandle()">Hide candle graph</button>
+
 	<section id="periodSelector">
 		<div id="1day" class="period" onclick="changePeriod(1,'D')"><span>1D</span></div>
 		<div id="1week" class="period" onclick="changePeriod(7,'D')"><span>1W</span></div>
@@ -33,13 +35,15 @@
 		<div id="1year" class="period" onclick="changePeriod(1,'Y')"><span>1Y</span></div>
 	</section>
 
-  <div id="container" class="left container">
-  	<div id="line_graph" class="left"></div>
-  	<div id="compare_graph" class="left"></div>
-  	<div id="volumes" class="left"></div>
-    <div id="candle_graph" class="left"></div>
-	</div>
-
+  <div id="graphcontainer">
+    <div id="container" class="left container">
+    	<div id="line_graph" class="left"></div>
+    	<div id="compare_graph" class="left"></div>
+    	<div id="volumes" class="left"></div>
+      <div id="candle_graph" class="left"></div>
+  	</div>
+  </div>
+  
 	<div class="right">
 		<input type="text" id="cryptoSelecter" placeholder="Search for a cryptocurrency">
 		<ul id="cryptoResult"></ul>

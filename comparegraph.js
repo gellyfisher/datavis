@@ -33,7 +33,7 @@ function setUpComparisonChart() {
 
 	compare_xAxis = d3.axisBottom()
 				.scale(compare_xScale)
-				.tickFormat(timeFormat);
+				.tickFormat(time_format_day);
 
 	compare_yAxis = d3.axisLeft()
 				.scale(compare_yScale)
@@ -92,6 +92,9 @@ function setUpCompare() {
 
 
 function drawComparisonChart(data) {
+
+	setAxisTimeFormat(compare_xAxis, data);
+
 	saveData=data;
 	compare_xScale.domain([d3.min(data,d=> d3.min(d.data,D=>D.time)),d3.max(data,d=> d3.max(d.data,D=>D.time))]);
 

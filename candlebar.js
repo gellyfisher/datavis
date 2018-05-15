@@ -28,7 +28,7 @@ function setUpCandleChart() {
 
 	candlebar_xAxis = d3.axisBottom()
 				.scale(candlebar_xScale)
-				.tickFormat(timeFormat);
+				.tickFormat(time_format_day);
 
 	candlebar_yAxis = d3.axisLeft()
 				.scale(candlebar_yScale)
@@ -55,6 +55,8 @@ function drawCandleChart(data) {
 	if (coin === null) {
 		return;
 	}
+
+	setAxisTimeFormat(candlebar_xAxis, data);
 
 	let found = false;
 	let candlebardata;

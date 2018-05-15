@@ -14,7 +14,8 @@ let cScale =  d3.scaleOrdinal().range(d3.schemeCategory10);
 
 let mouseCircleRadius = 6;
 
-let timeFormat = d3.timeFormat("%b %e %Y");
+let time_format_day = d3.timeFormat("%b %e %Y");
+let time_format_hour = d3.timeFormat("%b %e, %H h");
 
 let dragging=false;
 let prevTime=Date.now();
@@ -195,4 +196,14 @@ function updateGraphs(data) {
 	drawComparisonChart(data);
 	drawBarChart(data);
 	drawCandleChart(data);
+}
+
+
+function hideCandle() {
+    var x = document.getElementById("candle_graph");
+    if (x.style.display === "none") {
+        x.style.display = "block";
+    } else {
+        x.style.display = "none";
+    }
 }

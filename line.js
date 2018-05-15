@@ -33,7 +33,7 @@ function setUpLineChart() {
 
 	line_xAxis = d3.axisBottom()
 				.scale(line_xScale)
-				.tickFormat(timeFormat);
+				.tickFormat(time_format_day);
 
 	line_yAxis = d3.axisLeft()
 				.scale(line_yScale)
@@ -86,7 +86,9 @@ function setUpLine() {
 
 
 function drawLineChart(data) {
-	saveData=data;
+
+	setAxisTimeFormat(line_xAxis, data);
+
 	line_xScale.domain([d3.min(data,d=> d3.min(d.data,D=>D.time)),d3.max(data,d=> d3.max(d.data,D=>D.time))]);
 
 	line_yScale.domain([0,d3.max(data,d=> d3.max(d.data,D=>D.high))]);

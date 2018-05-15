@@ -31,7 +31,7 @@ function setUpBarChart() {
 
 	bar_xAxis = d3.axisBottom()
 				.scale(xbarScale)
-				.tickFormat(timeFormat);
+				.tickFormat(time_format_day);
 
 	bar_graph.append("g")
 		.attr("class", "x axis bar")
@@ -62,6 +62,8 @@ function drawBarChart(data) {
 	let found = false;
 	let bardata;
 	let cbarScale;
+
+	
 	for (key in data) {
 		if (data[key].currency === coin) {
 			bardata = data[key].data

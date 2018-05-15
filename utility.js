@@ -63,3 +63,25 @@ function shadeColor(color, percent) {
 
     return "#"+RR+GG+BB;
 }
+
+function setAxisTimeFormat(axis, data) {
+
+	let first_date = data[0].data[0].time
+	let numberOfDays = 14;
+	let new_date = new Date(
+								first_date.getFullYear(),
+								first_date.getMonth(),
+								first_date.getDate()+numberOfDays,
+								first_date.getHours(),
+								first_date.getMinutes(),
+								first_date.getSeconds());
+
+	let last_date = data[0].data[data[0].data.length - 1].time;
+
+	if (new_date > last_date) {
+		axis.tickFormat(time_format_hour);
+	} else {
+		axis.tickFormat(time_format_day);
+	}
+
+}
