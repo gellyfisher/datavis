@@ -2,12 +2,15 @@ let mouseCoordX=0;
 let mouseCoordY=0;
 
 function getMouseCoordinates(container) {
+	console.log(container)
 	mouseCoordX=d3.mouse(container)[0];
 	mouseCoordY=d3.mouse(container)[1];
+	console.log(mouseCoordX)
+	console.log(mouseCoordY)
 }
 
 function setupMouseEvents() {
-	graph_container = d3.select("div#container")
+	graph1 = d3.selectAll("div.graph_container")
 		.on("mousemove", function() {
 			dragGraph(this);
 			getMouseCoordinates(this);

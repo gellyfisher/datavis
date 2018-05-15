@@ -1,4 +1,4 @@
-let numPoints=100; //amount of data points to fetch
+let numPoints=40; //amount of data points to fetch
 let end=new Date(); //end date of the data we're getting
 let start = new Date(); //start date of the data we're getting
 start.setDate(end.getDate()-numPoints);

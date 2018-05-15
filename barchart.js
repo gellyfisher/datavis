@@ -63,7 +63,7 @@ function drawBarChart(data) {
 	let bardata;
 	let cbarScale;
 
-	
+
 	for (key in data) {
 		if (data[key].currency === coin) {
 			bardata = data[key].data
