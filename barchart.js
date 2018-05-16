@@ -63,7 +63,7 @@ function drawBarChart(data) {
 	let bardata;
 	let cbarScale;
 
-	bar_yAxis.tickFormat(function(d) {console.log(d); return Math.round(d/1000) + " K"})
+	bar_yAxis.tickFormat(function(d) {return Math.round(d/1000) + " K"})
 
 	for (key in data) {
 		if (data[key].currency === coin) {

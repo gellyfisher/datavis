@@ -102,7 +102,7 @@ function drawSlider(data) {
 	drawLineIndicator();
 }
 
-function drawLineLegend(data) {
+/*function drawLineLegend(data) {
 	legendRects = line_graph_legend.selectAll("rect.legend").data(data,d => d.currency);
 	legendRects.exit()
 				.transition()
@@ -200,4 +200,4 @@ function drawLineIndicator() {
 			.attr("transform", "translate(10,3)")
 			.text(function (d,i) {return line_yScale.invert(getY(i, "line_graph_line_class")).toFixed(3)});
 	}
-}
+}*/

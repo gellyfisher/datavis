@@ -86,7 +86,6 @@ function setUpLine() {
 
 
 function drawLineChart(data) {
-
 	setAxisTimeFormat(line_xAxis, data);
 
 	line_xScale.domain([d3.min(data,d=> d3.min(d.data,D=>D.time)),d3.max(data,d=> d3.max(d.data,D=>D.time))]);
@@ -193,7 +192,7 @@ function drawLineIndicator() {
 			.style("stroke", "black")
 			.style("stroke-width", "1px")
 
-			let mouseCircles=line_graph.selectAll("circle.mouseCircle").data(data,d=>d.currency)
+		let mouseCircles=line_graph.selectAll("circle.mouseCircle").data(data,d=>d.currency)
 		mouseCircles.exit().remove();
 		mouseCircles.enter()
 			.append("circle")
@@ -203,19 +202,20 @@ function drawLineIndicator() {
 			.style("pointer-events","visible")
 			.style("fill", "none")
 			.merge(mouseCircles)
-			.on("click",  function(d, i) { handleLineClick(d, i); d3.event.stopPropagation(); })
+			.on("click",  function(d, i) { console.log("???????????????"); handleLineClick(d, i); d3.event.stopPropagation(); })
 			.attr("cx",mouseCoordX)
 			.attr("cy",function (d,i) {
 				return getY(i, "line_graph_line_class");
 			})
 			.style("stroke", function(d, i) { return cScale(i); })
 			.style("display",function (d,i) {
-				if (document.getElementsByClassName('line_graph_line_class')[i].getPointAtLength(0).x<=mouseCoordX) {
+				let lineX=document.getElementsByClassName('line_graph_line_class')[i].getPointAtLength(0).x;
+				if (lineX<=mouseCoordX && lineX!==0) {
 					return ""
 				} else {
 					return "none"
 				};
-			})
+			});
 
 		mouseTexts=line_graph.selectAll("text.mouseText").data(data,d=>d.currency);
 		mouseTexts.exit().remove();
@@ -229,7 +229,15 @@ function drawLineIndicator() {
 				return getY(i, "line_graph_line_class");
 			})
 			.attr("transform", "translate(10,3)")
-			.text(function (d,i) {return line_yScale.invert(getY(i, "line_graph_line_class")).toFixed(3)});
+			.text(function (d,i) {return line_yScale.invert(getY(i, "line_graph_line_class")).toFixed(3)})
+			.style("display",function (d,i) {
+				let lineX=document.getElementsByClassName('line_graph_line_class')[i].getPointAtLength(0).x;
+				if (lineX<=mouseCoordX && lineX!==0) {
+					return ""
+				} else {
+					return "none"
+				};
+			});
 	}
 }
 

@@ -4,7 +4,7 @@ let start = new Date(); //start date of the data we're getting
 start.setDate(end.getDate()-numPoints);
 let grid_stroke_color = "#e8e8e8"
 
-const width = 800;
+const width = 850;
 const height = 300;
 const padding = {top: 20, left: 60, right: 200, bottom: 50}; //deze waardes kunnen nog aangepast worden
 
