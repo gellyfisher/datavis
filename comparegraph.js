@@ -18,7 +18,7 @@ function setUpComparisonChart() {
 		.attr("height", height);
 
 	/* we can use the same functions to handle the events */
-	compare_graph.on("wheel", scrollGraph);
+	compare_graph.on("wheel", function() {scrollGraph(this);d3.event.stopPropagation();});
 
 	compare_graph.on("mousedown", function() {startDragGraph(this)});
 	compare_graph.on("mouseup", function() {endDragGraph(this)});
@@ -37,6 +37,10 @@ function setUpComparisonChart() {
 
 	compare_yAxis = d3.axisLeft()
 				.scale(compare_yScale)
+				
+	compare_yAxis.tickFormat(function(d) {
+			return Math.round(d * 100).toString() + " %";
+		})
 
 	compare_graph.append("g")
 		.attr("class", "x axis compare")
@@ -98,16 +102,16 @@ function drawComparisonChart(data) {
 	saveData=data;
 	compare_xScale.domain([d3.min(data,d=> d3.min(d.data,D=>D.time)),d3.max(data,d=> d3.max(d.data,D=>D.time))]);
 
-  compare_yScale.domain([0,
-    d3.max(data,d=>
-    	d3.max(d.data,function (D) {
-    		if (d.data[0].high+d.data[0].low+d.data[0].close!==0) {
-    			return (D.high+D.low+D.close)/(d.data[0].high+d.data[0].low+d.data[0].close);
-    		} else {
-    			return (D.high+D.low+D.close)/0.005;  //we default the beginning price of a new currency to 0.005
-    		}
-  	}) * 1.2)
-  ]);
+	compare_yScale.domain([0,
+		d3.max(data,d=>
+			d3.max(d.data,function (D) {
+				if (d.data[0].high+d.data[0].low+d.data[0].close!==0) {
+					return (D.high+D.low+D.close)/(d.data[0].high+d.data[0].low+d.data[0].close);
+				} else {
+					return (D.high+D.low+D.close)/0.005;  //we default the beginning price of a new currency to 0.005
+				}
+		}) * 1.2)
+	]);
 
 
 	for (let i=0;i<currencyNames.length;i++) {
@@ -127,12 +131,6 @@ function drawComparisonChart(data) {
 	}
 
 	drawComparisonLegend(data);
-
-
-	compare_yAxis.tickFormat(
-		function(d) {
-			return Math.round(d * 100).toString() + " %";
-		})
 
 	compare_graph.select(".x.axis.compare")
 		.transition()
@@ -255,7 +253,7 @@ function drawComparisonIndicator() {
 
 function drawComparisonChartGridLines() {
 	compare_graph.selectAll(".gridline").remove()
-	let ticks = compare_graph.selectAll("g.y>g.tick")
+	let ticks = compare_graph.selectAll("g.y>g.tick:nth-child(n + 3)")  //nth-child(n+3) to avoid selecting the tick on the x-axis
 	.append("line")
 		.attr("class", "gridline")
 		.attr("stroke", grid_stroke_color)

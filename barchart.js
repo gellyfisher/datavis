@@ -1,51 +1,37 @@
 let ybarScale,xbarScale,cbarScale;
 let bar_graph;
 
-let bar_height=100; // height of bar chart
-let bar_graph_height = 120;
-
-let bar_xAxis;
 let bar_yAxis;
 
-let upper_bar_graph_padding = 10;
-let bottom_bar_graph_padding = 10;
+let bar_graph_padding={top: 10, right: padding.right, bottom: 10, left: padding.left};
 
+let bar_graph_height=120-bar_graph_padding.top-bar_graph_padding.bottom; // height of bars
+let bar_graph_width=width-bar_graph_padding.left-bar_graph_padding.right;
 
 function setUpBarChart() {
 	bar_graph=d3.select("div#volumes")
 		.append("svg")
 		.attr("width", width)
-		.attr("height", bar_graph_height);
+		.attr("height", 120)
+		.append("g")
+		.attr("transform","translate(" + bar_graph_padding.left + "," + bar_graph_padding.top + ")");
 
 	xbarScale = d3.scaleBand()
-			.rangeRound([padding.left, width - padding.right])
+			.rangeRound([0, bar_graph_width])
 			.paddingInner(0.05);
 
 	ybarScale = d3.scaleLinear()
-				.range([bottom_bar_graph_padding, bar_graph_height - upper_bar_graph_padding ])
-				.domain([10,0]);
+				.range([bar_graph_height,0])
+				.domain([0,10]);
 
 	bar_yAxis = d3.axisLeft()
 				.scale(ybarScale)
-				.tickPadding(15)
-
-	bar_xAxis = d3.axisBottom()
-				.scale(xbarScale)
-				.tickFormat(time_format_day);
-
-	bar_graph.append("g")
-		.attr("class", "x axis bar")
-		.attr("transform", `translate(0, ${height - padding.bottom})`)
-		.call(bar_xAxis)
-		.selectAll("text")
-		.style("text-anchor", "end")
-		.attr("dx", "-.8em")
-		.attr("dy", ".15em")
-		.attr("transform", "rotate(-30)");  // rotate the axis labels
+				.ticks(6);
+				
+	bar_yAxis.tickFormat(function(d) {return Math.round(d/1000) + " K"})
 
 	bar_graph.append("g")
 		.attr("class", "y axis bar")
-		.attr("transform", `translate(${padding.left}, 0)`)
 		.call(bar_yAxis);
 
 	coin = null
@@ -60,10 +46,7 @@ function drawBarChart(data) {
 	}
 
 	let found = false;
-	let bardata;
-	let cbarScale;
-
-	bar_yAxis.tickFormat(function(d) {return Math.round(d/1000) + " K"})
+	let bardata,cbarScale;
 
 	for (key in data) {
 		if (data[key].currency === coin) {
@@ -83,16 +66,6 @@ function drawBarChart(data) {
 	ybarScale.domain([0,d3.max(bardata,d=>d.volumeto)]);
 	cbarScale.domain([0,d3.max(bardata,d=>d.volumeto)]);
 
-
-	bar_graph.select(".x.axis.bar")
-		.transition()
-		.call(bar_xAxis)
-		.selectAll("text")	 // rotate the axis labels
-		.style("text-anchor", "end")
-		.attr("dx", "-.8em")
-		.attr("dy", ".15em")
-		.attr("transform", "rotate(-30)");
-
 	bar_graph.select(".y.axis.bar")
 		.transition()
 		.call(bar_yAxis)
@@ -102,30 +75,42 @@ function drawBarChart(data) {
 
 	bars.exit().remove();
 
-  bars.enter()
-    .append("rect")
-    .attr("x", (d, i) => xbarScale(i))
-    .attr("y", bar_height)
+	bars.enter()
+		.append("rect")
+		.attr("x", (d, i) => xbarScale(i))
+		.attr("y", ybarScale(0))
 		.attr("width", xbarScale.bandwidth())
-    .attr("height", d => ybarScale(0))
-  	.attr("fill", d => cbarScale(d.volumeto))
-  .merge(bars)
-	.transition()
-		.attr("id", (d, i) => "bar"+i)
+		.attr("height", d => 0)
+		.attr("fill", d => cbarScale(d.volumeto))
+		.merge(bars)
+		.attr("id", (d, i) => "bar"+i) //needs to be before transition (otherwise async execution and indicator won't find the id yet)
+		.transition()
 		.attr("width", xbarScale.bandwidth())
-    .attr("x", (d, i) => xbarScale(i))
-  	.attr("y", d => bar_height - ybarScale(d.volumeto))
-  	.attr("height", d => ybarScale(d.volumeto))
-  	.attr("fill", d => cbarScale(d.volumeto));
-
+		.attr("x", (d, i) => xbarScale(i))
+		.attr("y", d => ybarScale(d.volumeto))
+		.attr("height", d => bar_graph_height-ybarScale(d.volumeto))
+		.attr("fill", d => cbarScale(d.volumeto));
+	
+	drawBarGraphIndicator()
+	drawBarChartGridLines()
 }
 
 
 function drawBarGraphIndicator() {
 	if (coin!==null) {
 		let eachBand = xbarScale.step(); //distance between 2 bands
-		let index = Math.floor((mouseCoordX-padding.left) / eachBand);
+		let index = Math.floor((mouseCoordX-bar_graph_padding.left) / eachBand);
 		bar_graph.select("#bar"+index).attr("stroke","black");
 		bar_graph.selectAll("rect:not(#bar"+index+")").attr("stroke",null);
 	}
+}
+
+function drawBarChartGridLines() {
+	bar_graph.selectAll(".gridline").remove()
+	let ticks = bar_graph.selectAll("g.y>g.tick")  //nth-child(n+3) to avoid selecting the tick on the x-axis
+	.append("line")
+		.attr("class", "gridline")
+		.attr("stroke", grid_stroke_color)
+		.attr("zIndex", "-1")
+		.attr("x2", width - padding.right - padding.left)
 }

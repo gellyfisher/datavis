@@ -18,7 +18,7 @@ function setUpLineChart() {
 		.attr("height", height);
 
 	/* we can use the same functions to handle the events */
-	line_graph.on("wheel", scrollGraph);
+	line_graph.on("wheel", function() {scrollGraph(this);d3.event.stopPropagation();});
 
 	line_graph.on("mousedown", function() {startDragGraph(this)});
 	line_graph.on("mouseup", function() {endDragGraph(this)});
@@ -37,6 +37,8 @@ function setUpLineChart() {
 
 	line_yAxis = d3.axisLeft()
 				.scale(line_yScale)
+				
+	line_yAxis.tickFormat(function(d) {return "€ " + d})
 
 	line_graph.append("g")
 		.attr("class", "x axis line")
@@ -121,8 +123,6 @@ function drawLineChart(data) {
 		.attr("dy", ".15em")
 		.attr("transform", "rotate(-30)");
 
-	line_yAxis.tickFormat(function(d) {return "€ " + d})
-
 	line_graph.select(".y.axis.line")
 		.transition()
 		.call(line_yAxis)
@@ -202,7 +202,7 @@ function drawLineIndicator() {
 			.style("pointer-events","visible")
 			.style("fill", "none")
 			.merge(mouseCircles)
-			.on("click",  function(d, i) { console.log("???????????????"); handleLineClick(d, i); d3.event.stopPropagation(); })
+			.on("click",  function(d, i) { handleLineClick(d, i); d3.event.stopPropagation(); })
 			.attr("cx",mouseCoordX)
 			.attr("cy",function (d,i) {
 				return getY(i, "line_graph_line_class");
@@ -243,7 +243,7 @@ function drawLineIndicator() {
 
 function drawLineChartGridLines() {
 	line_graph.selectAll(".gridline").remove()
-	let ticks = line_graph.selectAll("g.y>g.tick:nth-child(n + 2)")
+	let ticks = line_graph.selectAll("g.y>g.tick:nth-child(n + 3)") //nth-child(n+3) to avoid selecting the tick on the x-axis
 	.append("line")
 		.attr("class", "gridline")
 		.attr("stroke", grid_stroke_color)

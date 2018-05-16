@@ -9,7 +9,7 @@ const height = 300;
 const padding = {top: 20, left: 60, right: 200, bottom: 50}; //deze waardes kunnen nog aangepast worden
 
 
-let cScale =  d3.scaleOrdinal().range(d3.schemeCategory10);
+let cScale =  d3.scaleOrdinal().range(d3.schemeSet1);
 
 let mouseCircleRadius = 6;
 
@@ -91,7 +91,6 @@ function setUpHtml() {
 	$("#cryptoSelected li").click(deselectCrypto);
 	$("#cryptoSelecter").keyup(filterResult);
 
-	//NOG INSTELLEN DAT JE VOOR EEN CANDLE MAAR EEN CURRENCY KAN SELECTEREN
 	$("#graph-type").change(function () {
 		$("#graph").empty();
 		$("#volumes").empty();
