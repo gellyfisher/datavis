@@ -37,7 +37,7 @@ function setUpLineChart() {
 
 	line_yAxis = d3.axisLeft()
 				.scale(line_yScale)
-				
+
 	line_yAxis.tickFormat(function(d) {return "€ " + d})
 
 	line_graph.append("g")
@@ -92,7 +92,7 @@ function drawLineChart(data) {
 
 	line_xScale.domain([d3.min(data,d=> d3.min(d.data,D=>D.time)),d3.max(data,d=> d3.max(d.data,D=>D.time))]);
 
-	line_yScale.domain([0,d3.max(data,d=> d3.max(d.data,D=>D.high))]);
+	line_yScale.domain([0,d3.max(data,d=> d3.max(d.data,D=>D.high)) * y_axis_multiplier]);
 
 
 	for (let i=0;i<currencyNames.length;i++) {
@@ -133,43 +133,48 @@ function drawLineChart(data) {
 }
 
 function drawLineLegend(data) {
-	legendRects = line_graph_legend.selectAll("rect.legend").data(data,d => d.currency);
+
+	let color_rect_x = 10;
+	let text_rect_x = 30;
+
+
+	let legendRects = line_graph_legend.selectAll("rect.legend").data(data,d => d.currency);
 	legendRects.exit()
 				.transition()
-				.attr("x", padding.right)
+				.attr("x", padding.right + color_rect_x)
 				.remove();
 
 	legendRects.enter()
 			.append("rect")
 			.attr("class","legend")
-			.attr("x", padding.right)
+			.attr("x", padding.right + color_rect_x)
 			.attr("y", function(d, i) { return 60+20*i; })
 			.merge(legendRects)
 			.transition()
-			.attr("x", 0)
+			.attr("x", color_rect_x)
 			.attr("y", function(d, i) { return 60+20*i; })
 			.attr("width", 10)
 			.attr("height", 10)
 			.style("fill", function(d, i) { return cScale(i); });
 
-	legendTexts=line_graph_legend.selectAll("text.legend").data(data,d => d.currency);
+	let legendTexts=line_graph_legend.selectAll("text.legend").data(data,d => d.currency);
 	legendTexts.exit()
 				.transition()
-				.attr("x", padding.right+20)
+				.attr("x", padding.right + text_rect_x)
 				.remove();
 
 	legendTexts.enter()
 		.append("text")
 		.attr("class","legend")
-		.attr("x", padding.right+20)
+		.attr("x", padding.right+text_rect_x)
 		.attr("dy", "0.75em")
 		.attr("y", function(d, i) { return 60+20*i; })
 		.merge(legendTexts)
 		.transition()
-		.attr("x", 20)
+		.attr("x", text_rect_x)
 		.attr("dy", "0.75em")
 		.attr("y", function(d, i) { return 60+20*i; })
-		.text(function(d) {return findLongName(d.currency)});
+	.text(function(d) {return findLongName(d.currency)});
 }
 
 function drawLineIndicator() {

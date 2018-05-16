@@ -27,7 +27,7 @@ function setUpBarChart() {
 	bar_yAxis = d3.axisLeft()
 				.scale(ybarScale)
 				.ticks(6);
-				
+
 	bar_yAxis.tickFormat(function(d) {return Math.round(d/1000) + " K"})
 
 	bar_graph.append("g")
@@ -63,7 +63,7 @@ function drawBarChart(data) {
 	}
 
 	xbarScale.domain(d3.range(bardata.length));
-	ybarScale.domain([0,d3.max(bardata,d=>d.volumeto)]);
+	ybarScale.domain([0,d3.max(bardata,d=>d.volumeto) * y_axis_multiplier]);
 	cbarScale.domain([0,d3.max(bardata,d=>d.volumeto)]);
 
 	bar_graph.select(".y.axis.bar")
@@ -90,7 +90,7 @@ function drawBarChart(data) {
 		.attr("y", d => ybarScale(d.volumeto))
 		.attr("height", d => bar_graph_height-ybarScale(d.volumeto))
 		.attr("fill", d => cbarScale(d.volumeto));
-	
+
 	drawBarGraphIndicator()
 	drawBarChartGridLines()
 }

@@ -5,7 +5,8 @@ html, body  {
 }
 
 .graph_container {
-  margin-left: 50px
+  margin-left: 50px;
+  margin-right: 50px;
 }
 .container {
   background-color: white;

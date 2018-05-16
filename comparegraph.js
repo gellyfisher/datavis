@@ -37,7 +37,7 @@ function setUpComparisonChart() {
 
 	compare_yAxis = d3.axisLeft()
 				.scale(compare_yScale)
-				
+
 	compare_yAxis.tickFormat(function(d) {
 			return Math.round(d * 100).toString() + " %";
 		})
@@ -102,7 +102,16 @@ function drawComparisonChart(data) {
 	saveData=data;
 	compare_xScale.domain([d3.min(data,d=> d3.min(d.data,D=>D.time)),d3.max(data,d=> d3.max(d.data,D=>D.time))]);
 
-	compare_yScale.domain([0,
+	compare_yScale.domain([
+		d3.min(data,d=>
+			d3.min(d.data,function (D) {
+				if (d.data[0].high+d.data[0].low+d.data[0].close!==0) {
+					return (D.high+D.low+D.close)/(d.data[0].high+d.data[0].low+d.data[0].close);
+				} else {
+					return (D.high+D.low+D.close)/0.005;  //we default the beginning price of a new currency to 0.005
+				}
+		}))
+		,
 		d3.max(data,d=>
 			d3.max(d.data,function (D) {
 				if (d.data[0].high+d.data[0].low+d.data[0].close!==0) {
@@ -110,7 +119,7 @@ function drawComparisonChart(data) {
 				} else {
 					return (D.high+D.low+D.close)/0.005;  //we default the beginning price of a new currency to 0.005
 				}
-		}) * 1.2)
+		}))
 	]);
 
 
@@ -150,7 +159,7 @@ function drawComparisonChart(data) {
 }
 
 function drawComparisonLegend(data) {
-	legendRects = compare_graph_legend.selectAll("rect.legend").data(data,d => d.currency);
+	let legendRects = compare_graph_legend.selectAll("rect.legend").data(data,d => d.currency);
 	legendRects.exit()
 				.transition()
 				.attr("x", padding.right)
@@ -169,7 +178,7 @@ function drawComparisonLegend(data) {
 			.attr("height", 10)
 			.style("fill", function(d, i) { return cScale(i); });
 
-	legendTexts=compare_graph_legend.selectAll("text.legend").data(data,d => d.currency);
+	let legendTexts=compare_graph_legend.selectAll("text.legend").data(data,d => d.currency);
 	legendTexts.exit()
 				.transition()
 				.attr("x", padding.right+20)
