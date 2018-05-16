@@ -128,6 +128,12 @@ function drawComparisonChart(data) {
 
 	drawComparisonLegend(data);
 
+
+	compare_yAxis.tickFormat(
+		function(d) {
+			return Math.round(d * 100).toString() + " %";
+		})
+
 	compare_graph.select(".x.axis.compare")
 		.transition()
 		.call(compare_xAxis)

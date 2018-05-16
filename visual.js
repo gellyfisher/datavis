@@ -134,7 +134,6 @@ function requestMultipleData() {
 		if (resultData===[]) {
 			throw "no data available";
 		} else {
-			console.log(resultData);
 			updateGraphs(resultData);
 		}
 

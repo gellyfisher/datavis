@@ -2,11 +2,9 @@ let mouseCoordX=0;
 let mouseCoordY=0;
 
 function getMouseCoordinates(container) {
-	console.log(container)
+	
 	mouseCoordX=d3.mouse(container)[0];
 	mouseCoordY=d3.mouse(container)[1];
-	console.log(mouseCoordX)
-	console.log(mouseCoordY)
 }
 
 function setupMouseEvents() {

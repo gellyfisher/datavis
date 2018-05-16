@@ -63,6 +63,7 @@ function drawBarChart(data) {
 	let bardata;
 	let cbarScale;
 
+	bar_yAxis.tickFormat(function(d) {console.log(d); return Math.round(d/1000) + " K"})
 
 	for (key in data) {
 		if (data[key].currency === coin) {
@@ -94,7 +95,7 @@ function drawBarChart(data) {
 
 	bar_graph.select(".y.axis.bar")
 		.transition()
-		.call(bar_yAxis);
+		.call(bar_yAxis)
 
 	let bars = bar_graph.selectAll("rect")
     	.data(bardata, d => d.time);
@@ -116,6 +117,7 @@ function drawBarChart(data) {
   	.attr("y", d => bar_height - ybarScale(d.volumeto))
   	.attr("height", d => ybarScale(d.volumeto))
   	.attr("fill", d => cbarScale(d.volumeto));
+
 }
 
 

@@ -58,6 +58,8 @@ function drawCandleChart(data) {
 
 	setAxisTimeFormat(candlebar_xAxis, data);
 
+	candlebar_yAxis.tickFormat(function(d) {return "€ " + d})
+	
 	let found = false;
 	let candlebardata;
 	for (key in data) {
@@ -75,7 +77,7 @@ function drawCandleChart(data) {
 
 
 	candlebar_xScale.domain(d3.extent(candlebardata, d => d.time));
-	candlebar_yScale.domain([0,d3.max(candlebardata, d => d.high)]);
+	candlebar_yScale.domain([0,d3.max(candlebardata, d => d.high) * 1.2]);
 
 	let high=candlebar_graph.selectAll("line.high").data(candlebardata,d=>d.time);
 

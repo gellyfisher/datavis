@@ -122,9 +122,11 @@ function drawLineChart(data) {
 		.attr("dy", ".15em")
 		.attr("transform", "rotate(-30)");
 
+	line_yAxis.tickFormat(function(d) {return "€ " + d})
+
 	line_graph.select(".y.axis.line")
 		.transition()
-		.call(line_yAxis);
+		.call(line_yAxis)
 
 	drawLineIndicator();
 
@@ -233,7 +235,7 @@ function drawLineIndicator() {
 
 function drawLineChartGridLines() {
 	line_graph.selectAll(".gridline").remove()
-	let ticks = line_graph.selectAll("g.y>g.tick:nth-child(n+2)")
+	let ticks = line_graph.selectAll("g.y>g.tick:nth-child(n + 2)")
 	.append("line")
 		.attr("class", "gridline")
 		.attr("stroke", grid_stroke_color)
