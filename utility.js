@@ -1,3 +1,5 @@
+let minimumDate=new Date(2009,0,1,0,0,0,0).getTime(); //1 januari 2009 (eerste cryptocurrency was in 2009)
+
 function findLongName(shortName) {
 	for (let i=0;i<currencyNames.length;i++) {
 		if (shortName===currencyNames[i].shortName) {

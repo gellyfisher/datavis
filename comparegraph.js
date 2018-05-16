@@ -106,7 +106,7 @@ function drawComparisonChart(data) {
     		} else {
     			return (D.high+D.low+D.close)/0.005;  //we default the beginning price of a new currency to 0.005
     		}
-  	}))
+  	}) * 1.2)
   ]);
 
 
@@ -142,6 +142,7 @@ function drawComparisonChart(data) {
 		.call(compare_yAxis);
 
 	drawComparisonIndicator();
+	drawComparisonChartGridLines();
 }
 
 function drawComparisonLegend(data) {
@@ -243,4 +244,15 @@ function drawComparisonIndicator() {
 			.text(function (d,i) {return compare_yScale.invert(getY(i, "compare_graph_line_class")).toFixed(3)});
 
 	}
+}
+
+
+function drawComparisonChartGridLines() {
+	compare_graph.selectAll(".gridline").remove()
+	let ticks = compare_graph.selectAll("g.y>g.tick")
+	.append("line")
+		.attr("class", "gridline")
+		.attr("stroke", grid_stroke_color)
+		.attr("zIndex", "-1")
+		.attr("x2", width - padding.right - padding.left)
 }

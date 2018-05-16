@@ -98,6 +98,7 @@ function drawLineChart(data) {
 		line_graph.select("."+currencyNames[i].shortName).remove();
 	}
 
+
 	for (let i=0;i<data.length;i++) {
 		line_graph.append("g").attr("class",  data[i].currency)
 			.append("path").datum(data[i].data)
@@ -126,6 +127,8 @@ function drawLineChart(data) {
 		.call(line_yAxis);
 
 	drawLineIndicator();
+
+	drawLineChartGridLines()
 }
 
 function drawLineLegend(data) {
@@ -226,4 +229,14 @@ function drawLineIndicator() {
 			.attr("transform", "translate(10,3)")
 			.text(function (d,i) {return line_yScale.invert(getY(i, "line_graph_line_class")).toFixed(3)});
 	}
+}
+
+function drawLineChartGridLines() {
+	line_graph.selectAll(".gridline").remove()
+	let ticks = line_graph.selectAll("g.y>g.tick:nth-child(n+2)")
+	.append("line")
+		.attr("class", "gridline")
+		.attr("stroke", grid_stroke_color)
+		.attr("zIndex", "-1")
+		.attr("x2", width - padding.right - padding.left)
 }
