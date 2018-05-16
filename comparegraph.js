@@ -63,7 +63,7 @@ function setUpComparisonChart() {
       .attr("x",-height/2)
       .attr("dy", "1em")
       .style("text-anchor", "middle")
-      .text("Value comparison");
+      .text("Increment since start");
 
 	compare_graph_legend = compare_graph.append("g")
 			.attr("class","legend")

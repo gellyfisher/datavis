@@ -6,7 +6,7 @@ let grid_stroke_color = "#e8e8e8"
 
 const width = 850;
 const height = 300;
-const padding = {top: 20, left: 60, right: 200, bottom: 50}; //deze waardes kunnen nog aangepast worden
+const padding = {top: 20, left: 70, right: 200, bottom: 50}; //deze waardes kunnen nog aangepast worden
 
 
 let cScale =  d3.scaleOrdinal().range(d3.schemeSet1);
