@@ -58,11 +58,15 @@ div.left {
 }
 
 
-#chartType {
-	width: 300px;
-    height: auto;
-    padding: 10px;
-	float:left;
+.graph_container {
+	margin-left: 40px;
+	margin-bottom:10px;
+	margin-top:10px;
+}
+
+div.container {
+  background-color: #f8fbfc;
+  margin-left: 10px;
 }
 
 #periodSelector {
@@ -92,14 +96,13 @@ div.left {
 #cryptoSelecter {
 	width:100%;
 	box-sizing:border-box;
-    font-size: 16px; /* Increase font-size */
-    padding: 12px 20px 12px 40px; /* Add some padding */
-    border: 1px solid #ddd; /* Add a grey border */
-    margin-bottom: 12px; /* Add some space below the input */
+    font-size: 16px;
+    padding: 12px 20px 12px 40px;
+    border: 1px solid #ddd;
+    margin-bottom: 12px;
 }
 
 #cryptoResult,#cryptoSelected {
-    /* Remove default list styling */
 	border-top: 1px solid #ddd;
 	overflow: auto;
 	max-height:250px;
@@ -108,30 +111,27 @@ div.left {
     margin: 0 0 12px 0;
 }
 
-#cryptoSelected li {
-	border: 1px solid #ddd; /* Add a border to all links */
-    margin-top: -1px; /* Prevent double borders */
-    background-color: #a6f6a6; /* Grey background color */
-    padding: 12px 12px 12px 40px; /* Add some padding */
-    text-decoration: none; /* Remove default text underline */
-    font-size: 18px; /* Increase the font-size */
-    color: black; /* Add a black text color */
+#cryptoSelected li,#cryptoResult li {
+	border: 1px solid #ddd;
+    margin-top: -2px;
+    margin-bottom: 0px;
+    padding: 12px 12px 12px 40px;
+    text-decoration: none;
+    font-size: 18px;
+    color: black;
 	display:block;
+}
+
+#cryptoSelected li {
+	background-color: #dbf5e6; /* Green background color */
 }
 
 #cryptoSelected li:hover {
-	background-color: #9e9;
+	background-color: #b7ebce
 }
 
 #cryptoResult li {
-    border: 1px solid #ddd; /* Add a border to all links */
-    margin-top: -1px; /* Prevent double borders */
-    background-color: #f6f6f6; /* Grey background color */
-    padding: 12px 12px 12px 40px; /* Add some padding */
-    text-decoration: none; /* Remove default text underline */
-    font-size: 18px; /* Increase the font-size */
-    color: black; /* Add a black text color */
-	display:block;
+	background-color: #f6f6f6; /* Green background color */
 }
 
 #cryptoResult li:hover {

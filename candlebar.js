@@ -61,7 +61,7 @@ function drawCandleChart(data) {
 
 	setAxisTimeFormat(candlebar_xAxis, data);
 
-	candlebar_yAxis.tickFormat(function(d) {return "€ " + d})
+	candlebar_yAxis.tickFormat(function(d) {return "€" + d})
 
 	let found = false;
 	let candlebardata;
@@ -80,7 +80,13 @@ function drawCandleChart(data) {
 
 
 	candlebar_xScale.domain(d3.extent(candlebardata, d => d.time));
-	candlebar_yScale.domain([0,d3.max(candlebardata, d => d.high) * y_axis_multiplier]);
+
+	let y_axis_max = d3.max(candlebardata, d => d.high)
+	let y_axis_min = d3.min(candlebardata, d => d.low)
+	let padding = (y_axis_max - y_axis_min) * y_axis_padding_multiplier
+	let lowerbound = Math.max( (y_axis_min - padding) , 0)
+
+	candlebar_yScale.domain([lowerbound, y_axis_max + padding]);
 
 	let high=candlebar_graph.selectAll("line.high").data(candlebardata,d=>d.time);
 

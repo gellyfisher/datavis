@@ -4,7 +4,7 @@ let start = new Date(); //start date of the data we're getting
 start.setDate(end.getDate()-numPoints);
 let grid_stroke_color = "#e8e8e8"
 
-width = Math.round(screen.width / 1.4);
+width = Math.round(screen.width / 1.5);
 const height = 350;
 const padding = {top: 20, left: 60, right: 200, bottom: 50}; //deze waardes kunnen nog aangepast worden
 
@@ -89,18 +89,10 @@ function setUpHtml() {
 	$("#cryptoResult li").click(selectCrypto);
 	$("#cryptoSelected li").click(deselectCrypto);
 	$("#cryptoSelecter").keyup(filterResult);
-
-	$("#graph-type").change(function () {
-		$("#graph").empty();
-		$("#volumes").empty();
-		setUp();
-		requestMultipleData();
-	});
 }
 
 function requestMultipleData() {
 	let promises=[];
-	let result=[];
 
 	for (let i = 0; i < currentCurrencies.length; i++) {
 		promises.push(requestData(currentCurrencies[i]));

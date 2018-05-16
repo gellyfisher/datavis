@@ -38,7 +38,7 @@ function setUpLineChart() {
 	line_yAxis = d3.axisLeft()
 				.scale(line_yScale)
 
-	line_yAxis.tickFormat(function(d) {return "€ " + d})
+	line_yAxis.tickFormat(function(d) {return "€" + d})
 
 	line_graph.append("g")
 		.attr("class", "x axis line")
@@ -92,7 +92,12 @@ function drawLineChart(data) {
 
 	line_xScale.domain([d3.min(data,d=> d3.min(d.data,D=>D.time)),d3.max(data,d=> d3.max(d.data,D=>D.time))]);
 
-	line_yScale.domain([0,d3.max(data,d=> d3.max(d.data,D=>D.high)) * y_axis_multiplier]);
+	let y_axis_max = d3.max(data,d=> d3.max(d.data,D=>D.high))
+	let y_axis_min = d3.min(data,d=> d3.min(d.data,D=>D.low))
+	let padding = (y_axis_max - y_axis_min) * y_axis_padding_multiplier
+	let lowerbound = Math.max( (y_axis_min - padding) , 0)
+
+	line_yScale.domain([lowerbound, y_axis_max + padding]);
 
 
 	for (let i=0;i<currencyNames.length;i++) {

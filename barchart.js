@@ -1,18 +1,20 @@
 let ybarScale,xbarScale,cbarScale;
 let bar_graph;
 
-let bar_yAxis;
+let bar_yAxis,bar_xAxis;
 
-let bar_graph_padding={top: 30, right: padding.right, bottom: 10, left: padding.left};
+let bar_graph_padding={top: 30, right: padding.right, bottom: 50, left: padding.left};
 
-let bar_graph_height=140-bar_graph_padding.top-bar_graph_padding.bottom; // height of bars
+let bar_graph_height=180-bar_graph_padding.top-bar_graph_padding.bottom; // height of bars
 let bar_graph_width=width-bar_graph_padding.left-bar_graph_padding.right;
+
+let X_BAR_SCALE_OFFSET = 1
 
 function setUpBarChart() {
 	bar_graph=d3.select("div#volumes")
 		.append("svg")
 		.attr("width", width)
-		.attr("height", 140)
+		.attr("height", 180)
 		.append("g")
 		.attr("transform","translate(" + bar_graph_padding.left + "," + bar_graph_padding.top + ")");
 
@@ -30,13 +32,13 @@ function setUpBarChart() {
 
 	bar_yAxis.tickFormat(function(d) {
 		if (d<1000){
-			return d;
+			return "€" + d;
 		} else if (d<1000000) {
-			return Math.round(d/1000) + " K";
+			return "€" + Math.round(d/1000) + " K";
 		} else if (d<1000000000) {
-			return Math.round(d/1000000) + " M";
+			return "€" + Math.round(d/1000000) + " M";
 		} else {
-			return Math.round(d/1000000000) + " B";
+			return "€" + Math.round(d/1000000000) + " B";
 		}
 	});
 
@@ -49,7 +51,7 @@ function setUpBarChart() {
       .attr("x",-bar_graph_padding.left)
       .attr("dy", "1em")
       .style("text-anchor", "left")
-      .text("Trading volumes (Euro)");
+      .text("Trading volumes");
 
 	coin = null
 }
@@ -81,7 +83,7 @@ function drawBarChart(data) {
 	}
 
 	xbarScale.domain(d3.range(bardata.length));
-	ybarScale.domain([0,d3.max(bardata,d=>d.volumeto) * y_axis_multiplier]);
+	ybarScale.domain([0,d3.max(bardata,d=>d.volumeto) * 1.2]);
 	cbarScale.domain([0,d3.max(bardata,d=>d.volumeto)]);
 
 	bar_graph.select(".y.axis.bar")
@@ -103,8 +105,8 @@ function drawBarChart(data) {
 		.merge(bars)
 		.attr("id", (d, i) => "bar"+i) //needs to be before transition (otherwise async execution and indicator won't find the id yet)
 		.transition()
-		.attr("width", xbarScale.bandwidth())
-		.attr("x", (d, i) => xbarScale(i))
+		.attr("width", xbarScale.bandwidth() - 0.05)
+		.attr("x", (d, i) => xbarScale(i) + X_BAR_SCALE_OFFSET)
 		.attr("y", d => ybarScale(d.volumeto))
 		.attr("height", d => bar_graph_height-ybarScale(d.volumeto))
 		.attr("fill", d => cbarScale(d.volumeto));

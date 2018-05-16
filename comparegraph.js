@@ -102,26 +102,29 @@ function drawComparisonChart(data) {
 	saveData=data;
 	compare_xScale.domain([d3.min(data,d=> d3.min(d.data,D=>D.time)),d3.max(data,d=> d3.max(d.data,D=>D.time))]);
 
-	compare_yScale.domain([
-		d3.min(data,d=>
-			d3.min(d.data,function (D) {
-				if (d.data[0].high+d.data[0].low+d.data[0].close!==0) {
-					return (D.high+D.low+D.close)/(d.data[0].high+d.data[0].low+d.data[0].close);
-				} else {
-					return (D.high+D.low+D.close)/0.005;  //we default the beginning price of a new currency to 0.005
-				}
-		}))
-		,
-		d3.max(data,d=>
-			d3.max(d.data,function (D) {
-				if (d.data[0].high+d.data[0].low+d.data[0].close!==0) {
-					return (D.high+D.low+D.close)/(d.data[0].high+d.data[0].low+d.data[0].close);
-				} else {
-					return (D.high+D.low+D.close)/0.005;  //we default the beginning price of a new currency to 0.005
-				}
-		}))
-	]);
 
+	let y_axis_max = d3.max(data,d=>
+										d3.max(d.data,function (D) {
+											if (d.data[0].high+d.data[0].low+d.data[0].close!==0) {
+												return (D.high+D.low+D.close)/(d.data[0].high+d.data[0].low+d.data[0].close);
+											} else {
+												return (D.high+D.low+D.close)/0.005;  //we default the beginning price of a new currency to 0.005
+											}
+										}))
+
+
+	let y_axis_min = d3.min(data,d=>
+										d3.min(d.data,function (D) {
+											if (d.data[0].high+d.data[0].low+d.data[0].close!==0) {
+												return (D.high+D.low+D.close)/(d.data[0].high+d.data[0].low+d.data[0].close);
+											} else {
+												return (D.high+D.low+D.close)/0.005;  //we default the beginning price of a new currency to 0.005
+											}
+									}))
+
+	let padding = (y_axis_max - y_axis_min) * y_axis_padding_multiplier
+	let lowerbound = Math.max( (y_axis_min - padding) , 0)
+	compare_yScale.domain([lowerbound, y_axis_max + padding])
 
 	for (let i=0;i<currencyNames.length;i++) {
 		compare_graph.select("."+currencyNames[i].shortName).remove();
