@@ -2,7 +2,7 @@ let mouseCoordX=0;
 let mouseCoordY=0;
 
 function getMouseCoordinates(container) {
-	
+
 	mouseCoordX=d3.mouse(container)[0];
 	mouseCoordY=d3.mouse(container)[1];
 }
@@ -17,6 +17,8 @@ function setupMouseEvents() {
 			drawCandleIndicator();
 			drawBarGraphIndicator();
 		})
+	d3.selectAll("div#container").on("mouseover",disableScroll);
+	d3.selectAll("div#container").on("mouseleave",enableScroll);
 }
 
 function startDragGraph(container) {
@@ -81,9 +83,29 @@ function dragLeftGraph(dist) { // nu gaan we vooruit in de tijd
 	requestMultipleData();
 }
 
+function preventDefault(e) { //prevents scrolling
+	e = e || window.event;
+	if (e.preventDefault)
+	  e.preventDefault();
+	e.returnValue = false;
+}
+
+function disableScroll() {
+	if (window.addEventListener) // older firefox
+	  window.addEventListener('DOMMouseScroll', preventDefault, false);
+	window.onwheel = preventDefault; // modern standard
+	window.onmousewheel = document.onmousewheel = preventDefault; // older browsers, IE
+}
+
+function enableScroll() {
+	if (window.removeEventListener)
+		window.removeEventListener('DOMMouseScroll', preventDefault, false);
+	window.onmousewheel = document.onmousewheel = null;
+	window.onwheel = null;
+}
+
 function scrollGraph(container) {
-	let mouseX=d3.event.clientX-18; //d3.mouse(container)[0] werkt hier precies niet
-									// 18 is de marge van de body en de div samen... ja lelijk.
+	let mouseX=d3.event.clientX-$(container).offset().left; //d3.mouse(container)[0] werkt hier precies niet
 	let effectiveWidth=width-padding.left-padding.right
 	let scale=(mouseX-padding.left)/effectiveWidth //how much to the left is the mouse
 	scale=Math.max(0,scale);
@@ -111,10 +133,20 @@ function assignCoin(newcoin) {
 }
 
 function handleLineClick(d, i) {
-	d3.selectAll("."+d.currency+">path").attr("stroke-width",2)
-	d3.selectAll("g:not(."+d.currency+")>path.line_class") //if we don't use path.line_class then the axis will be selected too
-			.attr("stroke-width",1.5)
+	console.log("handling line click")
+	if (coin == d.currency){
+		assignCoin(null)
+		d3.selectAll("g>path.line_class") //if we don't use path.line_class then the axis will be selected too
+				.attr("stroke-width",1.5)
+		console.log("SAME CURRENCY")
+		updateGraphsCoinRemoved()
 
-	assignCoin(d.currency)
-	updateGraphs(saveData)
+	} else {
+		d3.selectAll("."+d.currency+">path").attr("stroke-width",2)
+		d3.selectAll("g:not(."+d.currency+")>path.line_class") //if we don't use path.line_class then the axis will be selected too
+				.attr("stroke-width",1.5)
+
+		assignCoin(d.currency)
+		updateGraphs(saveData)
+	}
 }

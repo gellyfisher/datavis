@@ -1,10 +1,10 @@
-let numPoints=40; //amount of data points to fetch
+let numPoints=100; //amount of data points to fetch
 let end=new Date(); //end date of the data we're getting
 let start = new Date(); //start date of the data we're getting
 start.setDate(end.getDate()-numPoints);
 let grid_stroke_color = "#e8e8e8"
 
-const width = 1250;
+width = Math.round(screen.width / 1.4);
 const height = 350;
 const padding = {top: 20, left: 60, right: 200, bottom: 50}; //deze waardes kunnen nog aangepast worden
 
@@ -28,8 +28,7 @@ let currentCurrencies=["XMR","MLN","LTC"]; // a subset of the short names in cur
 
 $(document).ready(function() {
 	setUpHtml();
-
-    setUp();
+  setUp();
 	requestMultipleData();
 });
 
@@ -175,7 +174,6 @@ function requestData(currency="BTC") {
 }
 
 function setUp() {
-
 	setUpLineChart();
 	setUpComparisonChart();
 	setUpBarChart();
@@ -195,12 +193,7 @@ function updateGraphs(data) {
 	drawCandleChart(data);
 }
 
-
-function hideCandle() {
-    var x = document.getElementById("candle_graph");
-    if (x.style.display === "none") {
-        x.style.display = "block";
-    } else {
-        x.style.display = "none";
-    }
+function updateGraphsCoinRemoved() {
+	drawBarChart(null);
+	drawCandleChart(null);
 }

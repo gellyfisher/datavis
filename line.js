@@ -18,7 +18,7 @@ function setUpLineChart() {
 		.attr("height", height);
 
 	/* we can use the same functions to handle the events */
-	line_graph.on("wheel", function() {scrollGraph(this);d3.event.stopPropagation();});
+	line_graph.on("wheel", function() {scrollGraph(this);});
 
 	line_graph.on("mousedown", function() {startDragGraph(this)});
 	line_graph.on("mouseup", function() {endDragGraph(this)});
@@ -248,7 +248,8 @@ function drawLineIndicator() {
 
 function drawLineChartGridLines() {
 	line_graph.selectAll(".gridline").remove()
-	let ticks = line_graph.selectAll("g.y>g.tick:nth-child(n + 3)") //nth-child(n+3) to avoid selecting the tick on the x-axis
+	let y_axis = line_graph.selectAll("g.y")
+	let ticks = y_axis.selectAll("g.tick:nth-child(n + 3)") //nth-child(n+3) to avoid selecting the tick on the x-axis
 	.append("line")
 		.attr("class", "gridline")
 		.attr("stroke", grid_stroke_color)

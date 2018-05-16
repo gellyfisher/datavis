@@ -52,9 +52,12 @@ function setUpCandleChart() {
 
 function drawCandleChart(data) {
 
-	if (coin === null) {
+
+	if (coin === null || data === null) {
+		d3.select("#candle_graph").style("display", "none");
 		return;
 	}
+	d3.select("#candle_graph").style("display", "block");
 
 	setAxisTimeFormat(candlebar_xAxis, data);
 

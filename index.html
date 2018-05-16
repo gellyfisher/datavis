@@ -1,56 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-	<meta charset="utf-8">
-	<title>Cryptocurrency graph</title>
 
-	<link rel = "stylesheet" type = "text/css" href = "index.css" />
+<head>
+  <meta charset="utf-8">
+  <title>Cryptocurrency graph</title>
 
-	<!-- Include jquery source-->
-	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="index.css" />
 
-	<!-- Include d3 source-->
-	<script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+  <!-- Include jquery source-->
+  <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
 
-	<!-- Include our sources for drawing the graphs-->
-	<script type="text/javascript" src="visual.js"></script>
-	<script type="text/javascript" src="candlebar.js"></script>
-	<script type="text/javascript" src="line.js"></script>
-	<script type="text/javascript" src="comparegraph.js"></script>
-	<script type="text/javascript" src="events.js"></script>
-	<script type="text/javascript" src="utility.js"></script>
-	<script type="text/javascript" src="barchart.js"></script>
-	<script type="text/javascript" src="slider.js"></script>
-    </head>
+  <!-- Include d3 source-->
+  <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
 
-    <body>
+  <!-- Include our sources for drawing the graphs-->
+  <script type="text/javascript" src="visual.js"></script>
+  <script type="text/javascript" src="candlebar.js"></script>
+  <script type="text/javascript" src="line.js"></script>
+  <script type="text/javascript" src="comparegraph.js"></script>
+  <script type="text/javascript" src="events.js"></script>
+  <script type="text/javascript" src="utility.js"></script>
+  <script type="text/javascript" src="barchart.js"></script>
+  <script type="text/javascript" src="slider.js"></script>
+</head>
 
-  <button onclick="hideCandle()">Hide candle graph</button>
+<body>
 
-	<section id="periodSelector">
-		<div id="1day" class="period" onclick="changePeriod(1,'D')"><span>1D</span></div>
-		<div id="1week" class="period" onclick="changePeriod(7,'D')"><span>1W</span></div>
-		<div id="1month" class="period" onclick="changePeriod(1,'M')"><span>1M</span></div>
-		<div id="3months" class="period" onclick="changePeriod(3,'M')"><span>3M</span></div>
-		<div id="6months" class="period" onclick="changePeriod(6,'M')"><span>6M</span></div>
-		<div id="1year" class="period" onclick="changePeriod(1,'Y')"><span>1Y</span></div>
-	</section>
-
-  <div id="graphcontainer">
-    <div id="container" class="left container">
-    	<div id="line_graph" class="left graph_container"></div>
-    	<div id="date_range_slider" class="left graph_container"></div>
-    	<div id="compare_graph" class="left graph_container"></div>
-    	<div id="volumes" class="left graph_container"></div>
-      <div id="candle_graph" class="left graph_container"></div>
-  	</div>
+  <div id="page_header">
+    <header>Cryptocurrency Compare</header>
   </div>
 
-	<div class="right">
-		<input type="text" id="cryptoSelecter" placeholder="Search for a cryptocurrency">
-		<ul id="cryptoResult"></ul>
-		<ul id="cryptoSelected"></ul>
-	</div>
+  <div id="page_container">
+    <div id="container" class="container">
 
-    </body>
+
+      <div id="line_graph" class="left graph_container"></div>
+      <div id="date_range_slider" class="left graph_container"></div>
+      <div id="compare_graph" class="left graph_container"></div>
+      <div id="volumes" class="left graph_container"></div>
+      <div id="candle_graph" class="left graph_container"></div>
+    </div>
+
+    <div id="right_bar">
+
+      <section id="periodSelector">
+        <div id="1day" class="period" onclick="changePeriod(1,'D')"><span>1D</span></div>
+        <div id="1week" class="period" onclick="changePeriod(7,'D')"><span>1W</span></div>
+        <div id="1month" class="period" onclick="changePeriod(1,'M')"><span>1M</span></div>
+        <div id="3months" class="period" onclick="changePeriod(3,'M')"><span>3M</span></div>
+        <div id="6months" class="period" onclick="changePeriod(6,'M')"><span>6M</span></div>
+        <div id="1year" class="period" onclick="changePeriod(1,'Y')"><span>1Y</span></div>
+      </section>
+      <div class="right">
+        <input type="text" id="cryptoSelecter" placeholder="Search for a cryptocurrency">
+        <ul id="cryptoResult"></ul>
+        <ul id="cryptoSelected"></ul>
+      </div>
+    </div>
+  </div>
+
+</body>
+
 </html>

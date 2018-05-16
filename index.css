@@ -1,15 +1,43 @@
 html, body  {
-  background-color: grey;
+  background-color: #211914;
   margin: 0;
   height: 100%;
 }
 
-.graph_container {
-  margin-left: 50px;
-  margin-right: 50px;
+#page_header {
+  height: 20px;
+  margin: auto;
+  padding: 10px;
+  padding-top: 20px;
+  width: 90%;
+  border: 1px solid black;
 }
-.container {
+#page_header>header {
+  background-color: green;
+  text-align: center;
+  margin: auto;
+}
+#page_container {
+  margin: auto;
+  width: 90%;
+  padding: 10px;
   background-color: white;
+  display: block;
+  overflow: auto;
+}
+
+#container {
+  float: left;
+  width: %70;
+  overflow: hidden;
+}
+
+#right_bar {
+  width: 20%;
+  float: right;
+  height: 100%;
+  position: relative;
+
 }
 
 svg text,fieldset{
@@ -25,22 +53,10 @@ svg text::selection,fieldset::selection {
 
 div.left {
     width: 70%;
-    float: left;
+    float: center;
 	clear:left;
 }
 
-div.container {
-    margin-left: 10px;
-}
-
-div.right {
-	width: 25%;
-	float:right;
-	display: inline-block;
-	position:absolute;
-	top:18px;
-	right:18px;
-}
 
 #chartType {
 	width: 300px;

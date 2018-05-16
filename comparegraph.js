@@ -18,7 +18,7 @@ function setUpComparisonChart() {
 		.attr("height", height);
 
 	/* we can use the same functions to handle the events */
-	compare_graph.on("wheel", function() {scrollGraph(this);d3.event.stopPropagation();});
+	compare_graph.on("wheel", function() {scrollGraph(this);});
 
 	compare_graph.on("mousedown", function() {startDragGraph(this)});
 	compare_graph.on("mouseup", function() {endDragGraph(this)});
@@ -63,7 +63,7 @@ function setUpComparisonChart() {
       .attr("x",-height/2)
       .attr("dy", "1em")
       .style("text-anchor", "middle")
-      .text("Value comparison");
+      .text("Increment since start");
 
 	compare_graph_legend = compare_graph.append("g")
 			.attr("class","legend")
@@ -235,12 +235,13 @@ function drawComparisonIndicator() {
 			})
 			.style("stroke", function(d, i) { return cScale(i); })
 			.style("display",function (d,i) {
-							if (document.getElementsByClassName('compare_graph_line_class')[i].getPointAtLength(0).x<=mouseCoordX) {
-								return ""
-							} else {
-								return "none"
-							};
-						})
+				let lineX=document.getElementsByClassName('line_graph_line_class')[i].getPointAtLength(0).x;
+				if (lineX<=mouseCoordX && lineX!==0) {
+					return ""
+				} else {
+					return "none"
+				};
+			});
 
 		mouseTexts=compare_graph.selectAll("text.mouseText").data(data,d=>d.currency);
 		mouseTexts.exit().remove();
@@ -254,8 +255,15 @@ function drawComparisonIndicator() {
 				return getY(i, "compare_graph_line_class");
 			})
 			.attr("transform", "translate(10,3)")
-			.text(function (d,i) {return compare_yScale.invert(getY(i, "compare_graph_line_class")).toFixed(3)});
-
+			.text(function (d,i) {return compare_yScale.invert(getY(i, "compare_graph_line_class")).toFixed(3)})
+			.style("display",function (d,i) {
+				let lineX=document.getElementsByClassName('line_graph_line_class')[i].getPointAtLength(0).x;
+				if (lineX<=mouseCoordX && lineX!==0) {
+					return ""
+				} else {
+					return "none"
+				};
+			});
 	}
 }
 
