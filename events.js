@@ -105,8 +105,7 @@ function enableScroll() {
 }
 
 function scrollGraph(container) {
-	let mouseX=d3.event.clientX-50; //d3.mouse(container)[0] werkt hier precies niet
-									// 50 is de marge van de body en de div samen... ja lelijk.
+	let mouseX=d3.event.clientX-$(container).offset().left; //d3.mouse(container)[0] werkt hier precies niet
 	let effectiveWidth=width-padding.left-padding.right
 	let scale=(mouseX-padding.left)/effectiveWidth //how much to the left is the mouse
 	scale=Math.max(0,scale);
