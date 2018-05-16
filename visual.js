@@ -90,18 +90,10 @@ function setUpHtml() {
 	$("#cryptoResult li").click(selectCrypto);
 	$("#cryptoSelected li").click(deselectCrypto);
 	$("#cryptoSelecter").keyup(filterResult);
-
-	$("#graph-type").change(function () {
-		$("#graph").empty();
-		$("#volumes").empty();
-		setUp();
-		requestMultipleData();
-	});
 }
 
 function requestMultipleData() {
 	let promises=[];
-	let result=[];
 
 	for (let i = 0; i < currentCurrencies.length; i++) {
 		promises.push(requestData(currentCurrencies[i]));
