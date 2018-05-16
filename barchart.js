@@ -3,16 +3,16 @@ let bar_graph;
 
 let bar_yAxis;
 
-let bar_graph_padding={top: 10, right: padding.right, bottom: 10, left: padding.left};
+let bar_graph_padding={top: 30, right: padding.right, bottom: 10, left: padding.left};
 
-let bar_graph_height=120-bar_graph_padding.top-bar_graph_padding.bottom; // height of bars
+let bar_graph_height=140-bar_graph_padding.top-bar_graph_padding.bottom; // height of bars
 let bar_graph_width=width-bar_graph_padding.left-bar_graph_padding.right;
 
 function setUpBarChart() {
 	bar_graph=d3.select("div#volumes")
 		.append("svg")
 		.attr("width", width)
-		.attr("height", 120)
+		.attr("height", 140)
 		.append("g")
 		.attr("transform","translate(" + bar_graph_padding.left + "," + bar_graph_padding.top + ")");
 
@@ -26,13 +26,30 @@ function setUpBarChart() {
 
 	bar_yAxis = d3.axisLeft()
 				.scale(ybarScale)
-				.ticks(6);
+				.ticks(5);
 				
-	bar_yAxis.tickFormat(function(d) {return Math.round(d/1000) + " K"})
+	bar_yAxis.tickFormat(function(d) {
+		if (d<1000){
+			return d;
+		} else if (d<1000000) {
+			return Math.round(d/1000) + " K";
+		} else if (d<1000000000) {
+			return Math.round(d/1000000) + " M";
+		} else {
+			return Math.round(d/1000000000) + " B";
+		}
+	});
 
 	bar_graph.append("g")
 		.attr("class", "y axis bar")
 		.call(bar_yAxis);
+		
+	bar_graph.append("text")
+      .attr("y", -bar_graph_padding.top)
+      .attr("x",-bar_graph_padding.left)
+      .attr("dy", "1em")
+      .style("text-anchor", "left")
+      .text("Trading volumes (Euro)");
 
 	coin = null
 }
