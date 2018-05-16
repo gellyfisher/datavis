@@ -17,6 +17,8 @@ function setupMouseEvents() {
 			drawCandleIndicator();
 			drawBarGraphIndicator();
 		})
+	d3.selectAll("div#container").on("mouseover",disableScroll);
+	d3.selectAll("div#container").on("mouseleave",enableScroll);
 }
 
 function startDragGraph(container) {
@@ -81,9 +83,30 @@ function dragLeftGraph(dist) { // nu gaan we vooruit in de tijd
 	requestMultipleData();
 }
 
+function preventDefault(e) { //prevents scrolling
+	e = e || window.event;
+	if (e.preventDefault)
+	  e.preventDefault();
+	e.returnValue = false;  
+}
+
+function disableScroll() {
+	if (window.addEventListener) // older firefox
+	  window.addEventListener('DOMMouseScroll', preventDefault, false);
+	window.onwheel = preventDefault; // modern standard
+	window.onmousewheel = document.onmousewheel = preventDefault; // older browsers, IE
+}
+
+function enableScroll() {
+	if (window.removeEventListener)
+		window.removeEventListener('DOMMouseScroll', preventDefault, false);
+	window.onmousewheel = document.onmousewheel = null; 
+	window.onwheel = null; 
+}
+
 function scrollGraph(container) {
-	let mouseX=d3.event.clientX-18; //d3.mouse(container)[0] werkt hier precies niet
-									// 18 is de marge van de body en de div samen... ja lelijk.
+	let mouseX=d3.event.clientX-50; //d3.mouse(container)[0] werkt hier precies niet
+									// 50 is de marge van de body en de div samen... ja lelijk.
 	let effectiveWidth=width-padding.left-padding.right
 	let scale=(mouseX-padding.left)/effectiveWidth //how much to the left is the mouse
 	scale=Math.max(0,scale);

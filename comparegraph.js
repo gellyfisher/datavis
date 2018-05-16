@@ -18,7 +18,7 @@ function setUpComparisonChart() {
 		.attr("height", height);
 
 	/* we can use the same functions to handle the events */
-	compare_graph.on("wheel", function() {scrollGraph(this);d3.event.stopPropagation();});
+	compare_graph.on("wheel", function() {scrollGraph(this);});
 
 	compare_graph.on("mousedown", function() {startDragGraph(this)});
 	compare_graph.on("mouseup", function() {endDragGraph(this)});
