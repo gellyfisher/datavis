@@ -4,6 +4,9 @@ let start = new Date(); //start date of the data we're getting
 start.setDate(end.getDate()-numPoints);
 let grid_stroke_color = "#e8e8e8"
 
+let last_requested_timeframe = "hour";
+let last_requested_time_between = 0;
+
 width = Math.round(screen.width / 1.5);
 const height = 350;
 const padding = {top: 20, left: 60, right: 200, bottom: 50}; //deze waardes kunnen nog aangepast worden
@@ -142,9 +145,11 @@ function requestData(currency="BTC") {
 
 	if (timeInBetween>=24*60) {
 		url+="day";
+		last_requested_timeframe = "day";
 		amount=Math.round(timeInBetween/1440);
 	} else if (timeInBetween>0) {
 		url+="hour";
+		last_requested_timeframe = "hour";
 		amount=Math.ceil(timeInBetween/60);
 	} else {
 		throw "invalid timeInBetween for the data request";
@@ -177,6 +182,8 @@ function setUp() {
 let saveData;
 
 function updateGraphs(data) {
+
+	last_requested_time_between = Math.abs(Date.parse(data[0].data[1].time) - Date.parse(data[0].data[0].time)) / 36e5
 
 	saveData = data
 	drawLineChart(data);

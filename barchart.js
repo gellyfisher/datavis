@@ -8,7 +8,8 @@ let bar_graph_padding={top: 30, right: padding.right, bottom: 50, left: padding.
 let bar_graph_height=180-bar_graph_padding.top-bar_graph_padding.bottom; // height of bars
 let bar_graph_width=width-bar_graph_padding.left-bar_graph_padding.right;
 
-let X_BAR_SCALE_OFFSET = 1
+let X_BAR_START_OFFSET = 2;
+
 
 function setUpBarChart() {
 	bar_graph=d3.select("div#volumes")
@@ -19,7 +20,7 @@ function setUpBarChart() {
 		.attr("transform","translate(" + bar_graph_padding.left + "," + bar_graph_padding.top + ")");
 
 	xbarScale = d3.scaleBand()
-			.rangeRound([0, bar_graph_width])
+			.range([X_BAR_START_OFFSET, bar_graph_width])
 			.paddingInner(0.05);
 
 	ybarScale = d3.scaleLinear()
@@ -31,15 +32,7 @@ function setUpBarChart() {
 				.ticks(5);
 
 	bar_yAxis.tickFormat(function(d) {
-		if (d<1000){
-			return "€" + d;
-		} else if (d<1000000) {
-			return "€" + Math.round(d/1000) + " K";
-		} else if (d<1000000000) {
-			return "€" + Math.round(d/1000000) + " M";
-		} else {
-			return "€" + Math.round(d/1000000000) + " B";
-		}
+		return format_volume_text(d);
 	});
 
 	bar_graph.append("g")
@@ -47,15 +40,35 @@ function setUpBarChart() {
 		.call(bar_yAxis);
 
 	bar_graph.append("text")
+			.attr("class", "bar_graph_title")
       .attr("y", -bar_graph_padding.top)
       .attr("x",-bar_graph_padding.left)
       .attr("dy", "1em")
       .style("text-anchor", "left")
-      .text("Trading volumes");
+      .text(write_bar_title());
 
 	coin = null
 }
 
+function format_volume_text(d) {
+	if (d<1000){
+		return "€" + d;
+	} else if (d<1000000) {
+		return "€" + Math.round(d/1000) + " K";
+	} else if (d<1000000000) {
+		return "€" + Math.round(d/1000000) + " M";
+	} else {
+		return "€" + Math.round(d/1000000000) + " B";
+	}
+}
+
+function write_bar_title() {
+	if (last_requested_time_between != 1) {
+		return "Trading volume last " + last_requested_time_between + " hours";
+	} else {
+		return "Trading volume last hour";
+	}
+}
 
 function drawBarChart(data) {
 
@@ -104,13 +117,15 @@ function drawBarChart(data) {
 		.attr("fill", d => cbarScale(d.volumeto))
 		.merge(bars)
 		.attr("id", (d, i) => "bar"+i) //needs to be before transition (otherwise async execution and indicator won't find the id yet)
+		.attr("class", "bar")
 		.transition()
 		.attr("width", xbarScale.bandwidth() - 0.05)
-		.attr("x", (d, i) => xbarScale(i) + X_BAR_SCALE_OFFSET)
+		.attr("x", (d, i) => xbarScale(i))
 		.attr("y", d => ybarScale(d.volumeto))
 		.attr("height", d => bar_graph_height-ybarScale(d.volumeto))
 		.attr("fill", d => cbarScale(d.volumeto));
 
+	d3.select(".bar_graph_title").text("Trading volume last " + last_requested_time_between + " hours");
 	drawBarGraphIndicator()
 	drawBarChartGridLines()
 }
@@ -118,11 +133,48 @@ function drawBarChart(data) {
 
 function drawBarGraphIndicator() {
 	if (coin!==null) {
-		let eachBand = xbarScale.step(); //distance between 2 bands
-		let index = Math.floor((mouseCoordX-bar_graph_padding.left) / eachBand);
-		bar_graph.select("#bar"+index).attr("stroke","black");
-		bar_graph.selectAll("rect:not(#bar"+index+")").attr("stroke",null);
+		if (mouseCoordX>=padding.left && mouseCoordX<=width-padding.right) {
+			let eachBand = xbarScale.step(); //distance between 2 bands
+			let index = Math.floor((mouseCoordX - X_BAR_START_OFFSET - bar_graph_padding.left) / eachBand + 0.05);
+			bar_graph.select("#bar"+index).attr("stroke","black");
+			bar_graph.selectAll("rect:not(#bar"+index+")").attr("stroke",null);
+
+			let bar = bar_graph.select("#bar"+index);
+			let bar_data = bar.datum();
+			let bar_x = parseFloat(bar.attr("x"));
+			let bar_width = parseFloat(bar.attr("width"));
+
+			if (bar_data) {
+				bar_graph.selectAll(".bar_graph_value_text").remove()
+
+				let bar_x_offset = bar_x + (bar_width / 2)
+				console.log(bar_x_offset)
+				bar_graph.append("text")
+					.attr("class", "bar_graph_value_text")
+					.style("text-anchor", "center")
+					.style("font-size", "small")
+					.attr("x", bar_x_offset - 15)
+					.attr("y", Math.max(bar.attr("y") - 30, 5))
+					.text(format_volume_text(bar_data.volumeto));
+
+				bar_graph.append("text")
+					.attr("class", "bar_graph_value_text")
+					.style("text-anchor", "center")
+					.style("font-size", "small")
+					.attr("x", bar_x_offset - 35)
+					.attr("y", 120)
+					.text(format_bar_date(bar_data.time));
+			}
+		}
 	}
+}
+
+
+function format_bar_date(date) {
+	if (last_requested_time_between > 24) {
+		return time_format_day(date);
+	}
+	return time_format_hour(date);
 }
 
 function drawBarChartGridLines() {

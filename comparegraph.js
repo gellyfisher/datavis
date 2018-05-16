@@ -39,8 +39,14 @@ function setUpComparisonChart() {
 				.scale(compare_yScale)
 
 	compare_yAxis.tickFormat(function(d) {
-			return Math.round(d * 100).toString() + " %";
+		let count = Math.round(d * 100)
+		if (count > 100000) {
+			return (count/100000).toString() + " x";;
+		}
+		return count.toString() + " %";
+
 		})
+
 
 	compare_graph.append("g")
 		.attr("class", "x axis compare")
