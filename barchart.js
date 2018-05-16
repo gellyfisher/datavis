@@ -39,25 +39,6 @@ function setUpBarChart() {
 			return Math.round(d/1000000000) + " B";
 		}
 	});
-	
-	bar_xAxis = d3.axisBottom()
-					.scale(xbarScale)
-					.tickFormat(function(d,i) { return i%4===0 ? "": d;})
-	
-	bar_graph.append("g")
-		.attr("class", "x axis bar")
-		.attr("transform", `translate(0, ${bar_graph_height})`)
-		.call(bar_xAxis);
-		
-	bar_graph.append("g")
-		.attr("class", "x axis bar")
-		.attr("transform", `translate(0, ${bar_graph_height})`)
-		.call(bar_xAxis)
-		.selectAll("text")
-		.style("text-anchor", "end")
-		.attr("dx", "-.8em")
-		.attr("dy", ".15em")
-		.attr("transform", "rotate(-30)");  // rotate the axis labels
 		
 	bar_graph.append("g")
 		.attr("class", "y axis bar")
@@ -101,15 +82,6 @@ function drawBarChart(data) {
 	xbarScale.domain(d3.range(bardata.length));
 	ybarScale.domain([0,d3.max(bardata,d=>d.volumeto)]);
 	cbarScale.domain([0,d3.max(bardata,d=>d.volumeto)]);
-
-	bar_graph.select(".x.axis.bar")
-		.transition()
-		.call(bar_xAxis)
-		.selectAll("text")	 // rotate the axis labels
-		.style("text-anchor", "end")
-		.attr("dx", "-.8em")
-		.attr("dy", ".15em")
-		.attr("transform", "rotate(-30)");
 		
 	bar_graph.select(".y.axis.bar")
 		.transition()
@@ -152,7 +124,7 @@ function drawBarGraphIndicator() {
 
 function drawBarChartGridLines() {
 	bar_graph.selectAll(".gridline").remove()
-	let ticks = bar_graph.selectAll("g.y>g.tick:nth-child(n+3)")  //nth-child(n+3) to avoid selecting the tick on the x-axis
+	let ticks = bar_graph.selectAll("g.y>g.tick")  //nth-child(n+3) to avoid selecting the tick on the x-axis
 	.append("line")
 		.attr("class", "gridline")
 		.attr("stroke", grid_stroke_color)
