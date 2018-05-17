@@ -1,5 +1,4 @@
-//line specific global variables
-
+//compare specific global variables
 
 let compare_graph_legend;
 let compare_xScale;
@@ -9,8 +8,8 @@ let compare_yAxis;
 let compare_graph;
 let compare_graph_line;
 let compare_graph_padding_left_offset = 40;
-function setUpComparisonChart() {
 
+function setUpComparisonChart() {
 
 	compare_graph = d3.select("div#compare_graph")
 		.append("svg")

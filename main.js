@@ -6,7 +6,7 @@ let grid_stroke_color = "#e8e8e8"
 
 let last_requested_time_between = 0;
 
-let width = Math.round(screen.width - 600);
+let width = Math.round(screen.width -600);
 const height = 350;
 const padding = {top: 40, left: 60, right: 200, bottom: 50}; //padding voor line en compare graph
 
@@ -45,8 +45,25 @@ function getFirstUnusedCurrencyIndex() {
 	return i;
 }
 
-let deselected_crypto_color = "#ddd"
+let deselected_crypto_color = "#eee"
 function setUpHtml() {
+	
+	$(document).keypress(function(e) {
+		if(e.which == 13) {
+			//swap views
+			div1 = $('#line_graph');
+			div2 = $('#compare_graph');
+
+			tdiv1 = div1.clone();
+			tdiv2 = div2.clone();
+			
+			div1.replaceWith(tdiv2);
+			div2.replaceWith(tdiv1);
+			$('#line_graph:parent').each(function () {
+				$(this).insertBefore($(this).prev('.div1'));
+			});
+		}
+	});
 
 	for (let i=0;i<currencyNames.length;i++) {
 		if (currencyNames[i].shortName in currentCurrenciesObject) { //these currencies are already selected

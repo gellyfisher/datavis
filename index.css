@@ -32,22 +32,22 @@ img {
   margin: auto;
   width: 90%;
   padding: 10px;
-  background-color: white;
+  background-color: #f8fbfc;
   display: block;
   overflow: auto;
 }
 
 #container {
-  float: left;
-  width: %70;
-  overflow: hidden;
+	float: left;
+	width: %70;
+	overflow: hidden;
 }
 
 #right_bar {
-  width: 280px;
-  float: right;
-  height: 100%;
-  position: relative;
+	width: 280px;
+	float: right;
+	height: 100%;
+	position: relative;
 
 }
 
@@ -85,6 +85,7 @@ div.container {
 	width: 250px;
     height: auto;
     padding: 10px 10px 10px 0px;
+	margin-bottom:20px;
 	overflow: hidden;
 	float:left;
 }
