@@ -184,15 +184,14 @@ function drawLineLegend(data) {
 		.attr("x", text_rect_x)
 		.attr("dy", "0.75em")
 		.attr("y", function(d, i) { return 60+20*i; })
-
-		if (mouseCoordX>=padding.left && mouseCoordX<=width-padding.right) {
-			legendTexts.text(function (d,i) {return formatPercentages(compare_yScale.invert(getY(i, "compare_graph_line_class")).toFixed(3))})
-		} else {
-			legendTexts.text(
-				function (d,i) {
-					return "100 %";
-				})
-		}
+		.text(function (d,i) {
+			let lineX=document.getElementsByClassName('line_graph_line_class')[i].getPointAtLength(0).x;
+			if (mouseCoordX>=padding.left && mouseCoordX<=width-padding.right && lineX<=mouseCoordX && lineX!==0) {
+				return "€ " + line_yScale.invert(getY(i, "line_graph_line_class")).toFixed(3)
+			} else {
+				return "€ 0";
+			}
+		});
 }
 
 function drawLineIndicator() {
@@ -242,17 +241,14 @@ function drawLineIndicator() {
 	}
 
 	let legendTexts=line_graph_legend.selectAll("text.legend").data(data,d => d.currency)
-	if (mouseCoordX>=padding.left && mouseCoordX<=width-padding.right) {
-		legendTexts.text(
-			function (d,i) {
-				return "€ " + line_yScale.invert(getY(i, "line_graph_line_class")).toFixed(3)
-			})
-	} else {
-		legendTexts.text(
-			function (d,i) {
-				return "€ 0";
-			})
-	}
+	legendTexts.text(function (d,i) {
+		let lineX=document.getElementsByClassName('line_graph_line_class')[i].getPointAtLength(0).x;
+		if (mouseCoordX>=padding.left && mouseCoordX<=width-padding.right && lineX<=mouseCoordX && lineX!==0) {
+			return "€ " + line_yScale.invert(getY(i, "line_graph_line_class")).toFixed(3)
+		} else {
+			return "€ 0";
+		}
+	});
 }
 
 function drawLineChartGridLines() {
