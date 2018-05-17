@@ -110,12 +110,12 @@ function drawLineChart(data) {
 	for (let i=0;i<data.length;i++) {
 		line_graph.append("g").attr("class",  data[i].currency)
 			.append("path").datum(data[i].data)
-			.attr("class", "line_graph_line_class line_class")
+			.attr("class", "line_graph_line_class line_class " + data[i].currency)
 			.attr("fill", "none")
 			.attr("stroke", getColorByCurrencyName(data[i].currency))
 			.attr("stroke-linejoin", "round")
 			.attr("stroke-linecap", "round")
-			.attr("stroke-width", data[i].currency===coin?2.5:1.5)
+			.attr("stroke-width",active_coins.indexOf(data[i].currency) != -1 ? 2.5 : 1.5)
 			.attr("d", line_grap_line);
 	}
 
@@ -262,4 +262,10 @@ function drawLineChartGridLines() {
 		.attr("stroke", grid_stroke_color)
 		.attr("zIndex", "-1")
 		.attr("x2", width - padding.right - padding.left)
+}
+
+
+function resetLineGraphLines(coin) {
+	line_graph.select("path.line_graph_line_class.line_class."+coin).attr("stroke-width", 1.5);
+	return ;
 }

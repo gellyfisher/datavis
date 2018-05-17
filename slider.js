@@ -80,7 +80,7 @@ function drawSlider(data) {
 			.attr("stroke", getColorByCurrencyName(data[i].currency))
 			.attr("stroke-linejoin", "round")
 			.attr("stroke-linecap", "round")
-			.attr("stroke-width", data[i].currency===coin?2.5:1.5)
+			.attr("stroke-width", data[i].currency in currentCurrenciesObject?2.5:1.5)
 			.attr("d", line_grap_line);
 	}
 

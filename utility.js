@@ -98,3 +98,14 @@ function getKeyByValue(object, value) {
 function getColorByCurrencyName(given_coin) {
 	return cScale(currentCurrenciesObject[given_coin]);
 }
+
+
+function getFirstUnusedCurrencyIndex() {
+	let i = 0;
+	let vals = Object.values(currentCurrenciesObject)
+
+	while (vals.includes(i)) {
+		i = i + 1;
+	}
+	return i;
+}

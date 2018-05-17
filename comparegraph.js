@@ -143,7 +143,7 @@ function drawComparisonChart(data) {
 			.attr("stroke", function(d, i) {return getColorByCurrencyName(currency)})
 			.attr("stroke-linejoin", "round")
 			.attr("stroke-linecap", "round")
-			.attr("stroke-width", data[i].currency===coin?2.5:1.5)
+			.attr("stroke-width", active_coins.indexOf(data[i].currency) != -1 ? 2.5 : 1.5)
 			.attr("d", compare_graph_line);
 	}
 

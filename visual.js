@@ -29,6 +29,7 @@ let currencyNames=[{shortName:"XMR",longName :"Monero"},{shortName:"ETH",longNam
 					{shortName:"XZC",longName:"Zcoin"},{shortName:"ETC",longName:"Ethereum Classic"}];
 
 let currentCurrenciesObject = {"XMR":0,"MLN":1,"LTC":2}
+let active_coins = ["XMR", "MLN", "LTC"]
 
 $(document).ready(function() {
 	setUpHtml();
@@ -36,15 +37,6 @@ $(document).ready(function() {
 	requestMultipleData();
 });
 
-function getFirstUnusedCurrencyIndex() {
-	let i = 0;
-	let vals = Object.values(currentCurrenciesObject)
-
-	while (vals.includes(i)) {
-		i = i + 1;
-	}
-	return i;
-}
 
 let deselected_crypto_color = "#ddd"
 function setUpHtml() {
@@ -52,8 +44,6 @@ function setUpHtml() {
 	for (let i=0;i<currencyNames.length;i++) {
 		if (currencyNames[i].shortName in currentCurrenciesObject) { //these currencies are already selected
 			let currencyName = currencyNames[i].shortName
-			console.log(currencyName)
-			console.log()
 			$("#cryptoSelected").append('<li value="'+currencyNames[i].shortName+'" style="background-color: ' + getColorByCurrencyName(currencyName)+ '" > ' + currencyNames[i].longName + '</li>');
 
 		} else {
@@ -195,8 +185,10 @@ function requestData(currency="BTC") {
 function setUp() {
 	setUpLineChart();
 	setUpComparisonChart();
-	setUpBarChart();
-	setUpCandleChart();
+	addBarChart("XMR", getColorByCurrencyName("XMR"));
+	addBarChart("MLN", getColorByCurrencyName("MLN"));
+	addBarChart("LTC", getColorByCurrencyName("LTC"));
+	// setUpCandleChart();
 
 	setupMouseEvents();
 }
@@ -211,10 +203,5 @@ function updateGraphs(data) {
 	drawLineChart(data);
 	drawComparisonChart(data);
 	drawBarChart(data);
-	drawCandleChart(data);
-}
-
-function updateGraphsCoinRemoved() {
-	drawBarChart(null);
-	drawCandleChart(null);
+	// drawCandleChart(data);
 }

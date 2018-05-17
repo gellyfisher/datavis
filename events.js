@@ -14,7 +14,7 @@ function setupMouseEvents() {
 			getMouseCoordinates(this);
 			drawLineIndicator();
 			drawComparisonIndicator();
-			drawCandleIndicator();
+			// drawCandleIndicator();
 			drawBarGraphIndicator();
 		})
 	d3.selectAll("div#container").on("mouseover",disableScroll);
@@ -126,25 +126,37 @@ function scrollGraph(container) {
 }
 
 
-let coin; // currently selected currency
 
-function assignCoin(newcoin) {
-	coin = newcoin;
+function addCoin(coin){
+	let coinindex = active_coins.indexOf(coin)
+	if (coinindex !== -1) {
+		return false;
+	}
+	active_coins.push(coin)
+	return true;
+}
+
+function removeCoin(coin) {
+	let coinindex = active_coins.indexOf(coin)
+	if (coinindex !== -1) {
+		active_coins.splice(coinindex, 1)
+		return true;
+	}
+	return false;
 }
 
 function handleLineClick(d, i) {
-	if (coin == d.currency){
-		assignCoin(null)
-		d3.selectAll("g>path.line_class") //if we don't use path.line_class then the axis will be selected too
-				.attr("stroke-width",1.5)
-		updateGraphsCoinRemoved()
+	console.log("HANDLING LINE CLICK")
+	console.log(d.currency)
 
+	let coin = d.currency
+	let coinindex = active_coins.indexOf(coin)
+	if (coinindex !== -1) {
+		removeCoin(coin)
+		removeBarChart(coin)
 	} else {
-		d3.selectAll("."+d.currency+">path").attr("stroke-width",2)
-		d3.selectAll("g:not(."+d.currency+")>path.line_class") //if we don't use path.line_class then the axis will be selected too
-				.attr("stroke-width",1.5)
-
-		assignCoin(d.currency)
-		updateGraphs(saveData)
+		addCoin(coin)
+		addBarChart(coin, getColorByCurrencyName(coin))
 	}
+
 }
