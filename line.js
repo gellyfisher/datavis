@@ -56,12 +56,11 @@ function setUpLineChart() {
 
 	line_graph.append("text")
 			.attr("class", "line_graph_title")
-	  	// .attr("transform",`rotate(-90)`)s
-      .attr("y", 0)
-      .attr("x", padding.left - 15)
-      .attr("dy", "1em")
-      .style("text-anchor", "middle")
-      .text("Coin value");
+			.attr("y", 0)
+			.attr("x", 0)
+			.attr("dy", "1em")
+			.style("text-anchor", "left")
+			.text("Cryptocurrency value");
 
 
 	line_graph_legend = line_graph.append("g")
@@ -227,7 +226,7 @@ function drawLineIndicator() {
 					return "none"
 				};
 			});
-
+		
 		mouseTexts=line_graph.selectAll("text.mouseText").data(data,d=>d.currency);
 		mouseTexts.exit().remove();
 		mouseTexts.enter()

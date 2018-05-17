@@ -3,7 +3,7 @@ let bar_graph;
 
 let bar_yAxis,bar_xAxis;
 
-let bar_graph_padding={top: 30, right: padding.right, bottom: 50, left: padding.left};
+let bar_graph_padding={top: 40, right: padding.right, bottom: 50, left: padding.left};
 
 let bar_graph_height=180-bar_graph_padding.top-bar_graph_padding.bottom; // height of bars
 let bar_graph_width=width-bar_graph_padding.left-bar_graph_padding.right;
@@ -154,9 +154,9 @@ function drawBarGraphIndicator() {
 				let bar_x_offset = bar_x + (bar_width / 2)
 				bar_graph.append("text")
 					.attr("class", "bar_graph_value_text")
-					.style("text-anchor", "center")
+					.style("text-anchor", "middle")
 					.style("font-size", "small")
-					.attr("x", Math.max(bar_x_offset - 15, 3))
+					.attr("x", Math.max(bar_x_offset, 3))
 					.attr("y", Math.max(bar.attr("y") - 30, 5))
 					.text(format_volume_text(bar_data.volumeto));
 

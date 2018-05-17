@@ -65,11 +65,11 @@ function setUpComparisonChart() {
 
 	compare_graph.append("text")
 			.attr("class", "line_graph_title")
-      .attr("y", 0)
-      .attr("x", padding.left + 20 )
-      .attr("dy", "1em")
-      .style("text-anchor", "middle")
-      .text("Relative coin value");
+		  .attr("y", 0)
+		  .attr("x", 0 )
+		  .attr("dy", "1em")
+		  .style("text-anchor", "left")
+		  .text("Relative value");
 
 	compare_graph_legend = compare_graph.append("g")
 			.attr("class","legend")

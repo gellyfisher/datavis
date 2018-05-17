@@ -4,12 +4,11 @@ let start = new Date(); //start date of the data we're getting
 start.setDate(end.getDate()-numPoints);
 let grid_stroke_color = "#e8e8e8"
 
-let last_requested_timeframe = "hour";
 let last_requested_time_between = 0;
 
 let width = Math.round(screen.width - 600);
 const height = 350;
-const padding = {top: 30, left: 60, right: 200, bottom: 50}; //padding voor line en compare graph
+const padding = {top: 40, left: 60, right: 200, bottom: 50}; //padding voor line en compare graph
 
 
 let cScale =  d3.scaleOrdinal().range(d3.schemeSet1);
@@ -165,11 +164,9 @@ function requestData(currency="BTC") {
 
 	if (timeInBetween>=24*60) {
 		url+="day";
-		last_requested_timeframe = "day";
 		amount=Math.round(timeInBetween/1440);
 	} else if (timeInBetween>0) {
 		url+="hour";
-		last_requested_timeframe = "hour";
 		amount=Math.ceil(timeInBetween/60);
 	} else {
 		throw "invalid timeInBetween for the data request";
