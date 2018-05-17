@@ -182,14 +182,6 @@ function drawBarGraphIndicator() {
 					.attr("y", bar_graph_height)
 					.attr("dy","1.5em")
 					.text(format_bar_date(bar_date))
-					.style("display",function () {
-						let lineX=document.getElementsByClassName('line_graph_line_class')[barindex].getPointAtLength(0).x;
-						if (lineX<=mouseCoordX && lineX!==0) {
-							return ""
-						} else {
-							return "none"
-						};
-					});
 			}
 		}
 	}
