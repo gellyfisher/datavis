@@ -152,13 +152,16 @@ function drawBarGraphIndicator() {
 				before_date.setHours(before_date.getHours() - last_requested_time_between)
 
 				let bar_x_offset = bar_x + (bar_width / 2)
+
+				let bar_text = format_volume_text(bar_data.volumeto)
+
 				bar_graph.append("text")
 					.attr("class", "bar_graph_value_text")
 					.style("text-anchor", "middle")
 					.style("font-size", "small")
-					.attr("x", Math.max(bar_x_offset, 33))
+					.attr("x", Math.max(bar_x_offset, (bar_text.length / 2) * 8 + 3))
 					.attr("y", Math.max(bar.attr("y") - 40, 2))
-					.text(format_volume_text(bar_data.volumeto));
+					.text(bar_text);
 
 				bar_graph.append("text")
 					.attr("class", "bar_graph_value_text")
