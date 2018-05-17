@@ -3,7 +3,7 @@ let bar_graph;
 
 let bar_yAxis,bar_xAxis;
 
-let bar_graph_padding={top: 30, right: padding.right, bottom: 50, left: padding.left};
+let bar_graph_padding={top: 40, right: padding.right, bottom: 50, left: padding.left};
 
 let bar_graph_height=180-bar_graph_padding.top-bar_graph_padding.bottom; // height of bars
 let bar_graph_width=width-bar_graph_padding.left-bar_graph_padding.right;
@@ -126,7 +126,7 @@ function drawBarChart(data) {
 		.attr("height", d => bar_graph_height-ybarScale(d.volumeto))
 		.attr("fill", d => cbarScale(d.volumeto));
 
-	d3.select(".bar_graph_title").text("Trading volumes");
+	d3.select(".bar_graph_title").text("Trading volumes (every "+last_requested_time_between+" hours)");
 	drawBarGraphIndicator()
 	drawBarChartGridLines()
 }
