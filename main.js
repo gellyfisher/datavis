@@ -47,6 +47,23 @@ function getFirstUnusedCurrencyIndex() {
 
 let deselected_crypto_color = "#eee"
 function setUpHtml() {
+	
+	$(document).keypress(function(e) {
+		if(e.which == 13) {
+			//swap views
+			div1 = $('#line_graph');
+			div2 = $('#compare_graph');
+
+			tdiv1 = div1.clone();
+			tdiv2 = div2.clone();
+			
+			div1.replaceWith(tdiv2);
+			div2.replaceWith(tdiv1);
+			$('#line_graph:parent').each(function () {
+				$(this).insertBefore($(this).prev('.div1'));
+			});
+		}
+	});
 
 	for (let i=0;i<currencyNames.length;i++) {
 		if (currencyNames[i].shortName in currentCurrenciesObject) { //these currencies are already selected
