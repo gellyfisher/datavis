@@ -14,7 +14,6 @@ function setupMouseEvents() {
 			getMouseCoordinates(this);
 			drawLineIndicator();
 			drawComparisonIndicator();
-			// drawCandleIndicator();
 			drawBarGraphIndicator();
 		})
 	d3.selectAll("div#container").on("mouseover",disableScroll);
@@ -135,14 +134,9 @@ function assignCoin(newcoin) {
 function handleLineClick(d, i) {
 	if (coin == d.currency){
 		assignCoin(null)
-		d3.selectAll("g>path.line_class") //if we don't use path.line_class then the axis will be selected too
-				.attr("stroke-width",1.5)
-		updateGraphsCoinRemoved()
+		updateGraphs(saveData)
 
 	} else {
-		d3.selectAll("."+d.currency+">path").attr("stroke-width",2)
-		d3.selectAll("g:not(."+d.currency+")>path.line_class") //if we don't use path.line_class then the axis will be selected too
-				.attr("stroke-width",1.5)
 
 		assignCoin(d.currency)
 		updateGraphs(saveData)
