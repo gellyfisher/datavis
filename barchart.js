@@ -10,6 +10,8 @@ let bar_graph_width=width-bar_graph_padding.left-bar_graph_padding.right;
 
 let X_BAR_START_OFFSET = 2;
 
+let barindex;
+
 
 function setUpBarChart() {
 	d3.select("div#volumes").on("wheel", function () {scrollGraph(this)});
@@ -42,11 +44,11 @@ function setUpBarChart() {
 
 	bar_graph.append("text")
 			.attr("class", "bar_graph_title")
-      .attr("y", -bar_graph_padding.top)
-      .attr("x",-bar_graph_padding.left + 5)
-      .attr("dy", "1em")
-      .style("text-anchor", "left")
-      .text(write_bar_title());
+		  .attr("y", -bar_graph_padding.top)
+		  .attr("x",-bar_graph_padding.left + 5)
+		  .attr("dy", "1em")
+		  .style("text-anchor", "left")
+		  .text(write_bar_title());
 
 	coin = null
 }
@@ -83,7 +85,8 @@ function drawBarChart(data) {
 	let bardata,cbarScale;
 
 	for (key in data) {
-		if (data[key].currency === coin) {
+		if (data[key].currency === coin && !found) {
+			barindex=key;
 			bardata = data[key].data
 			cbarScale = d3.scaleSequential()
 				.interpolator(d3.interpolateRgb(shadeColor(cScale(key), 40), shadeColor(cScale(key), -40)));
@@ -161,7 +164,15 @@ function drawBarGraphIndicator() {
 					.style("font-size", "small")
 					.attr("x", Math.max(bar_x_offset, (bar_text.length / 2) * 8 + 3))
 					.attr("y", Math.max(bar.attr("y") - 40, 2))
-					.text(bar_text);
+					.text(bar_text)
+					.style("display",function () {
+						let lineX=document.getElementsByClassName('line_graph_line_class')[barindex].getPointAtLength(0).x;
+						if (lineX<=mouseCoordX && lineX!==0) {
+							return ""
+						} else {
+							return "none"
+						};
+					});
 
 				bar_graph.append("text")
 					.attr("class", "bar_graph_value_text")
@@ -170,7 +181,15 @@ function drawBarGraphIndicator() {
 					.attr("x", bar_x_offset)
 					.attr("y", bar_graph_height)
 					.attr("dy","1.5em")
-					.text(format_bar_date(bar_date));
+					.text(format_bar_date(bar_date))
+					.style("display",function () {
+						let lineX=document.getElementsByClassName('line_graph_line_class')[barindex].getPointAtLength(0).x;
+						if (lineX<=mouseCoordX && lineX!==0) {
+							return ""
+						} else {
+							return "none"
+						};
+					});
 			}
 		}
 	}
