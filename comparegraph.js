@@ -69,7 +69,7 @@ function setUpComparisonChart() {
 		  .attr("x", 0 )
 		  .attr("dy", "1em")
 		  .style("text-anchor", "left")
-		  .text("Relative value");
+		  .text("Relative cryptocurrency value");
 
 	compare_graph_legend = compare_graph.append("g")
 			.attr("class","legend")
@@ -79,7 +79,8 @@ function setUpComparisonChart() {
 		.attr("x",0)
 		.attr("y",50)
 		.attr("font-weight","bold")
-		.text("Currencies");
+		.text("Current value");
+		// .text("Currencies");
 
 	setUpCompare();
 }

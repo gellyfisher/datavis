@@ -14,7 +14,7 @@ function setupMouseEvents() {
 			getMouseCoordinates(this);
 			drawLineIndicator();
 			drawComparisonIndicator();
-			drawCandleIndicator();
+			// drawCandleIndicator();
 			drawBarGraphIndicator();
 		})
 	d3.selectAll("div#container").on("mouseover",disableScroll);

@@ -191,7 +191,7 @@ function setUp() {
 	setUpLineChart();
 	setUpComparisonChart();
 	setUpBarChart();
-	setUpCandleChart();
+	// setUpCandleChart();
 
 	setupMouseEvents();
 }
@@ -206,7 +206,7 @@ function updateGraphs(data) {
 	drawLineChart(data);
 	drawComparisonChart(data);
 	drawBarChart(data);
-	drawCandleChart(data);
+	// drawCandleChart(data);
 }
 
 function updateGraphsCoinRemoved() {

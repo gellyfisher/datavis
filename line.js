@@ -60,7 +60,7 @@ function setUpLineChart() {
 			.attr("x", 0)
 			.attr("dy", "1em")
 			.style("text-anchor", "left")
-			.text("Cryptocurrency value");
+			.text("Absolute cryptocurrency value");
 
 
 	line_graph_legend = line_graph.append("g")
@@ -71,7 +71,8 @@ function setUpLineChart() {
 		.attr("x",0)
 		.attr("y",50)
 		.attr("font-weight","bold")
-		.text("Currencies");
+		.text("Current value")
+		// .text("Currencies");
 
 	setUpLine();
 }
@@ -171,6 +172,7 @@ function drawLineLegend(data) {
 	legendTexts.enter()
 		.append("text")
 		.attr("class","legend")
+		.attr("id", function(d) {return findLongName(d.currency)})
 		.attr("x", padding.right+text_rect_x)
 		.attr("dy", "0.75em")
 		.attr("y", function(d, i) { return 60+20*i; })
@@ -179,7 +181,7 @@ function drawLineLegend(data) {
 		.attr("x", text_rect_x)
 		.attr("dy", "0.75em")
 		.attr("y", function(d, i) { return 60+20*i; })
-	.text(function(d) {return findLongName(d.currency)});
+	.text(function(d) {return "€ 0"}); //return findLongName(d.currency)});
 }
 
 function drawLineIndicator() {
@@ -226,12 +228,12 @@ function drawLineIndicator() {
 					return "none"
 				};
 			});
-		
+
 		mouseTexts=line_graph.selectAll("text.mouseText").data(data,d=>d.currency);
 		mouseTexts.exit().remove();
 		mouseTexts.enter()
 			.append("text")
-			.attr("class","mouseText")
+			.attr("class", function (d,i) { return "mouseText " + data[i].currency }  )
 			.attr("font-size", "small")
 			.merge(mouseTexts)
 			.attr("x",mouseCoordX)
@@ -239,7 +241,7 @@ function drawLineIndicator() {
 				return getY(i, "line_graph_line_class");
 			})
 			.attr("transform", "translate(10,3)")
-			.text(function (d,i) {return line_yScale.invert(getY(i, "line_graph_line_class")).toFixed(3)})
+			.text(function (d,i) { return line_yScale.invert(getY(i, "line_graph_line_class")).toFixed(3)})
 			.style("display",function (d,i) {
 				let lineX=document.getElementsByClassName('line_graph_line_class')[i].getPointAtLength(0).x;
 				if (lineX<=mouseCoordX && lineX!==0) {
@@ -249,6 +251,9 @@ function drawLineIndicator() {
 				};
 			});
 	}
+
+	let legendTexts=line_graph_legend.selectAll("text.legend").data(data,d => d.currency)
+	legendTexts.text(function (d,i) { return "€ " + line_yScale.invert(getY(i, "line_graph_line_class")).toFixed(3)})
 }
 
 function drawLineChartGridLines() {
