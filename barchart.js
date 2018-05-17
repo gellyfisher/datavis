@@ -79,7 +79,6 @@ function drawBarChart(data) {
 		d3.select("#volumes").style("visibility", "hidden");
 		return;
 	}
-	d3.select("#volumes").style("visibility", "visible");
 
 	let found = false;
 	let bardata,cbarScale;
@@ -120,6 +119,7 @@ function drawBarChart(data) {
 		.attr("height", d => 0)
 		.attr("fill", d => cbarScale(d.volumeto))
 		.merge(bars)
+		.attr("fill", d => cbarScale(d.volumeto))
 		.attr("id", (d, i) => "bar"+i) //needs to be before transition (otherwise async execution and indicator won't find the id yet)
 		.attr("class", "bar")
 		.transition()
@@ -127,8 +127,8 @@ function drawBarChart(data) {
 		.attr("x", (d, i) => xbarScale(i))
 		.attr("y", d => ybarScale(d.volumeto))
 		.attr("height", d => bar_graph_height-ybarScale(d.volumeto))
-		.attr("fill", d => cbarScale(d.volumeto));
-
+	
+	d3.select("#volumes").style("visibility", "visible"); // in case the bar chart was hidden because a coin was deselected
 	d3.select(".bar_graph_title").text(write_bar_title());
 	drawBarGraphIndicator()
 	drawBarChartGridLines()
