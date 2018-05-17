@@ -37,14 +37,7 @@ function setUpComparisonChart() {
 	compare_yAxis = d3.axisLeft()
 				.scale(compare_yScale)
 
-	compare_yAxis.tickFormat(function(d) {
-		let count = Math.round(d * 100)
-		if (count > 100000) {
-			return (count/100000).toString() + " x";;
-		}
-		return count.toString() + " %";
-
-		})
+	compare_yAxis.tickFormat(function(d) {return formatPercentages(d);})
 
 
 	compare_graph.append("g")
@@ -83,6 +76,15 @@ function setUpComparisonChart() {
 
 	setUpCompare();
 }
+
+function formatPercentages(d) {
+	let count = Math.round(d * 100)
+	if (count > 100000) {
+		return (Math.round(count/1000)/100).toString() + " x";;
+	}
+	return count.toString() + " %";
+
+	}
 
 function setUpCompare() {
 	compare_graph_line = d3.line()
@@ -204,7 +206,7 @@ function drawComparisonLegend(data) {
 		.attr("x", 20)
 		.attr("dy", "0.75em")
 		.attr("y", function(d, i) { return 60+20*i; })
-		.text(function(d) {return findLongName(d.currency)});
+		.text(function(d) {return "100%";}) // findLongName(d.currency)});
 }
 
 function drawComparisonIndicator() {
@@ -252,34 +254,10 @@ function drawComparisonIndicator() {
 				};
 			});
 
-		// mouseTexts=compare_graph.selectAll("text.mouseText").data(data,d=>d.currency);
-		// mouseTexts.exit().remove();
-		// mouseTexts.enter()
-		// 	.append("text")
-		// 	.attr("class","mouseText")
-		// 	.attr("font-size", "small")
-		// 	.merge(mouseTexts)
-		// 	.attr("x",mouseCoordX)
-		// 	.attr("y",function (d,i) {
-		// 		return getY(i, "compare_graph_line_class");
-		// 	})
-		// 	.attr("transform", "translate(10,3)")
-		// 	.text(function (d,i) {return compare_yScale.invert(getY(i, "compare_graph_line_class")).toFixed(3)})
-		// 	.style("display",function (d,i) {
-		// 		let lineX=document.getElementsByClassName('line_graph_line_class')[i].getPointAtLength(0).x;
-		// 		if (lineX<=mouseCoordX && lineX!==0) {
-		// 			return ""
-		// 		} else {
-		// 			return "none"
-		// 		};
-		// 	});
 	}
 	let legendTexts=compare_graph_legend.selectAll("text.legend").data(data,d => d.currency);
 	if (mouseCoordX>=padding.left && mouseCoordX<=width-padding.right) {
-		legendTexts.text(
-			function (d,i) {
-				return line_yScale.invert(getY(i, "line_graph_line_class")).toFixed(3) + " %"
-			})
+		legendTexts.text(function (d,i) {return formatPercentages(compare_yScale.invert(getY(i, "compare_graph_line_class")).toFixed(3))})
 	} else {
 		legendTexts.text(
 			function (d,i) {

@@ -232,5 +232,5 @@ function updateGraphs(data) {
 
 function updateGraphsCoinRemoved() {
 	drawBarChart(null);
-	drawCandleChart(null);
+	// drawCandleChart(null);
 }
