@@ -1,6 +1,5 @@
 //line specific global variables
 
-
 let line_graph_legend;
 let line_xScale;
 let line_yScale;

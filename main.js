@@ -7,9 +7,9 @@ let grid_stroke_color = "#e8e8e8"
 let last_requested_timeframe = "hour";
 let last_requested_time_between = 0;
 
-width = Math.round(screen.width / 1.5);
+let width = Math.round(screen.width -550);
 const height = 350;
-const padding = {top: 30, left: 60, right: 200, bottom: 50}; //deze waardes kunnen nog aangepast worden
+const padding = {top: 30, left: 60, right: 200, bottom: 50}; //padding voor line en compare graph
 
 
 let cScale =  d3.scaleOrdinal().range(d3.schemeSet1);
@@ -17,7 +17,7 @@ let cScale =  d3.scaleOrdinal().range(d3.schemeSet1);
 let mouseCircleRadius = 6;
 
 let time_format_day = d3.timeFormat("%b %e %Y");
-let time_format_hour = d3.timeFormat("%b %e, %H h");
+let time_format_hour = d3.timeFormat("%b %e, %-H %p");
 
 let dragging=false;
 let prevTime=Date.now();
@@ -32,7 +32,7 @@ let currentCurrenciesObject = {"XMR":0,"MLN":1,"LTC":2}
 
 $(document).ready(function() {
 	setUpHtml();
-  setUp();
+	setUp();
 	requestMultipleData();
 });
 
@@ -52,9 +52,7 @@ function setUpHtml() {
 	for (let i=0;i<currencyNames.length;i++) {
 		if (currencyNames[i].shortName in currentCurrenciesObject) { //these currencies are already selected
 			let currencyName = currencyNames[i].shortName
-			console.log(currencyName)
-			console.log()
-			$("#cryptoSelected").append('<li value="'+currencyNames[i].shortName+'" style="background-color: ' + getColorByCurrencyName(currencyName)+ '" > ' + currencyNames[i].longName + '</li>');
+			$("#cryptoSelected").append('<li value="'+currencyNames[i].shortName+'" style="background-color: ' + shadeColor(getColorByCurrencyName(currencyName),10)+ '" > ' + currencyNames[i].longName + '</li>');
 
 		} else {
 			$("#cryptoResult").append('<li value="'+currencyNames[i].shortName+'" style="background-color: ' + deselected_crypto_color + '" > ' + currencyNames[i].longName + '</li>');
