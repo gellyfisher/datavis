@@ -10,8 +10,9 @@ let width = Math.round(screen.width -600);
 const height = 350;
 const padding = {top: 40, left: 60, right: 200, bottom: 50}; //padding voor line en compare graph
 
+let MAX_COINS = 10;
 
-let cScale =  d3.scaleOrdinal().range(d3.schemeSet1);
+let cScale =  d3.scaleOrdinal().range(d3.schemeCategory10);
 
 let mouseCircleRadius = 6;
 
@@ -47,7 +48,7 @@ function getFirstUnusedCurrencyIndex() {
 
 let deselected_crypto_color = "#eee"
 function setUpHtml() {
-	
+
 	$(document).keypress(function(e) {
 		if(e.which == 13) {
 			//swap views
@@ -56,7 +57,7 @@ function setUpHtml() {
 
 			tdiv1 = div1.clone();
 			tdiv2 = div2.clone();
-			
+
 			div1.replaceWith(tdiv2);
 			div2.replaceWith(tdiv1);
 			$('#line_graph:parent').each(function () {
@@ -76,6 +77,9 @@ function setUpHtml() {
 	}
 
 	function selectCrypto() {
+		if (Object.keys(currentCurrenciesObject).length >= MAX_COINS) {
+			return ;
+		}
 		let val=$(this).attr('value');
 		if (val in currentCurrenciesObject) {
 			return false;
