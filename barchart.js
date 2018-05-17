@@ -166,9 +166,6 @@ function drawBarGraphIndicator() {
 					.attr("y", Math.max(bar.attr("y") - 40, 2))
 					.text(bar_text)
 					.style("display",function () {
-						let line = document.getElementsByClassName('line_graph_line_class')
-						console.log(line)
-						console.log(barindex)
 						let lineX = document.getElementsByClassName('line_graph_line_class')[barindex].getPointAtLength(0).x;
 						if (lineX<=mouseCoordX && lineX!==0) {
 							return ""
