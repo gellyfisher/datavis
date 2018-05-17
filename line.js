@@ -228,28 +228,6 @@ function drawLineIndicator() {
 					return "none"
 				};
 			});
-
-		// mouseTexts=line_graph.selectAll("text.mouseText").data(data,d=>d.currency);
-		// mouseTexts.exit().remove();
-		// mouseTexts.enter()
-		// 	.append("text")
-		// 	.attr("class", function (d,i) { return "mouseText " + data[i].currency }  )
-		// 	.attr("font-size", "small")
-		// 	.merge(mouseTexts)
-		// 	.attr("x",mouseCoordX)
-		// 	.attr("y",function (d,i) {
-		// 		return getY(i, "line_graph_line_class");
-		// 	})
-		// 	.attr("transform", "translate(10,3)")
-		// 	.text(function (d,i) { return line_yScale.invert(getY(i, "line_graph_line_class")).toFixed(3)})
-		// 	.style("display",function (d,i) {
-		// 		let lineX=document.getElementsByClassName('line_graph_line_class')[i].getPointAtLength(0).x;
-		// 		if (lineX<=mouseCoordX && lineX!==0) {
-		// 			return ""
-		// 		} else {
-		// 			return "none"
-		// 		};
-		// 	});
 	}
 
 	let legendTexts=line_graph_legend.selectAll("text.legend").data(data,d => d.currency)
