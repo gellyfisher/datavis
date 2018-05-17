@@ -74,10 +74,10 @@ function write_bar_title() {
 function drawBarChart(data) {
 
 	if (coin === null || data === null) {
-			d3.select("#volumes").style("display", "none");
+		d3.select("#volumes").style("display", "none");
 		return;
 	}
-		d3.select("#volumes").style("display", "block");
+	d3.select("#volumes").style("display", "block");
 
 	let found = false;
 	let bardata,cbarScale;
@@ -126,7 +126,7 @@ function drawBarChart(data) {
 		.attr("height", d => bar_graph_height-ybarScale(d.volumeto))
 		.attr("fill", d => cbarScale(d.volumeto));
 
-	d3.select(".bar_graph_title").text("Trading volume last " + last_requested_time_between + " hours");
+	d3.select(".bar_graph_title").text("Trading volumes");
 	drawBarGraphIndicator()
 	drawBarChartGridLines()
 }
@@ -151,9 +151,9 @@ function drawBarGraphIndicator() {
 				let bar_x_offset = bar_x + (bar_width / 2)
 				bar_graph.append("text")
 					.attr("class", "bar_graph_value_text")
-					.style("text-anchor", "center")
+					.style("text-anchor", "middle")
 					.style("font-size", "small")
-					.attr("x", Math.max(bar_x_offset - 15, 3))
+					.attr("x", Math.max(bar_x_offset, 3))
 					.attr("y", Math.max(bar.attr("y") - 30, 5))
 					.text(format_volume_text(bar_data.volumeto));
 
