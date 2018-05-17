@@ -83,9 +83,9 @@ div.container {
 }
 
 #periodSelector {
-	width: 250px;
+	width: 251px;
     height: auto;
-    padding: 10px 10px 10px 0px;
+    padding: 10px 0px 10px 0px;
 	margin-bottom: 20px;
 	margin-top: 20px;
 	overflow: hidden;
@@ -102,7 +102,7 @@ div.container {
     color: black; /* Add a black text color */
 	display:block;
 	width:auto;
-	font-size:14.5px;
+	font-size:13.5px;
 }
 
 .period:hover {
@@ -110,7 +110,7 @@ div.container {
 }
 
 #cryptoSelecter {
-	width:250px;
+	width:251px;
 	box-sizing:border-box;
     font-size: 16px;
     padding: 12px 12px 12px 24px;
@@ -122,7 +122,7 @@ div.container {
 	border-top: 1px solid #ddd;
 	overflow: auto;
 	max-height:250px;
-	width:250px;
+	width:251px;
     list-style-type: none;
     padding: 0;
     margin: 0 0 12px 0;

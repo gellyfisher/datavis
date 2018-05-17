@@ -179,6 +179,7 @@ function drawComparisonLegend(data) {
 	legendRects.enter()
 			.append("rect")
 			.attr("class","legend")
+			.on("click",  function(d, i) { handleLineClick(d, i); d3.event.stopPropagation(); })
 			.attr("x", padding.right)
 			.attr("y", function(d, i) { return 60+20*i; })
 			.merge(legendRects)
@@ -198,15 +199,26 @@ function drawComparisonLegend(data) {
 	legendTexts.enter()
 		.append("text")
 		.attr("class","legend")
+		.on("click",  function(d, i) { handleLineClick(d, i); d3.event.stopPropagation(); })
 		.attr("x", padding.right+20)
 		.attr("dy", "0.75em")
 		.attr("y", function(d, i) { return 60+20*i; })
 		.merge(legendTexts)
 		.transition()
+		.attr("font-weight", function (d,i) { return data[i].currency===coin?"bold":"normal";})
 		.attr("x", 20)
 		.attr("dy", "0.75em")
 		.attr("y", function(d, i) { return 60+20*i; })
-		.text(function(d) {return "100%";}) // findLongName(d.currency)});
+
+		
+		if (mouseCoordX>=padding.left && mouseCoordX<=width-padding.right) {
+			legendTexts.text(function (d,i) {return formatPercentages(compare_yScale.invert(getY(i, "compare_graph_line_class")).toFixed(3))})
+		} else {
+			legendTexts.text(
+				function (d,i) {
+					return "100 %";
+				})
+		}
 }
 
 function drawComparisonIndicator() {
@@ -261,7 +273,7 @@ function drawComparisonIndicator() {
 	} else {
 		legendTexts.text(
 			function (d,i) {
-				return "100%";
+				return "100 %";
 			})
 	}
 }
