@@ -56,12 +56,14 @@ function setUpLineChart() {
 		.call(line_yAxis);
 
 	line_graph.append("text")
-	  .attr("transform",`rotate(-90)`)
+			.attr("class", "line_graph_title")
+	  	// .attr("transform",`rotate(-90)`)s
       .attr("y", 0)
-      .attr("x",-height/2)
+      .attr("x", padding.left - 15)
       .attr("dy", "1em")
       .style("text-anchor", "middle")
-      .text("Value");
+      .text("Coin value");
+
 
 	line_graph_legend = line_graph.append("g")
 			.attr("class","legend")
@@ -110,7 +112,7 @@ function drawLineChart(data) {
 			.append("path").datum(data[i].data)
 			.attr("class", "line_graph_line_class line_class")
 			.attr("fill", "none")
-			.attr("stroke", cScale(i))
+			.attr("stroke", getColorByCurrencyName(data[i].currency))
 			.attr("stroke-linejoin", "round")
 			.attr("stroke-linecap", "round")
 			.attr("stroke-width", data[i].currency===coin?2.5:1.5)
@@ -160,7 +162,7 @@ function drawLineLegend(data) {
 			.attr("y", function(d, i) { return 60+20*i; })
 			.attr("width", 10)
 			.attr("height", 10)
-			.style("fill", function(d, i) { return cScale(i); });
+			.style("fill", function(d, i) { return getColorByCurrencyName(data[i].currency); });
 
 	let legendTexts=line_graph_legend.selectAll("text.legend").data(data,d => d.currency);
 	legendTexts.exit()
@@ -217,7 +219,7 @@ function drawLineIndicator() {
 			.attr("cy",function (d,i) {
 				return getY(i, "line_graph_line_class");
 			})
-			.style("stroke", function(d, i) { return cScale(i); })
+			.style("stroke", function(d, i) { return getColorByCurrencyName(data[i].currency); })
 			.style("display",function (d,i) {
 				let lineX=document.getElementsByClassName('line_graph_line_class')[i].getPointAtLength(0).x;
 				if (lineX<=mouseCoordX && lineX!==0) {

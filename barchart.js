@@ -42,7 +42,7 @@ function setUpBarChart() {
 	bar_graph.append("text")
 			.attr("class", "bar_graph_title")
       .attr("y", -bar_graph_padding.top)
-      .attr("x",-bar_graph_padding.left)
+      .attr("x",-bar_graph_padding.left + 5)
       .attr("dy", "1em")
       .style("text-anchor", "left")
       .text(write_bar_title());
@@ -56,17 +56,17 @@ function format_volume_text(d) {
 	} else if (d<1000000) {
 		return "€" + Math.round(d/1000) + " K";
 	} else if (d<1000000000) {
-		return "€" + Math.round(d/1000000) + " M";
+		return "€" + (Math.round(d/10000)/100) + " M";
 	} else {
-		return "€" + Math.round(d/1000000000) + " B";
+		return "€" + (Math.round(d/1000000)/1000) + " B";
 	}
 }
 
 function write_bar_title() {
 	if (last_requested_time_between != 1) {
-		return "Trading volume last " + last_requested_time_between + " hours";
+		return "Traded volume last " + last_requested_time_between + " hours";
 	} else {
-		return "Trading volume last hour";
+		return "Traded volume last hour";
 	}
 }
 
@@ -148,12 +148,11 @@ function drawBarGraphIndicator() {
 				bar_graph.selectAll(".bar_graph_value_text").remove()
 
 				let bar_x_offset = bar_x + (bar_width / 2)
-				console.log(bar_x_offset)
 				bar_graph.append("text")
 					.attr("class", "bar_graph_value_text")
 					.style("text-anchor", "center")
 					.style("font-size", "small")
-					.attr("x", bar_x_offset - 15)
+					.attr("x", Math.max(bar_x_offset - 15, 3))
 					.attr("y", Math.max(bar.attr("y") - 30, 5))
 					.text(format_volume_text(bar_data.volumeto));
 

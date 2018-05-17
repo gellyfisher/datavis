@@ -133,12 +133,10 @@ function assignCoin(newcoin) {
 }
 
 function handleLineClick(d, i) {
-	console.log("handling line click")
 	if (coin == d.currency){
 		assignCoin(null)
 		d3.selectAll("g>path.line_class") //if we don't use path.line_class then the axis will be selected too
 				.attr("stroke-width",1.5)
-		console.log("SAME CURRENCY")
 		updateGraphsCoinRemoved()
 
 	} else {

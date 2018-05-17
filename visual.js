@@ -9,7 +9,7 @@ let last_requested_time_between = 0;
 
 width = Math.round(screen.width / 1.5);
 const height = 350;
-const padding = {top: 20, left: 60, right: 200, bottom: 50}; //deze waardes kunnen nog aangepast worden
+const padding = {top: 30, left: 60, right: 200, bottom: 50}; //deze waardes kunnen nog aangepast worden
 
 
 let cScale =  d3.scaleOrdinal().range(d3.schemeSet1);
@@ -27,7 +27,8 @@ let currencyNames=[{shortName:"XMR",longName :"Monero"},{shortName:"ETH",longNam
 					{shortName:"MLN",longName :"Melon"},{shortName:"DASH",longName :"Dash"},{shortName:"LTC",longName:"Litecoin"},{shortName:"NMC",longName:"Namecoin"},
 					{shortName:"XPM",longName:"Primecoin"},{shortName:"XRP",longName:"Ripple"},{shortName:"BCH",longName:"Bitcoin Cash"},{shortName:"ZEC",longName:"Zcash"},
 					{shortName:"XZC",longName:"Zcoin"},{shortName:"ETC",longName:"Ethereum Classic"}];
-let currentCurrencies=["XMR","MLN","LTC"]; // a subset of the short names in currencyNames which will be drawn.
+
+let currentCurrenciesObject = {"XMR":0,"MLN":1,"LTC":2}
 
 $(document).ready(function() {
 	setUpHtml();
@@ -35,33 +36,53 @@ $(document).ready(function() {
 	requestMultipleData();
 });
 
+function getFirstUnusedCurrencyIndex() {
+	let i = 0;
+	let vals = Object.values(currentCurrenciesObject)
+
+	while (vals.includes(i)) {
+		i = i + 1;
+	}
+	return i;
+}
+
+let deselected_crypto_color = "#ddd"
 function setUpHtml() {
-	$("#graph-type").val("line"); //set initial value of the dropdown
 
 	for (let i=0;i<currencyNames.length;i++) {
-		if ($.inArray(currencyNames[i].shortName, currentCurrencies)!==-1) { //these currencies are already selected
-			$("#cryptoSelected").append("<li value='"+currencyNames[i].shortName+"'>"+currencyNames[i].longName+"</li>");
+		if (currencyNames[i].shortName in currentCurrenciesObject) { //these currencies are already selected
+			let currencyName = currencyNames[i].shortName
+			console.log(currencyName)
+			console.log()
+			$("#cryptoSelected").append('<li value="'+currencyNames[i].shortName+'" style="background-color: ' + getColorByCurrencyName(currencyName)+ '" > ' + currencyNames[i].longName + '</li>');
 
 		} else {
-			$("#cryptoResult").append("<li value='"+currencyNames[i].shortName+"'>"+currencyNames[i].longName+"</li>");
+			$("#cryptoResult").append('<li value="'+currencyNames[i].shortName+'" style="background-color: ' + deselected_crypto_color + '" > ' + currencyNames[i].longName + '</li>');
 		}
 	}
 
 	function selectCrypto() {
 		let val=$(this).attr('value');
-		currentCurrencies.push(val);
+		if (val in currentCurrenciesObject) {
+			return false;
+		}
+
+		currentCurrenciesObject[val] = getFirstUnusedCurrencyIndex();
 
 		requestMultipleData();
 
 		$(this).prependTo("#cryptoSelected");
 		$(this).unbind("click")
 		$(this).click(deselectCrypto);
+		$(this).css("background-color", getColorByCurrencyName(val))
+		console.log($(this))
+
 		filterResult();
 	}
 
 	function deselectCrypto() {
 		let val=$(this).attr('value');
-		currentCurrencies.splice( $.inArray(val, currentCurrencies),1);
+		delete currentCurrenciesObject[val]
 
 		requestMultipleData();
 
@@ -73,6 +94,7 @@ function setUpHtml() {
 		$(this).appendTo("#cryptoResult");
 		$(this).unbind("click")
 		$(this).click(selectCrypto);
+		$(this).css("background-color", deselected_crypto_color)
 		filterResult();
 	}
 
@@ -97,16 +119,16 @@ function setUpHtml() {
 function requestMultipleData() {
 	let promises=[];
 
-	for (let i = 0; i < currentCurrencies.length; i++) {
-		promises.push(requestData(currentCurrencies[i]));
+	let object_keys = Object.keys(currentCurrenciesObject)
+	for (keyindex in object_keys) {
+		promises.push(requestData(object_keys[keyindex]));
 	}
-
 	// Als alle requests gedaan zijn dan kunnen we de grafiek tekenen
 	Promise.all(promises).then(function(data) {
 
 		resultData=[];
 
-		for (let i = 0; i < currentCurrencies.length; i++) {
+		for (let i = 0; i < object_keys.length; i++) {
 			if (data[i].Response==="Error") {
 				throw "Error: "+data[i].Message
 
@@ -115,7 +137,7 @@ function requestMultipleData() {
 				data[i].Data.forEach(function(d) { d.time = new Date(d.time * 1000); });
 
 				resultData.push({
-					currency:currentCurrencies[i],
+					currency:object_keys[i],
 					data:data[i].Data
 				});
 

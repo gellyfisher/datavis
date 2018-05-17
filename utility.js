@@ -1,6 +1,7 @@
 let minimumDate=new Date(2009,0,1,0,0,0,0).getTime(); //1 januari 2009 (eerste cryptocurrency was in 2009)
 let y_axis_padding_multiplier = 0.35;
 
+
 function findLongName(shortName) {
 	for (let i=0;i<currencyNames.length;i++) {
 		if (shortName===currencyNames[i].shortName) {
@@ -87,4 +88,13 @@ function setAxisTimeFormat(axis, data) {
 		axis.tickFormat(time_format_day);
 	}
 
+}
+
+function getKeyByValue(object, value) {
+  return Object.keys(object).find(key => object[key] === value);
+}
+
+
+function getColorByCurrencyName(given_coin) {
+	return cScale(currentCurrenciesObject[given_coin]);
 }

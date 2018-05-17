@@ -8,7 +8,7 @@ let compare_xAxis;
 let compare_yAxis;
 let compare_graph;
 let compare_graph_line;
-
+let compare_graph_padding_left_offset = 40;
 function setUpComparisonChart() {
 
 
@@ -64,16 +64,16 @@ function setUpComparisonChart() {
 		.call(compare_yAxis);
 
 	compare_graph.append("text")
-	  .attr("transform",`rotate(-90)`)
+			.attr("class", "line_graph_title")
       .attr("y", 0)
-      .attr("x",-height/2)
+      .attr("x", padding.left + 20 )
       .attr("dy", "1em")
       .style("text-anchor", "middle")
-      .text("Increment since start");
+      .text("Relative coin value");
 
 	compare_graph_legend = compare_graph.append("g")
 			.attr("class","legend")
-			.attr("transform", "translate(" + (width -padding.right+40) + "," + 0+ ")")
+			.attr("transform", "translate(" + (width -padding.right+compare_graph_padding_left_offset) + "," + 0+ ")")
 
 	compare_graph_legend.append("text")
 		.attr("x",0)
@@ -99,7 +99,6 @@ function setUpCompare() {
 	});
 
 }
-
 
 function drawComparisonChart(data) {
 
@@ -135,18 +134,19 @@ function drawComparisonChart(data) {
 	for (let i=0;i<currencyNames.length;i++) {
 		compare_graph.select("."+currencyNames[i].shortName).remove();
 	}
-
 	for (let i=0;i<data.length;i++) {
-		compare_graph.append("g").attr("class",  data[i].currency)
+		currency = data[i].currency
+		compare_graph.append("g").attr("class",  currency)
 			.append("path").datum(data[i].data)
 			.attr("class", "compare_graph_line_class line_class")
 			.attr("fill", "none")
-			.attr("stroke", cScale(i))
+			.attr("stroke", function(d, i) {return getColorByCurrencyName(currency)})
 			.attr("stroke-linejoin", "round")
 			.attr("stroke-linecap", "round")
 			.attr("stroke-width", data[i].currency===coin?2.5:1.5)
 			.attr("d", compare_graph_line);
 	}
+
 
 	drawComparisonLegend(data);
 
@@ -185,7 +185,7 @@ function drawComparisonLegend(data) {
 			.attr("y", function(d, i) { return 60+20*i; })
 			.attr("width", 10)
 			.attr("height", 10)
-			.style("fill", function(d, i) { return cScale(i); });
+			.style("fill", function(d, i) { return getColorByCurrencyName(data[i].currency); });
 
 	let legendTexts=compare_graph_legend.selectAll("text.legend").data(data,d => d.currency);
 	legendTexts.exit()
@@ -242,7 +242,7 @@ function drawComparisonIndicator() {
 			.attr("cy",function (d,i) {
 				return getY(i, "compare_graph_line_class");
 			})
-			.style("stroke", function(d, i) { return cScale(i); })
+			.style("stroke", function(d, i) { return getColorByCurrencyName(data[i].currency); })
 			.style("display",function (d,i) {
 				let lineX=document.getElementsByClassName('line_graph_line_class')[i].getPointAtLength(0).x;
 				if (lineX<=mouseCoordX && lineX!==0) {

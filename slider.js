@@ -77,7 +77,7 @@ function drawSlider(data) {
 			.append("path").datum(data[i].data)
 			.attr("class", "line_graph_line_class line_class")
 			.attr("fill", "none")
-			.attr("stroke", cScale(i))
+			.attr("stroke", getColorByCurrencyName(data[i].currency))
 			.attr("stroke-linejoin", "round")
 			.attr("stroke-linecap", "round")
 			.attr("stroke-width", data[i].currency===coin?2.5:1.5)
@@ -120,7 +120,7 @@ function drawSlider(data) {
 			.attr("y", function(d, i) { return 60+20*i; })
 			.attr("width", 10)
 			.attr("height", 10)
-			.style("fill", function(d, i) { return cScale(i); });
+			.style("fill", function(d, i) { return getColorByCurrencyName(data[i].currency); });
 
 	legendTexts=line_graph_legend.selectAll("text.legend").data(data,d => d.currency);
 	legendTexts.exit()
@@ -177,7 +177,7 @@ function drawLineIndicator() {
 			.attr("cy",function (d,i) {
 				return getY(i, "line_graph_line_class");
 			})
-			.style("stroke", function(d, i) { return cScale(i); })
+			.style("stroke", function(d, i) { return getColorByCurrencyName(data[i].currency); })
 			.style("display",function (d,i) {
 				if (document.getElementsByClassName('line_graph_line_class')[i].getPointAtLength(0).x<=mouseCoordX) {
 					return ""
