@@ -6,7 +6,7 @@ let grid_stroke_color = "#e8e8e8"
 
 let last_requested_time_between = 0;
 
-let width = Math.round(screen.width - 600);
+let width = Math.round(screen.width -550);
 const height = 350;
 const padding = {top: 40, left: 60, right: 200, bottom: 50}; //padding voor line en compare graph
 
@@ -45,7 +45,7 @@ function getFirstUnusedCurrencyIndex() {
 	return i;
 }
 
-let deselected_crypto_color = "#ddd"
+let deselected_crypto_color = "#eee"
 function setUpHtml() {
 
 	for (let i=0;i<currencyNames.length;i++) {
