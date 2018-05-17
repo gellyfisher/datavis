@@ -105,8 +105,8 @@ function setUpHtml() {
 		requestMultipleData();
 
 		if (val===coin) { //this is the selected currency so we should remove the bar chart
-			coin=undefined;
-			$("#volumes>svg").empty();
+			coin=null;
+			d3.select("#volumes").style("display","none");
 		}
 
 		$(this).appendTo("#cryptoResult");
