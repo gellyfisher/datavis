@@ -227,10 +227,4 @@ function updateGraphs(data) {
 	drawLineChart(data);
 	drawComparisonChart(data);
 	drawBarChart(data);
-	// drawCandleChart(data);
-}
-
-function updateGraphsCoinRemoved() {
-	drawBarChart(null);
-	// drawCandleChart(null);
 }

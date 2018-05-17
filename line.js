@@ -178,6 +178,7 @@ function drawLineLegend(data) {
 		.attr("y", function(d, i) { return 60+20*i; })
 		.merge(legendTexts)
 		.transition()
+		.attr("font-weight", function (d,i) { return data[i].currency===coin?"bold":"normal";})
 		.attr("x", text_rect_x)
 		.attr("dy", "0.75em")
 		.attr("y", function(d, i) { return 60+20*i; })
