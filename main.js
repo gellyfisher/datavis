@@ -106,7 +106,7 @@ function setUpHtml() {
 
 		if (val===coin) { //this is the selected currency so we should remove the bar chart
 			coin=null;
-			d3.select("#volumes").style("display","none");
+			d3.select("#volumes").style("visibility","hidden");
 		}
 
 		$(this).appendTo("#cryptoResult");
