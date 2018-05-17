@@ -128,9 +128,6 @@ function scrollGraph(container) {
 let coin; // currently selected currency
 
 function assignCoin(newcoin) {
-	if (coin===null) {
-		d3.select("#volumes").style("display","");
-	}
 	coin = newcoin;
 }
 
