@@ -4,7 +4,9 @@ let candlebar_xScale;
 let candlebar_yScale;
 let candlebar_xAxis;
 let candlebar_yAxis;
-let candlebar_bar_width = 4;
+let candlebar_bar_width = 3;
+let candlebar_bar_padding = 2;
+
 function setUpCandleChart() {
 
 	candlebar_graph=d3.select("div#candle_graph")
@@ -19,7 +21,7 @@ function setUpCandleChart() {
 	// d3.select("div#candle_graph").on("mouseup", function() {endDragGraph(this)});
 
 	candlebar_xScale = d3.scaleTime()
-				.range([padding.left, width - padding.right])
+				.range([padding.left + 7, width - padding.right - 7])
 				.domain([start,end]);
 
 	candlebar_yScale = d3.scaleLinear()
@@ -79,14 +81,16 @@ function drawCandleChart(data) {
 	}
 
 
+	candlebar_bar_width = Math.floor( (width - padding.left - padding.right - (candlebar_bar_padding * candlebardata.length)) / candlebardata.length)
+
 	candlebar_xScale.domain(d3.extent(candlebardata, d => d.time));
 
 	let y_axis_max = d3.max(candlebardata, d => d.high)
 	let y_axis_min = d3.min(candlebardata, d => d.low)
-	let padding = (y_axis_max - y_axis_min) * y_axis_padding_multiplier
-	let lowerbound = Math.max( (y_axis_min - padding) , 0)
+	let data_padding = (y_axis_max - y_axis_min) * y_axis_padding_multiplier
+	let lowerbound = Math.max( (y_axis_min - data_padding) , 0)
 
-	candlebar_yScale.domain([lowerbound, y_axis_max + padding]);
+	candlebar_yScale.domain([lowerbound, y_axis_max + data_padding]);
 
 	let high=candlebar_graph.selectAll("line.high").data(candlebardata,d=>d.time);
 
@@ -203,4 +207,41 @@ function drawCandleIndicator() {
 			.style("stroke", "black")
 			.style("stroke-width", "1px")
 		}
+}
+
+function drawBarGraphIndicator() {
+	if (coin!==null) {
+		if (mouseCoordX>=padding.left && mouseCoordX<=width-padding.right) {
+			let eachBand = xbarScale.step(); //distance between 2 bands
+			let index = Math.floor((mouseCoordX - X_BAR_START_OFFSET - bar_graph_padding.left) / eachBand + 0.05);
+			bar_graph.select("#bar"+index).attr("stroke","black");
+			bar_graph.selectAll("rect:not(#bar"+index+")").attr("stroke",null);
+
+			let bar = bar_graph.select("#bar"+index);
+			let bar_data = bar.datum();
+			let bar_x = parseFloat(bar.attr("x"));
+			let bar_width = parseFloat(bar.attr("width"));
+
+			if (bar_data) {
+				bar_graph.selectAll(".bar_graph_value_text").remove()
+
+				let bar_x_offset = bar_x + (bar_width / 2)
+				bar_graph.append("text")
+					.attr("class", "bar_graph_value_text")
+					.style("text-anchor", "center")
+					.style("font-size", "small")
+					.attr("x", Math.max(bar_x_offset - 15, 3))
+					.attr("y", Math.max(bar.attr("y") - 30, 5))
+					.text(format_volume_text(bar_data.volumeto));
+
+				bar_graph.append("text")
+					.attr("class", "bar_graph_value_text")
+					.style("text-anchor", "center")
+					.style("font-size", "small")
+					.attr("x", bar_x_offset - 35)
+					.attr("y", 120)
+					.text(format_bar_date(bar_data.time));
+			}
+		}
+	}
 }

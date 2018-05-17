@@ -12,6 +12,7 @@ let X_BAR_START_OFFSET = 2;
 
 
 function setUpBarChart() {
+	d3.select("div#volumes").on("wheel", function () {scrollGraph(this)});
 	bar_graph=d3.select("div#volumes")
 		.append("svg")
 		.attr("width", width)
