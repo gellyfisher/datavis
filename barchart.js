@@ -89,7 +89,7 @@ function drawBarChart(data) {
 			barindex=key;
 			bardata = data[key].data
 			cbarScale = d3.scaleSequential()
-				.interpolator(d3.interpolateRgb(shadeColor(cScale(key), 40), shadeColor(cScale(key), -40)));
+				.interpolator(d3.interpolateRgb(shadeColor(getColorByCurrencyName(data[key].currency), 40), shadeColor(getColorByCurrencyName(data[key].currency ), -40)));
 			found=true;
 		}
 	}
@@ -166,7 +166,10 @@ function drawBarGraphIndicator() {
 					.attr("y", Math.max(bar.attr("y") - 40, 2))
 					.text(bar_text)
 					.style("display",function () {
-						let lineX=document.getElementsByClassName('line_graph_line_class')[barindex].getPointAtLength(0).x;
+						let line = document.getElementsByClassName('line_graph_line_class')
+						console.log(line)
+						console.log(barindex)
+						let lineX = document.getElementsByClassName('line_graph_line_class')[barindex].getPointAtLength(0).x;
 						if (lineX<=mouseCoordX && lineX!==0) {
 							return ""
 						} else {
