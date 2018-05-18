@@ -72,8 +72,7 @@ function setUpComparisonChart() {
 		.attr("x",0)
 		.attr("y",50)
 		.attr("font-weight","bold")
-		.text("Current value");
-		// .text("Currencies");
+		.text("Increment");
 
 	setUpCompare();
 }
@@ -270,7 +269,7 @@ function drawComparisonIndicator() {
 			});
 
 	}
-	
+
 	let legendTexts=compare_graph_legend.selectAll("text.legend").data(data,d => d.currency);
 	legendTexts.text(function (d,i) {
 			let lineX=document.getElementsByClassName('line_graph_line_class')[i].getPointAtLength(0).x;
