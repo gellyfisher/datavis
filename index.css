@@ -121,7 +121,7 @@ div.container {
 #cryptoResult,#cryptoSelected {
 	border-top: 1px solid #ddd;
 	overflow: auto;
-	max-height:250px;
+	max-height:800px;
 	width:251px;
     list-style-type: none;
     padding: 0;
