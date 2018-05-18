@@ -1,4 +1,4 @@
-let mouseCoordX=0;
+let mouseCoordX=0;//houdt de muis coordinaat bij. dit is nodig voor de indicators
 let mouseCoordY=0;
 
 function getMouseCoordinates(container) {
@@ -16,8 +16,8 @@ function setupMouseEvents() {
 			drawComparisonIndicator();
 			drawBarGraphIndicator();
 		})
-	d3.selectAll("div#container").on("mouseover",disableScroll);
-	d3.selectAll("div#container").on("mouseleave",enableScroll);
+	d3.selectAll("div#container").on("mouseover",disableScroll); //indien we op de svg zitten willen we inzoomen en niet op de pagina zelf scrollen
+	d3.selectAll("div#container").on("mouseleave",enableScroll); //buiten de svg mag de pagina zelf wel scrollen
 }
 
 function startDragGraph(container) {
@@ -82,6 +82,7 @@ function dragLeftGraph(dist) { // nu gaan we vooruit in de tijd
 	requestMultipleData();
 }
 
+/*next 3 functions allow us to disable page scrolling*/
 function preventDefault(e) { //prevents scrolling
 	e = e || window.event;
 	if (e.preventDefault)
@@ -103,6 +104,7 @@ function enableScroll() {
 	window.onwheel = null;
 }
 
+/* laat ons toe om in of uit te zoomen */
 function scrollGraph(container) {
 	let mouseX=d3.event.clientX-$(container).offset().left; //d3.mouse(container)[0] werkt hier precies niet
 	let effectiveWidth=width-padding.left-padding.right
@@ -127,18 +129,15 @@ function scrollGraph(container) {
 
 let coin; // currently selected currency
 
-function assignCoin(newcoin) {
-	coin = newcoin;
-}
-
+/* indien we op een indicator cirkel of in de legende geklikt hebben */
 function handleLineClick(d, i) {
 	if (coin == d.currency){
-		assignCoin(null)
-		updateGraphs(saveData)
+		coin=null;
+		updateGraphs(saveData);
 
 	} else {
 
-		assignCoin(d.currency)
-		updateGraphs(saveData)
+		coin=d.currency;
+		updateGraphs(saveData);
 	}
 }

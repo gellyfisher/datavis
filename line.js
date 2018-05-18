@@ -8,8 +8,8 @@ let line_yAxis;
 let line_graph;
 let line_grap_line;
 
+/*set up the line chart... */
 function setUpLineChart() {
-
 
 	line_graph = d3.select("div#line_graph")
 		.append("svg")
@@ -77,6 +77,7 @@ function setUpLineChart() {
 	setUpLine();
 }
 
+/* create line helper for this graph*/
 function setUpLine() {
 	line_grap_line = d3.line()
 			.curve(d3.curveLinear)
@@ -87,7 +88,7 @@ function setUpLine() {
 
 }
 
-
+/* Hier zal al het werk gebeuren om effectief de grafiek te tekenen*/
 function drawLineChart(data) {
 	setAxisTimeFormat(line_xAxis, data);
 
@@ -96,7 +97,7 @@ function drawLineChart(data) {
 	let y_axis_max = d3.max(data,d=> d3.max(d.data,D=>D.high))
 	let y_axis_min = d3.min(data,d=> d3.min(d.data,D=>D.low))
 	let padding = (y_axis_max - y_axis_min) * y_axis_padding_multiplier
-	let lowerbound = Math.max( (y_axis_min - padding) , 0)
+	let lowerbound = Math.max( (y_axis_min - padding) , 0) //We beginnen de y as pas iets lager dan het minimum van de data.
 
 	line_yScale.domain([lowerbound, y_axis_max + padding]);
 
@@ -138,6 +139,7 @@ function drawLineChart(data) {
 	drawLineChartGridLines()
 }
 
+// deze functie zal de legende met de prijzen tekenen
 function drawLineLegend(data) {
 
 	let color_rect_x = 10;
@@ -185,8 +187,8 @@ function drawLineLegend(data) {
 		.attr("dy", "0.75em")
 		.attr("y", function(d, i) { return 60+20*i; })
 		.text(function (d,i) {
-			let lineX=document.getElementsByClassName('line_graph_line_class')[i].getPointAtLength(0).x;
-			if (mouseCoordX>=padding.left && mouseCoordX<=width-padding.right && lineX<=mouseCoordX && lineX!==0) {
+			let lineX=document.getElementsByClassName('line_graph_line_class')[i].getPointAtLength(0).x; //als lineX=0 dan is er geen pad meer op de grafiek (anders zou die padding zijn)
+			if (mouseCoordX>=padding.left && mouseCoordX<=width-padding.right && lineX<=mouseCoordX && lineX!==0) { //voorlaatste conditie maakt zeker dat er nog data is op de mousecoordinaat
 				return "€ " + line_yScale.invert(getY(i, "line_graph_line_class")).toFixed(3)
 			} else {
 				return "€ 0";
@@ -194,6 +196,7 @@ function drawLineLegend(data) {
 		});
 }
 
+/*tekent de indicator op de muispositie*/
 function drawLineIndicator() {
 	if (saveData===undefined) {
 		return;

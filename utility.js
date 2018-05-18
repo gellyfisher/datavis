@@ -1,7 +1,7 @@
 let minimumDate=new Date(2009,0,1,0,0,0,0).getTime(); //1 januari 2009 (eerste cryptocurrency was in 2009)
 let y_axis_padding_multiplier = 0.35;
 
-
+/* deze functie zal in de de array van currencies zoeken naar wat de longName is voor de opgegeven shortName*/
 function findLongName(shortName) {
 	for (let i=0;i<currencyNames.length;i++) {
 		if (shortName===currencyNames[i].shortName) {
@@ -12,6 +12,18 @@ function findLongName(shortName) {
 	return shortName; //in case we didn't find the longname we just return the short name as a default...
 }
 
+/* geeft de eerste kleurindex terug die nog niet in gebruik is */
+function getFirstUnusedCurrencyIndex() {
+	let i = 0;
+	let vals = Object.values(currentCurrenciesObject)
+
+	while (vals.includes(i)) {
+		i = i + 1;
+	}
+	return i;
+}
+
+/*deze functie zal de tijds periode aanpassen en opnieuw data opvragen */
 function changePeriod(amount,type) {
 	start=new Date(end);
 	if (type==="D") {
@@ -27,7 +39,8 @@ function changePeriod(amount,type) {
 	requestMultipleData();
 }
 
-function getY(i, line_class) { //hulp functie om de y coordinaat op een gegeven x coordinaat te bepalen van de ide kromme
+/*hulp functie om de y coordinaat op een gegeven x coordinaat (muis coordinaat) te bepalen van de ide kromme*/
+function getY(i, line_class) { 
 	let lines=document.getElementsByClassName(line_class);
 	let beginning = 0,
 			end = lines[i].getTotalLength(),
@@ -47,6 +60,8 @@ function getY(i, line_class) { //hulp functie om de y coordinaat op een gegeven 
 	return pos.y;
 }
 
+/*deze functie zullen we gebruiken om een kleur lichter/donkerder te maken
+wordt gebruikt voor de barchart*/
 function shadeColor(color, percent) {
 
     var R = parseInt(color.substring(1,3),16);
@@ -68,6 +83,7 @@ function shadeColor(color, percent) {
     return "#"+RR+GG+BB;
 }
 
+/*dit zal het formaat van de x-as duidelijker weergeven. Namelijk als de dagen te dicht op elkaar liggen zullen we ook het uur meegeven.*/
 function setAxisTimeFormat(axis, data) {
 
 	let first_date = data[0].data[0].time

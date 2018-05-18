@@ -9,6 +9,7 @@ let compare_graph;
 let compare_graph_line;
 let compare_graph_padding_left_offset = 40;
 
+/* Deze functies zijn analoog aan die van de line chart */
 function setUpComparisonChart() {
 
 	compare_graph = d3.select("div#compare_graph")
@@ -80,12 +81,13 @@ function setUpComparisonChart() {
 function formatPercentages(d) {
 	let count = Math.round(d * 100)
 	if (count > 100000) {
-		return (Math.round(count/1000)/100).toString() + " x";;
+		return (Math.round(count/1000)/100).toString() + " x"; //50x betekent 50 keer zoveel (om te vermijden dat de percentages te groot worden.
 	}
 	return count.toString() + " %";
 
-	}
+}
 
+/* creeert de line helper voor de compare graph*/
 function setUpCompare() {
 	compare_graph_line = d3.line()
 			.curve(d3.curveLinear)
@@ -102,6 +104,7 @@ function setUpCompare() {
 
 }
 
+/* tekent de compare chart*/
 function drawComparisonChart(data) {
 
 	setAxisTimeFormat(compare_xAxis, data);
@@ -169,6 +172,7 @@ function drawComparisonChart(data) {
 	drawComparisonChartGridLines();
 }
 
+/* zal de legende met de waardes bij de compare graph tekenen */
 function drawComparisonLegend(data) {
 	let legendRects = compare_graph_legend.selectAll("rect.legend").data(data,d => d.currency);
 	legendRects.exit()
@@ -210,8 +214,8 @@ function drawComparisonLegend(data) {
 		.attr("dy", "0.75em")
 		.attr("y", function(d, i) { return 60+20*i; })
 		.text(function (d,i) {
-			let lineX=document.getElementsByClassName('line_graph_line_class')[i].getPointAtLength(0).x;
-			if (mouseCoordX>=padding.left && mouseCoordX<=width-padding.right && lineX<=mouseCoordX && lineX!==0) {
+			let lineX=document.getElementsByClassName('line_graph_line_class')[i].getPointAtLength(0).x; //als lineX=0 dan is er geen pad meer op de grafiek (anders zou die padding zijn)
+			if (mouseCoordX>=padding.left && mouseCoordX<=width-padding.right && lineX<=mouseCoordX && lineX!==0) { //voorlaatste conditie maakt zeker dat er nog data is op de mousecoordinaat
 				return formatPercentages(compare_yScale.invert(getY(i, "compare_graph_line_class")).toFixed(3))
 			} else {
 				return "100 %";
@@ -219,6 +223,7 @@ function drawComparisonLegend(data) {
 		});
 }
 
+/* tekent de indicator op de compare graph*/
 function drawComparisonIndicator() {
 	if (saveData===undefined) {
 		return;

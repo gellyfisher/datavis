@@ -4,23 +4,25 @@ let start = new Date(); //start date of the data we're getting
 start.setDate(end.getDate()-numPoints);
 let grid_stroke_color = "#e8e8e8"
 
-let last_requested_time_between = 0;
+let last_requested_time_between = 0; //wordt gebruikt bij de bar-chart
 
-let width = Math.round(screen.width - 640);
-const height = 350;
+const width = Math.round(screen.width - 640);
+const height = 350; //de hoogte
 const padding = {top: 40, left: 60, right: 200, bottom: 50}; //padding voor line en compare graph
 
-let MAX_COINS = 10;
+const MAX_COINS = 10; //maximum aantal coins dat de gebruiker kan selecteren
 
 let cScale =  d3.scaleOrdinal().range(d3.schemeCategory10);
 
-let mouseCircleRadius = 6;
+let mouseCircleRadius = 6; //de straal van de cirkeltjes op de indicator
 
-let time_format_day = d3.timeFormat("%b %e %Y");
-let time_format_hour = d3.timeFormat("%b %e, %-H %p");
+let time_format_day = d3.timeFormat("%b %e %Y"); // (Maand dag jaar)
+let time_format_hour = d3.timeFormat("%b %e, %-H %p"); //formaat als we ook het uur willen meegeven (Maand dag, uur AM/PM)
 
-let dragging=false;
-let prevTime=Date.now();
+let dragging=false; //houdt bij of we de grafiek aan het verslepen zijn
+let prevTime=Date.now(); //houdt bij wanneer we het laatst de grafiek versleept hebben om rate limit exceeded te vermijden
+
+let saveData; // houdt de data bij zodat we voor de indicator niet elke keer data moet opvragen
 
 // list of all possible currencies together with their short name
 let currencyNames=[{shortName:"XMR",longName :"Monero"},{shortName:"ETH",longName :"Ethereum"},{shortName:"BTC",longName :"Bitcoin"},{shortName:"STC",longName:"Swiftcoin"},
@@ -28,27 +30,17 @@ let currencyNames=[{shortName:"XMR",longName :"Monero"},{shortName:"ETH",longNam
 					{shortName:"XPM",longName:"Primecoin"},{shortName:"XRP",longName:"Ripple"},{shortName:"BCH",longName:"Bitcoin Cash"},{shortName:"ZEC",longName:"Zcash"},
 					{shortName:"XZC",longName:"Zcoin"},{shortName:"ETC",longName:"Ethereum Classic"}];
 
-let currentCurrenciesObject = {"XMR":0,"MLN":1,"LTC":2}
+let currentCurrenciesObject = {"XMR":0,"MLN":1,"LTC":2} //de huidige geselecteerde currencies samen met een index die we zullen gebruiken om het kleur bij te houden
 
-$(document).ready(function() {
+$(document).ready(function() { //start of code...
 	setUpHtml();
 	setUp();
 	requestMultipleData();
 });
 
-function getFirstUnusedCurrencyIndex() {
-	let i = 0;
-	let vals = Object.values(currentCurrenciesObject)
-
-	while (vals.includes(i)) {
-		i = i + 1;
-	}
-	return i;
-}
-
 let deselected_crypto_color = "#eee"
+/* in this function we handle everything that has to be done to set up the HTML such as events and creating some divs */
 function setUpHtml() {
-
 	$(document).keypress(function(e) {
 		if(e.which == 13) {
 			//swap views
@@ -76,7 +68,7 @@ function setUpHtml() {
 		}
 	}
 
-	function selectCrypto() {
+	function selectCrypto() { //Moet opgeroepen worden als de gebruiker een nieuwe cryptocurrency selecteerd.
 		if (Object.keys(currentCurrenciesObject).length >= MAX_COINS) {
 			return ;
 		}
@@ -98,13 +90,13 @@ function setUpHtml() {
 		filterResult();
 	}
 
-	function deselectCrypto() {
+	function deselectCrypto() { //Moet opgeroepen worden als de gebruiker een currency wil verwijderen.
 		let val=$(this).attr('value');
 		delete currentCurrenciesObject[val]
 
 		requestMultipleData();
 
-		if (val===coin) { //this is the selected currency so we should remove the bar chart
+		if (val===coin) { //this is the selected currency so we should hide the bar chart
 			coin=null;
 			d3.select("#volumes").style("visibility","hidden");
 		}
@@ -116,7 +108,7 @@ function setUpHtml() {
 		filterResult();
 	}
 
-	function filterResult() {
+	function filterResult() { //Dit zal de selectie filteren afhankelijk van wat er in de zoekbar staat.
 		let query=$("#cryptoSelecter").val();
 		$("#cryptoResult li").filter(function (index) { // hide the elements not matching the query
 			return !$(this).text().toLowerCase().includes(query.toLowerCase());
@@ -134,6 +126,7 @@ function setUpHtml() {
 	$("#cryptoSelecter").keyup(filterResult);
 }
 
+/* Deze functie zal meerdere keren een request gaan uitvoeren voor alle geselecteerde currencies. De resultaten worden dan samen in 1 array geplaatst */
 function requestMultipleData() {
 	let promises=[];
 
@@ -159,7 +152,7 @@ function requestMultipleData() {
 					data:data[i].Data
 				});
 
-			} else {
+			} else { //error handling!
 				throw "Unknown response message: "+data[i].Response
 			}
 		}
@@ -175,7 +168,8 @@ function requestMultipleData() {
 	});
 }
 
-function requestData(currency="BTC") {
+/* deze functie zal een request maken voor een specifieke opgegeven currency */
+function requestData(currency) {
 	let url="https://min-api.cryptocompare.com/data/histo";
 	let amount;
 
@@ -196,12 +190,12 @@ function requestData(currency="BTC") {
 	params={
 	    fsym: currency,
 	    tsym: "EUR",		// we're only interested in euro prices
-		limit: numPoints,
+		limit: numPoints,  //amount of data points 
 	    aggregate: amount, //amount of days/hours in between data points (API ignores any value more than 30)
 		toTs: endTimeStamp //last unix timestamp included
 	}
 
-	return $.ajax({
+	return $.ajax({ //returns the promise for this request
 	    type: "GET",
 	    url: url,
 		data: params
@@ -212,12 +206,8 @@ function setUp() {
 	setUpLineChart();
 	setUpComparisonChart();
 	setUpBarChart();
-	// setUpCandleChart();
-
 	setupMouseEvents();
 }
-
-let saveData;
 
 function updateGraphs(data) {
 

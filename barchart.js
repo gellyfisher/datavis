@@ -10,7 +10,7 @@ let bar_graph_width=width-bar_graph_padding.left-bar_graph_padding.right;
 
 let X_BAR_START_OFFSET = 2;
 
-let barindex;
+let barindex; //houdt bij met welke currency we nu precies bezig zijn.
 
 
 function setUpBarChart() {
@@ -50,7 +50,7 @@ function setUpBarChart() {
 		  .style("text-anchor", "left")
 		  .text(write_bar_title());
 
-	coin = null
+	coin = null;
 }
 
 function format_volume_text(d) {
@@ -73,6 +73,7 @@ function write_bar_title() {
 	}
 }
 
+/*tekent de bar chart*/
 function drawBarChart(data) {
 
 	if (coin === null || data === null) {
@@ -134,7 +135,7 @@ function drawBarChart(data) {
 	drawBarChartGridLines()
 }
 
-
+/* tekent de indicator op de bar chart */
 function drawBarGraphIndicator() {
 	if (coin!==null) {
 		if (mouseCoordX>=padding.left && mouseCoordX<=width-padding.right) {
